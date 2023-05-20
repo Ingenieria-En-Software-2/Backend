@@ -1,0 +1,14 @@
+from flask_restful import Api
+from .user.controllers import UserApi
+
+rest_api = Api()
+
+
+def create_module(app, **kwargs):
+
+    rest_api.add_resource(
+        UserApi,
+        '/api/user',
+        '/api/user/<int:user_id>',
+    )
+    rest_api.init_app(app)

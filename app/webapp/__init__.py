@@ -1,15 +1,17 @@
-from flask import Flask, render_template
-
+from flask import Flask
 
 
 def create_app(object_name):
-    from .auth.controllers import auth_blueprint
-    from .main.controllers import main_blueprint
-
     app = Flask(__name__)
     app.config.from_object(object_name)
 
-    app.register_blueprint(main_blueprint)
-    app.register_blueprint(auth_blueprint)
+    from .auth import create_module as auth_create_module    
+    from .main import create_module as main_create_module
+    from .api import create_module as api_create_module
+
+    auth_create_module(app)
+    main_create_module(app)
+    api_create_module(app)
+    
 
     return app
