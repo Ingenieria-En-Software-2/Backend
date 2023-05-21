@@ -81,15 +81,17 @@ class CrudRepository:
         Deletes a record from the repository. Given an id.
 
         :param id: Id of the record to delete.
+        :return: `True` if the record was deleted, `False` otherwise.
         """
         
         # Prevent from deleting a record that does not exist
         instance = self.get_by_id(id)
         if instance is None:
-            return
+            return False
         
         self.db.session.delete(instance)
         self.db.session.commit()
+        return True
 
     def exists(self, **kwargs):
         """
