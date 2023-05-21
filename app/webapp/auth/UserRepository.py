@@ -1,4 +1,4 @@
-from CrudRepository import CrudRepository
+from webapp.repositories.CrudRepository import CrudRepository
 # TODO: Import the User model and the db from app
 
 class UserRepository(CrudRepository):
