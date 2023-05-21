@@ -1,4 +1,4 @@
-name: Stack Run
+name: Backend + DB Run
 
 on:
   push:
