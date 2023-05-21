@@ -1,9 +1,14 @@
+import os
+import sys
+sys.path.append(os.getcwd()+"/app")
+
 from webapp.auth.UserRepository import UserRepository
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///example.db'
+# database is memory only, for testing purposes
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
 db = SQLAlchemy(app)
 
 class User(db.Model):
@@ -50,19 +55,23 @@ with app.app_context():
     print(f"All users: {all_users}")
 
     # Delete a user
-    user_repo.delete(updated_user.id)
-    print(f"Deleted user: {updated_user}")
+    if user_repo.delete(updated_user.id):
+        print(f"Deleted user: {updated_user}")
+    else:
+        print(f"Failed to delete user: {updated_user}")
     # Get all users again
     all_users = user_repo.get_all()
     print(f"All users: {all_users}")
 
     # Delete non-existing user
-    user_repo.delete(updated_user.id)
-    print(f"Deleted user: {updated_user}")
+    if user_repo.delete(updated_user.id):
+        print(f"Deleted user: {updated_user}")
+    else:
+        print(f"Failed to delete user: {updated_user}")
     # Get all users again
     all_users = user_repo.get_all(sort_by='name', per_page=2)
     print(f"All users: {all_users.items}")
 
-    # Get all admins
+    # Get all managers
     admin_users = user_repo.get_users_by_role('manager')
-    print(f"Admin users: {admin_users}")
+    print(f"Manager users: {admin_users}")
