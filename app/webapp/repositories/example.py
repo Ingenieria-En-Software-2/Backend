@@ -1,4 +1,4 @@
-from UserRepository import UserRepository
+from webapp.auth.UserRepository import UserRepository
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
