@@ -1,0 +1,21 @@
+name: Trigger Backend Run Event
+
+on:
+  push:
+    push:
+      branches:
+        - feat_actions
+    pull_request:
+      branches:
+        - feat_actions
+
+jobs:
+  trigger:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          repository: Ingenieria-En-Software-2/stack
+          event-type: backend-run
