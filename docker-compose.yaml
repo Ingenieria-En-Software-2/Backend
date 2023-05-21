@@ -20,7 +20,7 @@ services:
   backend:
     container_name: backend
     build:
-      context: ./Backend
+      context: .
       network: host
     restart: always
     networks:
