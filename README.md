@@ -15,7 +15,7 @@ POSTGRES_DB=<db name>
 ```bash
 docker-compose up --build <service> -d
 ```
-The <service> corresponds with backend and postgres services. Leave empty for
+The \<service> corresponds with backend and postgres services. Leave empty for
 running both services.
 
 In localhost, backend and postgres services will be started at 9010 and 5432
