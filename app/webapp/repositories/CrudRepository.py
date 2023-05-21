@@ -58,23 +58,37 @@ class CrudRepository:
         :param kwargs: The keyword arguments to use to create the new record.
         :return: The newly created record.
         """
-        instance = self.model(**kwargs)
-        self.db.session.add(instance)
-        self.db.session.commit()
-        return instance
+        try:
+            instance = self.model(**kwargs)
+            self.db.session.add(instance)
+            self.db.session.commit()
+            return instance
+        except Exception as e:
+            print(f"An error occurred while creating the record: {e}")
+            self.db.session.rollback()
+            return None
 
-    def update(self, instance, **kwargs):
+    def update(self, id, **kwargs):
         """
         Updates an existing record in the repository.
 
-        :param instance: The record to update.
+        :param id: The ID of the record to update.
         :param kwargs: The keyword arguments to use to update the record.
         :return: The updated record.
         """
-        for key, value in kwargs.items():
-            setattr(instance, key, value)
-        self.db.session.commit()
-        return instance
+        try:
+            instance = self.get_by_id(id)
+            if instance is None:
+                return None
+            
+            for key, value in kwargs.items():
+                setattr(instance, key, value)
+            self.db.session.commit()
+            return instance
+        except Exception as e:
+            print(f"An error occurred while updating the record: {e}")
+            self.db.session.rollback()
+            return None
 
     def delete(self, id):
         """
@@ -83,15 +97,19 @@ class CrudRepository:
         :param id: Id of the record to delete.
         :return: `True` if the record was deleted, `False` otherwise.
         """
-        
-        # Prevent from deleting a record that does not exist
-        instance = self.get_by_id(id)
-        if instance is None:
+        try:
+            # Prevent from deleting a record that does not exist
+            instance = self.get_by_id(id)
+            if instance is None:
+                return False
+
+            self.db.session.delete(instance)
+            self.db.session.commit()
+            return True
+        except Exception as e:
+            print(f"An error occurred while deleting the record: {e}")
+            self.db.session.rollback()
             return False
-        
-        self.db.session.delete(instance)
-        self.db.session.commit()
-        return True
 
     def exists(self, **kwargs):
         """
