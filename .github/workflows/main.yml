@@ -16,4 +16,4 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Docker Compose
-        run: docker-compose up --build postgres backend -d
+        run: docker-compose up --build -d
