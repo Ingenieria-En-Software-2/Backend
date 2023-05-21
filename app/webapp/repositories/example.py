@@ -45,9 +45,7 @@ with app.app_context():
     print(f"User with ID 1: {user}")
 
     # Update a user
-    user.name = "John Smith"
-    user.email = "john.smith@example.com"
-    user_repo.update(user)
+    user_repo.update(user.id, name="John Smith", email="john.smith@example.com")
     updated_user = user_repo.get_by_id(1)
     print(f"Updated user: {updated_user}")
     # Get all users again
