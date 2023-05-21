@@ -1,0 +1,39 @@
+version: "3"
+services:
+  postgres:
+    container_name: postgres
+    image: "postgres:15"
+    restart: always
+    networks:
+      project-network:
+        ipv4_address: 192.168.41.4
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/conf:/etc/postgresql
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "postgres"
+  
+  backend:
+    container_name: backend
+    build:
+      context: ./Backend
+      network: host
+    restart: always
+    networks:
+      project-network:
+        ipv4_address: 192.168.41.2
+    ports:
+      - "9010:9010"
+    depends_on:
+      - postgres
+
+networks:
+  project-network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.41.0/24   

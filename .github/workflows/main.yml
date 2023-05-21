@@ -1,24 +1,19 @@
-name: Trigger Backend Run Event
+name: Stack Run
 
 on:
   push:
-    push:
-      branches:
-        - feat_actions
-    pull_request:
-      branches:
-        - feat_actions
+    branches:
+      - feat_actions
+  pull_request:
+    branches:
+      - feat_actions
 
 jobs:
-  trigger:
+  run-container:
     runs-on: ubuntu-22.04
     steps:
-      - name: Repository Dispatch
-        run: |
-          curl -X POST \
-              -H "Accept: application/vnd.github.everest-preview+json" \
-              -H "Authorization: token ${{ secrets.ACCESS_TOKEN }}" \
-              https://api.github.com/repos/Ingenieria-En-Software-2/stack/dispatches \
-              -d '{"event_type":"backend-run"}'
+      - name: Checkout
+        uses: actions/checkout@v3
 
-
+      - name: Docker Compose
+        run: docker-compose up --build postgres backend-d
