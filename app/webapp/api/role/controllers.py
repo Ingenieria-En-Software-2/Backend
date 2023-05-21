@@ -1,30 +1,29 @@
 from flask import abort, current_app, jsonify, request
 from flask_restful import Resource, fields, marshal_with
 from .parsers import (
-    user_post_parser
+    role_post_parser    
 )
 
-user_fields = {
+role_fields = {
     'id' : fields.Integer(),
-    'login' : fields.String(),
-    'first_name' : fields.String(),
-    'last_name' : fields.String()
+    'description' : fields.String(),
 }
 
-class UserApi(Resource):
 
-    @marshal_with(user_fields)
-    def get(self, user_id=None):
+class RoleApi(Resource):
+
+    @marshal_with(role_fields)
+    def get(self, role_id=None):
         # TODO: Usar la interfaz que se proveera
-        
+
         ##### Codigo para pruebas #####
-        if user_id:
-            # Buscar el usuario especifico en la base.
-            return TESTINGUSER(user_id, 'Santa', 'ho', 'ho')
+        if role_id:
+            # Buscar el role especifico en la base.
+            return TESTINGROLE(role_id, 'admin')
         else:
-            # Retornar los usuarios
-            users = [TESTINGUSER(1, 'Santa', 'ho', 'ho'), [TESTINGUSER(2, 'Pika', 'Chu', 'am')]]
-            return users 
+            # Retornar los roles
+            roles = [TESTINGROLE(1, 'admin'), [TESTINGROLE(2, 'customer')]]
+            return roles 
         ################################
 
     def post(self):
@@ -32,41 +31,40 @@ class UserApi(Resource):
 
         ##### Codigo para pruebas #####
         # Conseguir los datos
-        args = user_post_parser.parse_args()
-        # Crear el usuario
+        args = role_post_parser.parse_args()
+        # Crear el role
         print(args)
-        # Retornar id del usuario
-        id = 2
+        # Retornar id del role
+        id = 3
         return {'id' : id}, 201
         ########################
 
-    def put(self, user_id=None):
+    def put(self, role_id=None):
         # TODO: Usar la interfaz que se proveera
-        if not user_id:
-            abort(400, 'user_id is required')
+        if not role_id:
+            abort(400, 'role_id is required')
 
         ##### Codigo para pruebas #####
         # Si no existe el usuario, abort
         # Si existe, aplicar los cambios
-        id = user_id
+
+        print('Updated role')
+        id = role_id
         # Se retorna el id de quien se le aplicaron los cambios
         return {'id' : id}, 201
         ##############################
-
-    def delete(self, user_id=None):
+          
+    def delete(self, role_id=None):
         # TODO: Usar la interfaz que se proveera
-        if not user_id:
+        if not role_id:
             abort(400, 'user_id is required')
        
+        print('Deleted role')
         return "", 204
-
-
         
 
 # TESTING
-class TESTINGUSER():
-    def __init__(self, id, login, name, lastname) -> None:
+class TESTINGROLE():
+    def __init__(self, id, description) -> None:
         self.id = id 
-        self.login = login
-        self.first_name = name
-        self.last_name = lastname
+        self.description = description
