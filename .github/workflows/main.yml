@@ -3,10 +3,10 @@ name: Backend + DB Run
 on:
   push:
     branches:
-      - feat_actions
+      - main
   pull_request:
     branches:
-      - feat_actions
+      - main
 
 jobs:
   run-container:
