@@ -85,7 +85,7 @@ class CrudRepository:
                 setattr(instance, key, value)
             self.db.session.commit()
             return instance
-        except Exception as e:
+        except Exception as e:            
             print(f"An error occurred while updating the record: {e}")
             self.db.session.rollback()
             return None

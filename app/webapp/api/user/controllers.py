@@ -22,5 +22,3 @@ user_repository = UserRepository(db)
 class UserApi(CrudApi):
     def __init__(self):
         super().__init__(user_repository, user_fields, user_post_parser, user_put_parser)
-
-
