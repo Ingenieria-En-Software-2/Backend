@@ -2,6 +2,8 @@ from flask_restful import Api
 from .user.controllers import UserApi
 from .role.controllers import RoleApi
 
+
+
 rest_api = Api()
 
 def create_module(app, **kwargs):
