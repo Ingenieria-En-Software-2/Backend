@@ -28,6 +28,8 @@ services:
         ipv4_address: 192.168.41.2
     ports:
       - "9010:9010"
+    environment:
+      - SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI}
     depends_on:
       - postgres
 
