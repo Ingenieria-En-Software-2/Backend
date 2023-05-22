@@ -50,6 +50,16 @@ class CrudRepository:
         :return: The record with the specified ID, or `None` if no record was found.
         """
         return self.db.session.query(self.model).get(id)
+    
+    def get_by(self, **kwargs):
+        """
+        Gets records from the repository that match the given filter criteria.
+
+        :param kwargs: The filter criteria to use for the query.
+        :return: The list of matching records.
+        """
+        query = self.model.query.filter_by(**kwargs)
+        return query.all()
 
     def create(self, **kwargs):
         """
