@@ -20,14 +20,14 @@ class UserRepository(CrudRepository):
         """
         return self.db.session.query(self.model).filter_by(login=login).first()
 
-    def get_user_by_email(self, email):
+    def get_users_by_type(self, user_type):
         """
-        Gets a user by email.
+        Gets users by type.
 
-        :param email: The email of the user to retrieve.
-        :return: The user with the specified email, or `None` if no user was found.
+        :param user_type: The type of the users to retrieve.
+        :return: The list of users with the specified type.
         """
-        return self.db.session.query(self.model).filter_by(email=email).first()
+        return self.db.session.query(self.model).filter_by(user_type=user_type).all()
 
     def get_users_by_role_id(self, role_id, page=1, per_page=None, sort_by=None, sort_order='asc'):
         """
