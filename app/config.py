@@ -1,0 +1,2 @@
+class DevConfig():
+    DEBUG = True
