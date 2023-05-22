@@ -11,14 +11,14 @@ class UserRepository(CrudRepository):
         super().__init__(User, db)
 
 
-    def get_user_by_username(self, username):
+    def get_user_by_login(self, login):
         """
-        Gets a user by username.
+        Gets a user by login.
 
-        :param username: The username of the user to retrieve.
-        :return: The user with the specified username, or `None` if no user was found.
+        :param login: The login of the user to retrieve.
+        :return: The user with the specified login, or `None` if no user was found.
         """
-        return self.db.session.query(self.model).filter_by(username=username).first()
+        return self.db.session.query(self.model).filter_by(login=login).first()
 
     def get_user_by_email(self, email):
         """
