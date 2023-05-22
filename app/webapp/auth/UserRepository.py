@@ -82,3 +82,32 @@ class UserRepository(CrudRepository):
                 records = query.all()
 
             return records
+    
+    def get_user_type(self, id):
+        """
+        Gets the type of a user by id.
+
+        :param id: The id of the user to retrieve the type for.
+        :return: The type of the user with the specified id.
+        :raises: ValueError if no user was found with the specified id.
+        """
+        user = self.db.session.query(self.model).filter_by(id=id).first()
+        if user:
+            return user.user_type
+        else:
+            raise ValueError(f"No user found with id {id}")
+        
+    def get_user_role(self, id):
+        """
+        Gets the role of a user by id.
+
+        :param id: The id of the user to retrieve the role for.
+        :return: The role of the user with the specified id.
+        :raises: ValueError if no user was found with the specified id.
+        """
+        user = self.db.session.query(self.model).filter_by(id=id).first()
+        if user:
+            return user.role
+        else:
+            raise ValueError(f"No user found with id {id}")
+        
