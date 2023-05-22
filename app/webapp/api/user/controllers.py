@@ -3,7 +3,8 @@ from flask_restful import Resource, fields, marshal_with
 from webapp.auth.models import db, User
 from webapp.auth.UserRepository import UserRepository
 from .parsers import (
-    user_post_parser
+    user_post_parser,
+    user_put_parser
 )
 
 user_fields = {
@@ -21,8 +22,7 @@ user_repository = UserRepository(db)
 class UserApi(Resource):
 
     @marshal_with(user_fields)
-    def get(self, user_id=None):
-        # TODO: Usar la interfaz que se proveera
+    def get(self, user_id=None):        
         # TODO: Agregar argumentos para busquedas especificas y paginacion
         # TODO: Comprobar caso que no existe el usuario o error de paginacion.
         if user_id:
@@ -36,8 +36,7 @@ class UserApi(Resource):
             # Retornar los usuarios
             return user_repository.get_all()            
 
-    def post(self):
-        # TODO: Usar la interfaz que se proveera.
+    def post(self):        
         # TODO: Comprobar caso con campos extras
         # TODO: Comprobar caso con error
         args = user_post_parser.parse_args()
@@ -45,42 +44,34 @@ class UserApi(Resource):
         
         # TODO: Mejorar este codigo de error
         if not result:
-            abort(500, "Can't create user")
+            abort(500, "Something whent wrong creating resource")
         
         return result.id, 201
 
-    def put(self, user_id=None):
-        # TODO: Usar la interfaz que se proveera
+    def put(self, user_id=None):        
         # TODO: Comprobar caso con campos extras
         # TODO: Comprobar caso con error
         if not user_id:
             abort(400, 'user_id is required')
 
-        # result = user_repository.update(args)
-        ##### Codigo para pruebas #####
-        # Si no existe el usuario, abort
-        # Si existe, aplicar los cambios
-        id = user_id
-        # Se retorna el id de quien se le aplicaron los cambios
-        return {'id' : id}, 201
-        ##############################
+        args = user_put_parser.parse_args()
+        result = user_repository.update(user_id, **args)
+
+        # TODO: Mejorar este codigo de error
+        if not result:
+            abort(500, "Something whent wrong updating resource")
+
+        return {'id' : result.id}, 201
+
 
     def delete(self, user_id=None):
-        # TODO: Usar la interfaz que se proveera
         if not user_id:
             abort(400, 'user_id is required')
 
-        # user_repository.delete(user_id)
+        result = user_repository.delete(user_id)
+        # TODO: Mejorar este codigo de error
+        if not result:
+            abort(500, "Something whent wrong deleting resource")        
         
         return "", 204
 
-
-        
-
-# TESTING
-class TESTINGUSER():
-    def __init__(self, id, login, name, lastname) -> None:
-        self.id = id 
-        self.login = login
-        self.first_name = name
-        self.last_name = lastname
