@@ -1,5 +1,6 @@
-from flask import abort, current_app, jsonify, request
+from flask import abort
 from flask_restful import Resource, fields, marshal_with
+from webapp.auth.models import db, User
 from webapp.auth.UserRepository import UserRepository
 from .parsers import (
     user_post_parser
@@ -12,7 +13,7 @@ user_fields = {
     'last_name' : fields.String()
 }
 
-#user_repository = UserRepository(User, db)
+user_repository = UserRepository(db)
 
 class UserApi(Resource):
 
@@ -29,9 +30,8 @@ class UserApi(Resource):
             return TESTINGUSER(user_id, 'Santa', 'ho', 'ho')
         else:
             # Retornar los usuarios
-            # return user_repository.get_all()
-            users = [TESTINGUSER(1, 'Santa', 'ho', 'ho'), [TESTINGUSER(2, 'Pika', 'Chu', 'am')]]
-            return users 
+            return user_repository.get_all()            
+
         ################################
 
     def post(self):

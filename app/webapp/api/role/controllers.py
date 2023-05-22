@@ -1,4 +1,4 @@
-from flask import abort, current_app, jsonify, request
+from flask import abort
 from flask_restful import Resource, fields, marshal_with
 from .parsers import (
     role_post_parser    

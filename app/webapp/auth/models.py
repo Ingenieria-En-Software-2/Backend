@@ -1,5 +1,5 @@
-from app import db
-from sqlalchemy.dialects.postgresql import JSON
+from .. import db
+
 
 id_str = '<id {}>'
 

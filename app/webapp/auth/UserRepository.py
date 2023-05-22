@@ -1,15 +1,15 @@
 from webapp.repositories.CrudRepository import CrudRepository
+from .models import User
 # TODO: Import the User model and the db from app
 
 class UserRepository(CrudRepository):
     """
     A repository for managing User objects.
     """
-    # TODO: Call the parent constructor with the imported User and db
-    def __init__(self, model, db):
-    # def __init__(self):
-        # super().__init__(User, db)
-        super().__init__(model, db)
+   
+    def __init__(self, db):
+        super().__init__(User, db)
+
 
     def get_user_by_username(self, username):
         """

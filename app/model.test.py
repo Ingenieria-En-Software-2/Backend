@@ -1,5 +1,5 @@
 from app import app, db
-from model import User, Role
+from webapp.auth.models import User, Role
 import sys
 
 
