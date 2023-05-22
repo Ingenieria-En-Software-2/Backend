@@ -13,7 +13,7 @@ class CrudApi(Resource):
 
     def get(self, id=None):        
         # TODO: Agregar argumentos para busquedas especificas y paginacion
-        # TODO: Comprobar caso que no existe el recurso o error de paginacion.
+        # TODO: Comprobar caso de error de paginacion.
         if id:
             # Buscar el usuario especifico en la base.
             user = self.repository.get_by_id(id)
@@ -44,10 +44,12 @@ class CrudApi(Resource):
             abort(400, 'id is required')
 
         args = self.put_parser.parse_args(strict=True)
-        print(args)
-        result = self.repository.update(id, **args)
-
-        # TODO: Mejorar este codigo de error
+        
+        try:
+            result = self.repository.update(id, **args)
+        except ValueError:
+            abort(404, 'Resource not found')
+        
         if not result:
             abort(500, "Something went wrong updating resource")
 
@@ -58,9 +60,12 @@ class CrudApi(Resource):
         if not id:
             abort(400, 'id is required')
 
-        result = self.repository.delete(id)
-        # TODO: Mejorar este codigo de error
-        if not result:
+        try:
+            result = self.repository.delete(id)
+        except ValueError: 
+            abort(404, 'Resource not found')
+
+        if result==-1:
             abort(500, "Something went wrong deleting resource")        
         
         return "", 204

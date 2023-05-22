@@ -90,11 +90,11 @@ class CrudRepository:
         :return: The updated record.
         """
         checkAttributes(self.model, **kwargs)
+        
+        instance = self.get_by_id(id)
+        if instance is None:
+            raise ValueError(f"No record found with id {id}")
         try:
-            instance = self.get_by_id(id)
-            if instance is None:
-                raise ValueError(f"No record found with id {id}")
-
             for key, value in kwargs.items():
                 # Check if the attribute is unique
                 if hasattr(self.model, key):
