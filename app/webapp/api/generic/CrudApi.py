@@ -35,7 +35,7 @@ class CrudApi(Resource):
         if not result:
             abort(500, "Something went wrong creating resource")
         
-        return result.id, 201
+        return {'id' : result.id}, 201
 
     def put(self, id=None):        
         # TODO: Comprobar caso con campos extras
