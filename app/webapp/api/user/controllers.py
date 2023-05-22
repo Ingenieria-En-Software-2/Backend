@@ -9,8 +9,11 @@ from .parsers import (
 user_fields = {
     'id' : fields.Integer(),
     'login' : fields.String(),
-    'first_name' : fields.String(),
-    'last_name' : fields.String()
+    'password' : fields.String(),
+    'name' : fields.String(),
+    'lastname' : fields.String(),
+    'user_type' : fields.String(),
+    'role_id' : fields.Integer(),
 }
 
 user_repository = UserRepository(db)
@@ -22,36 +25,29 @@ class UserApi(Resource):
         # TODO: Usar la interfaz que se proveera
         # TODO: Agregar argumentos para busquedas especificas y paginacion
         # TODO: Comprobar caso que no existe el usuario o error de paginacion.
-        
-        ##### Codigo para pruebas #####
         if user_id:
             # Buscar el usuario especifico en la base.
-            # return user_repository.get_by_id(user_id)
-            return TESTINGUSER(user_id, 'Santa', 'ho', 'ho')
+            user = user_repository.get_by_id(user_id)
+            if not user:
+                abort(404, 'User not found')
+            return user
+            
         else:
             # Retornar los usuarios
             return user_repository.get_all()            
-
-        ################################
 
     def post(self):
         # TODO: Usar la interfaz que se proveera.
         # TODO: Comprobar caso con campos extras
         # TODO: Comprobar caso con error
         args = user_post_parser.parse_args()
-        # result = user_repository.create(args)
-
-
-
-        ##### Codigo para pruebas #####
-        # Conseguir los datos
-        args = user_post_parser.parse_args()
-        # Crear el usuario
-        print(args)
-        # Retornar id del usuario
-        id = 2
-        return {'id' : id}, 201
-        ########################
+        result = user_repository.create(**args)
+        
+        # TODO: Mejorar este codigo de error
+        if not result:
+            abort(500, "Can't create user")
+        
+        return result.id, 201
 
     def put(self, user_id=None):
         # TODO: Usar la interfaz que se proveera
