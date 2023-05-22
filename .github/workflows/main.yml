@@ -20,4 +20,5 @@ jobs:
           POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
           POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
           POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+          SQLALCHEMY_DATABASE_URI=${{ secrets.SQLALCHEMY_DATABASE_URI }} \
           docker compose up --build -d
