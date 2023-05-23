@@ -22,6 +22,8 @@ services:
     build:
       context: .
       network: host
+      args:
+        SQLALCHEMY_DATABASE_URI: ${SQLALCHEMY_DATABASE_URI}
     restart: always
     networks:
       project-network:
