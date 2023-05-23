@@ -1,5 +1,5 @@
 from flask_restful import reqparse
-
+from ..generic.parsers import generic_get_parser
 
 user_post_parser = reqparse.RequestParser()
 user_post_parser.add_argument(
@@ -93,7 +93,7 @@ user_put_parser.add_argument(
     store_missing=False,
 )
 
-user_get_parser = reqparse.RequestParser()
+user_get_parser = generic_get_parser.copy()
 user_get_parser.add_argument(
     'login',
     type=str,
@@ -130,15 +130,12 @@ user_get_parser.add_argument(
 )
 
 user_get_parser.add_argument(
-    'page_number',
-    type=int, 
+    'sort_by',
+    type=str, 
     location='args',
-    default=1
+    choices=[
+        'id', 'login', 'name', 'lastname', 'user_type', 'role_id'
+    ],
+    default=None
 )
 
-user_get_parser.add_argument(
-    'page_size',
-    type=int, 
-    location='args',
-    default=10,
-)

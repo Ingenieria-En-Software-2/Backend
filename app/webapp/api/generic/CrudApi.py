@@ -13,8 +13,7 @@ class CrudApi(Resource):
         super().__init__()
 
     def get(self, id=None):        
-        # TODO: Agregar argumentos para busquedas especificas y paginacion
-        # TODO: Comprobar caso de error de paginacion.
+
         if id:
             # Buscar el recurso especifico en la base.
             user = self.repository.get_by_id(id)
@@ -25,25 +24,23 @@ class CrudApi(Resource):
         args = self.get_parser.parse_args()
         if args['page_number'] <= 0 or args['page_size'] <= 0:
             abort(400, "page_number and page_size must be a non zero positive integer")
-            
-        results = self.repository.get_all(args['page_number'], args['page_size'])
+        print(args)
+        results = self.repository.get_all(args['page_number'], args['page_size'], args['sort_by'], args['sort_order'])
         return marshal(results, self.fields)
 
     def post(self):        
-        # TODO: Comprobar caso con campos extras
-        # TODO: Comprobar caso con error
+
         args = self.post_parser.parse_args(strict=True)
         result = self.repository.create(**args)
         
-        # TODO: Mejorar este codigo de error
+
         if not result:
             abort(500, "Something went wrong creating resource")
         
         return {'id' : result.id}, 201
 
     def put(self, id=None):        
-        # TODO: Comprobar caso con campos extras
-        # TODO: Comprobar caso con error
+
         if not id:
             abort(400, 'id is required')
 
