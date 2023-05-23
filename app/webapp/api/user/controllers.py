@@ -3,8 +3,9 @@ from webapp.auth.models import db
 from webapp.auth.UserRepository import UserRepository
 from ..generic.CrudApi import CrudApi
 from .parsers import (
+    user_get_parser,
     user_post_parser,
-    user_put_parser
+    user_put_parser,
 )
 
 user_fields = {
@@ -21,4 +22,4 @@ user_repository = UserRepository(db)
 
 class UserApi(CrudApi):
     def __init__(self):
-        super().__init__(user_repository, user_fields, user_post_parser, user_put_parser)
+        super().__init__(user_repository, user_fields, user_post_parser, user_put_parser, user_get_parser)

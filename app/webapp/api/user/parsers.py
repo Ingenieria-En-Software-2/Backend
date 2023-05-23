@@ -92,3 +92,53 @@ user_put_parser.add_argument(
     location=('json', 'values'),
     store_missing=False,
 )
+
+user_get_parser = reqparse.RequestParser()
+user_get_parser.add_argument(
+    'login',
+    type=str,
+    location='args',
+    store_missing=False,
+)
+
+user_get_parser.add_argument(
+    'name',
+    type=str, 
+    location='args',
+    store_missing=False,
+)
+
+user_get_parser.add_argument(
+    'lastname',
+    type=str, 
+    location='args',
+    store_missing=False,
+)
+
+user_get_parser.add_argument(
+    'user_type',
+    type=str, 
+    location='args',
+    store_missing=False,
+)
+
+user_get_parser.add_argument(
+    'role_id',
+    type=int, 
+    location='args',
+    store_missing=False,
+)
+
+user_get_parser.add_argument(
+    'page_number',
+    type=int, 
+    location='args',
+    default=1
+)
+
+user_get_parser.add_argument(
+    'page_size',
+    type=int, 
+    location='args',
+    default=10,
+)
