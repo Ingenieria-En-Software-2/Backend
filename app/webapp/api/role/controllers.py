@@ -16,6 +16,7 @@ role_fields = {
 role_repository = CrudRepository(Role, db)
 class RoleApi(CrudApi):
     def __init__(self):
-        super().__init__(role_repository, role_fields, role_post_parser, role_put_parser, role_get_parser)
+        super().__init__(role_repository, role_fields, role_post_parser, 
+            role_put_parser, role_get_parser)
 
 

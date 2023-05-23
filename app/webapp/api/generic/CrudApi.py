@@ -13,23 +13,33 @@ class CrudApi(Resource):
         super().__init__()
 
     def get(self, id=None):        
+        """
+        When id is specified, gets the record from the DataBase.
+        Otherwise, execute a query and returns the result.
 
-        if id:
-            # Buscar el recurso especifico en la base.
+        :return: The resource or a list of resources.
+        """
+        # Si hay id especificado, se busca en la base.
+        if id:            
             user = self.repository.get_by_id(id)
             if not user:
                 abort(404, 'Resource not found')
             return marshal(user, self.fields)
-            
+        
+        
         args = self.get_parser.parse_args()
         if args['page_number'] <= 0 or args['page_size'] <= 0:
             abort(400, "page_number and page_size must be a non zero positive integer")
-        print(args)
+
         results = self.repository.get_all(args['page_number'], args['page_size'], args['sort_by'], args['sort_order'])
         return marshal(results, self.fields)
 
     def post(self):        
+        """
+        Creates a new resource in the database
 
+        :return: The id of the created resource
+        """
         args = self.post_parser.parse_args(strict=True)
         result = self.repository.create(**args)
         
@@ -40,7 +50,11 @@ class CrudApi(Resource):
         return {'id' : result.id}, 201
 
     def put(self, id=None):        
+        """
+        Edits the resource that is identified with id
 
+        :return: The id of the edited resource
+        """
         if not id:
             abort(400, 'id is required')
 
@@ -58,6 +72,9 @@ class CrudApi(Resource):
 
 
     def delete(self, id=None):
+        """
+        Deletes the resource that is identified with id
+        """
         if not id:
             abort(400, 'id is required')
 
