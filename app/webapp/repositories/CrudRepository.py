@@ -16,7 +16,7 @@ class CrudRepository:
         self.model = model
         self.db = db
 
-    def get_all(self, page=1, per_page=None, sort_by=None, sort_order='asc'):
+    def get_all(self, page=1, per_page=None, sort_by=None, sort_order='asc', **kwargs):
         """
         Gets all records from the model.
 
@@ -24,9 +24,13 @@ class CrudRepository:
         :param per_page: The number of records per page, or `None` to retrieve all records.
         :param sort_by: The name of the attribute to sort by, or `None` to not sort the records.
         :param sort_order: The sort order, 'desc' for descending or ascending by default.
+        :param kwargs: The filter criteria to use for the query.
         :return: A list or a `QueryPagination` object containing all the records.
         """
         query = self.db.session.query(self.model)
+        if kwargs is not None:
+            checkAttributes(self.model, **kwargs)
+            query = query.filter_by(**kwargs)
 
         if sort_by is not None:
             checkAttributes(self.model, **{sort_by: None})
