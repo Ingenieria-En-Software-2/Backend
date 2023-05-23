@@ -22,6 +22,7 @@ role_get_parser.add_argument(
     'description',
     type=str,
     location='args',
+    store_missing=False,
 )
 
 role_get_parser.add_argument(

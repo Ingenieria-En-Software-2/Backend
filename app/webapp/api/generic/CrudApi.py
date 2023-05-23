@@ -35,9 +35,10 @@ class CrudApi(Resource):
             key:args[key] for key in args if key not in 
                 ['page_number', 'page_size', 'sort_order', 'sort_by'] 
             }
-        
-        results = self.repository.get_all(args['page_number'], args['page_size'], 
-            args['sort_by'], args['sort_order'], **filter_args)
+       
+        results = self.repository.get_all(
+            args['page_number'], args['page_size'], args['sort_by'], 
+            args['sort_order'], **filter_args)
         
         if len(results.items) == 0:
             abort(404, "No resources found")
