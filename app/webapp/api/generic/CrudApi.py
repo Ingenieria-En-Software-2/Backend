@@ -1,4 +1,4 @@
-from flask import abort
+from flask import abort, request
 from flask_restful import Resource, marshal
 
 
@@ -25,14 +25,33 @@ class CrudApi(Resource):
             if not user:
                 abort(404, 'Resource not found')
             return marshal(user, self.fields)
-        
-        
+
+        # Consultar los recursos segun los filtros y paginarlos        
         args = self.get_parser.parse_args()
         if args['page_number'] <= 0 or args['page_size'] <= 0:
             abort(400, "page_number and page_size must be a non zero positive integer")
+        
+        filter_args = {
+            key:args[key] for key in args if key not in 
+                ['page_number', 'page_size', 'sort_order', 'sort_by'] 
+            }
+        
+        results = self.repository.get_all(args['page_number'], args['page_size'], 
+            args['sort_by'], args['sort_order'], **filter_args)
+        
+        if len(results.items) == 0:
+            abort(404, "No resources found")
+       
 
-        results = self.repository.get_all(args['page_number'], args['page_size'], args['sort_by'], args['sort_order'])
-        return marshal(results, self.fields)
+        return {
+            'next_page' : results.next_num,
+            'prev_page' : results.prev_num,
+            'item_count' : len(results.items),
+            'total_pages' : results.pages,
+            'total_items' : results.total,
+            'items' : marshal(results.items, self.fields)
+        }
+
 
     def post(self):        
         """

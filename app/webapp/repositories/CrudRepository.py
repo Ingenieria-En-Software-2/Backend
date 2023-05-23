@@ -41,7 +41,7 @@ class CrudRepository:
 
         if per_page is not None:
             # Error out is false to return empty list instead of 404 error when page is out of range
-            records = query.paginate(page=page, per_page=per_page, error_out=False).items
+            records = query.paginate(page=page, per_page=per_page, error_out=False)
         else:
             records = query.all()
 
