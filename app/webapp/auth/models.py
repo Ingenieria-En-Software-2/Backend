@@ -1,5 +1,6 @@
 from .. import db
 import jwt, datetime
+from app.config import DevConfig
 
 id_str = '<id {}>'
 
@@ -36,13 +37,13 @@ class User(db.Model):
 
         return jwt.encode(
             payload,
-            app.config.get('SECRET_KEY'),
+            DevConfig.SECRET_KEY,
             algorithm='HS256')
     
     @staticmethod
     def decode_token(token):
         try: 
-            payload = jwt.decode(token, app.config.get('SECRET_KEY'))
+            payload = jwt.decode(token, DevConfig.SECRET_KEY)
             return payload['sub'], payload['role']
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
