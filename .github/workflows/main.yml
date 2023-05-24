@@ -16,9 +16,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Docker Compose
-        run: |
-          POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
-          POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
-          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
-          SQLALCHEMY_DATABASE_URI=${{ secrets.SQLALCHEMY_DATABASE_URI }} \
-          docker compose up --build postgres -d && docker compose up --build backend -d
+        run: docker compose up --build -d
+        env:
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          SQLALCHEMY_DATABASE_URI: ${{ secrets.SQLALCHEMY_DATABASE_URI }}
