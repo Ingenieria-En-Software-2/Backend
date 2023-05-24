@@ -16,7 +16,8 @@ def create_documentation(app, **kwargs):
         SWAGGER_URL,  # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
         API_URL,
         config={  # Swagger UI config overrides
-            'app_name': "Test application"
+            'app_name': "Caribbean Wallet",
+            'layout': 'BaseLayout'
         }
     )
     app.register_blueprint(swaggerui_blueprint)
