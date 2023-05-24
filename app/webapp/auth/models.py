@@ -1,5 +1,5 @@
 from .. import db
-
+import jwt, datetime
 
 id_str = '<id {}>'
 
@@ -25,6 +25,29 @@ class User(db.Model):
 
     def __repr__(self):
         return id_str.format(self.id)
+    
+    def encode_token(self, id, role_id):
+        payload = {
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+            'iat': datetime.datetime.utcnow(),
+            'sub': id,
+            'role': role_id
+        }
+
+        return jwt.encode(
+            payload,
+            app.config.get('SECRET_KEY'),
+            algorithm='HS256')
+    
+    @staticmethod
+    def decode_token(token):
+        try: 
+            payload = jwt.decode(token, app.config.get('SECRET_KEY'))
+            return payload['sub'], payload['role']
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'
 
 
 class Role(db.Model):
