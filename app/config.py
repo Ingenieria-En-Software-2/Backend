@@ -7,3 +7,4 @@ class DevConfig():
         'SQLALCHEMY_DATABASE_URI'
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    BUNDLE_ERRORS = True

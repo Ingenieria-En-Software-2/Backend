@@ -10,8 +10,9 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
       retries: 5
     volumes:
       - ./postgres/data:/var/lib/postgresql/data
@@ -23,18 +24,22 @@ services:
   
   backend:
     container_name: backend
-    build: .
+    build:
+      context: .
+      network: host
+      args:
+        SQLALCHEMY_DATABASE_URI: ${SQLALCHEMY_DATABASE_URI}
     restart: always
     networks:
       project-network:
         ipv4_address: 192.168.41.2
     ports:
       - "9010:9010"
-    environment:
-      - SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI}
     depends_on:
       postgres:
         condition: service_healthy
+    environment:
+      - SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI}
 
 networks:
   project-network:

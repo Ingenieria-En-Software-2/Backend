@@ -1,5 +1,4 @@
-from sqlalchemy import func
-from flask import render_template, Blueprint, flash, redirect, url_for
+from flask import Blueprint
 
 
 auth_blueprint = Blueprint(

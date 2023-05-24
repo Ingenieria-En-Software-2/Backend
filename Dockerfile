@@ -3,6 +3,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY ./app .
+ARG SQLALCHEMY_DATABASE_URI
 RUN flask db init
 RUN flask db migrate
 RUN flask db upgrade
