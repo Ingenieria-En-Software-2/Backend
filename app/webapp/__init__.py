@@ -16,11 +16,9 @@ def create_app(object_name):
     from .auth import create_module as auth_create_module
     from .main import create_module as main_create_module
     from .api import create_module as api_create_module
-    from .endpoints_documentation import create_documentation
 
     auth_create_module(app)
     main_create_module(app)
     api_create_module(app)
-    create_documentation(app)
 
     return app
