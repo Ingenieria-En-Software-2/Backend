@@ -1,4 +1,5 @@
-from app import app, db
+from app import app
+from webapp import db
 from webapp.auth.models import User, Role
 import sys
 
@@ -39,11 +40,11 @@ def get_role_by_id(id):
 
 def populate_db():
     # add roles
-    admin_role = add_role('admin')
-    user_role = add_role('user')
+    # admin_role = add_role('admin')
+    # user_role = add_role('user')
     # add users
-    add_user('admin', 'admin', 'admin', 'admin', 'admin', admin_role.id)
-    add_user('user', 'user', 'user', 'user', 'user', user_role.id)
+    add_user('admin', 'admin', 'admin', 'admin', 'admin', 1)  # admin_role.id)
+    add_user('user', 'user', 'user', 'user', 'user', -1)  # user_role.id)
 
 
 if __name__ == '__main__':
