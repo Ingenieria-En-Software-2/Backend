@@ -5,8 +5,8 @@ from flask_cors import CORS
 
 load_dotenv()
 
-env = 'dev'
-app = create_app('config.%sConfig' % env.capitalize())
+env = "dev"
+app = create_app("config.%sConfig" % env.capitalize())
 
 
 CORS(app)  # for cross-origin requests for react dev server

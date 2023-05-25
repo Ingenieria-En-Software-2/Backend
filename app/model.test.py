@@ -47,14 +47,14 @@ def populate_db():
     add_user('user', 'user', 'user', 'user', 'user', 2)  # user_role.id)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with app.app_context():
-        if len(sys.argv) > 1 and sys.argv[1] == 'create':
+        if len(sys.argv) > 1 and sys.argv[1] == "create":
             db.drop_all()
             # create the database and the db table
             db.create_all()
             # commit the changes
             db.session.commit()
 
-        if len(sys.argv) > 1 and sys.argv[1] == 'populate':
+        if len(sys.argv) > 1 and sys.argv[1] == "populate":
             populate_db()

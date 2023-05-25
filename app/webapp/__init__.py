@@ -6,6 +6,7 @@ from flask_migrate import Migrate
 db = SQLAlchemy()
 migrate = Migrate()
 
+
 def create_app(object_name):
     app = Flask(__name__)
     app.config.from_object(object_name)
