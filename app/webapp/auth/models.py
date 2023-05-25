@@ -1,11 +1,11 @@
 from .. import db
 
 
-id_str = '<id {}>'
+id_str = "<id {}>"
 
 
 class User(db.Model):
-    __tablename__ = 'user'
+    __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String())
@@ -13,7 +13,7 @@ class User(db.Model):
     name = db.Column(db.String())
     lastname = db.Column(db.String())
     user_type = db.Column(db.String())
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    role_id = db.Column(db.Integer, db.ForeignKey("role.id"))
 
     def __init__(self, login, password, name, lastname, user_type, role_id):
         self.login = login
@@ -28,11 +28,11 @@ class User(db.Model):
 
 
 class Role(db.Model):
-    __tablename__ = 'role'
+    __tablename__ = "role"
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String())
-    users = db.relationship('User', backref='role', lazy='dynamic')
+    users = db.relationship("User", backref="role", lazy="dynamic")
 
     def __init__(self, description):
         self.description = description
