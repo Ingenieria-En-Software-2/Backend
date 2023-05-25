@@ -33,6 +33,41 @@ paths:
       summary: Get all users
       description: List all stored users on database
       operationId: getAllUsers
+      parameters:
+        - name: page_size
+          in: query
+          description: Number of elements per page
+          default: 10
+          schema:
+            type: integer
+        - name: page_number
+          in: query
+          description: Index for actual page
+          default: 3
+          schema:
+            type: integer
+        - name: sort_by
+          in: query
+          description: Fild name to sort by
+          schema:
+            type: string
+            example: id
+        - name: sort_order
+          in: query
+          description: Sort criteria
+          default: asc
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - <fild Name>:
+          in: query
+          description: The arguments for the searches are taken 
+            from the query params. These vary according to the fields that have the model.
+          schema:
+            type: string
+        
       responses:
         '200':
           description: Successful operation
