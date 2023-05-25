@@ -42,8 +42,3 @@ to run the backend:
 ```bash
 flask run
 ```
-
-test deploy
-
-
-
