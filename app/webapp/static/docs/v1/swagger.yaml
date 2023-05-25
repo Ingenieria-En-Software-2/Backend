@@ -1,0 +1,425 @@
+openapi: 3.0.3
+info:
+  title: Caribbean Wallet Documentation
+  description: |-
+    Caribbean Wallet is a mobile wallet platform
+    based on e-Banking domain. It provides to it's account holders, in addition to the classic services of a Wallet focused on the purchase and sale of products and services anywhere in the world, savings and checking accounts, as well as debit and credit cards (Visa and Master Card). virtual or physical, which can be recharged through other Wallet platforms and associated Banks of any field.
+
+    This is the backend documentation of the Caribbean Wallet application developed in python
+    using the Flask framework. The REST API standard is followed as a communication interface 
+    between information systems, through the hypertext transfer protocol (HTTP).
+    To obtain data or execute operations on the data, the JSON format is used.
+    
+  termsOfService: https://www.termsofservicegenerator.net/live.php?token=Q7AjipvSRCSokjzBi5S5rkBgIMyiRjuu
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Caribbean Wallet
+  url: /docs
+tags:
+  - name: User
+    description: Control and management of application users
+  - name: Role
+    description: Predefined category that can be assigned to users on the basis of their job or other criteria.
+paths:
+
+# Users Paths
+  /api/user:
+    get:
+      tags:
+        - User
+      summary: Get all users
+      description: List all stored users on database
+      operationId: getAllUsers
+      parameters:
+        - name: page_size
+          in: query
+          description: Number of elements per page
+          default: 10
+          schema:
+            type: integer
+        - name: page_number
+          in: query
+          description: Index for actual page
+          default: 3
+          schema:
+            type: integer
+        - name: sort_by
+          in: query
+          description: Fild name to sort by
+          schema:
+            type: string
+            example: id
+        - name: sort_order
+          in: query
+          description: Sort criteria
+          default: asc
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - <fild Name>:
+          in: query
+          description: The arguments for the searches are taken 
+            from the query params. These vary according to the fields that have the model.
+          schema:
+            type: string
+        
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  next_page:
+                    type: integer
+                    example: 3
+                  prev_page:
+                    type: integer
+                    example: 1
+                  item_count:
+                    type: integer
+                    example: 1
+                  total_items:
+                    type: integer
+                    example: 1
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+
+        '404':
+          description: No Users found
+    
+    post:
+      tags:
+        - User
+      summary: Add a new user to the database
+      description: Add a new user to the database
+      operationId: addUser
+      requestBody:
+        description: Create a new user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: 
+                    type: integer
+                    example: 2 
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+    
+  /api/user/{user_id}:
+    get:
+      tags:
+        - User
+      summary: Get user by id
+      description: Get user by id
+      operationId: getUserById
+      parameters:
+        - name: user_id
+          in: path
+          description: ID of user to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+        '404':
+          description: User not found
+    
+    put:
+      tags:
+        - User
+      summary: Update user by id
+      description: Update user data by id
+      operationId: updateUser
+      requestBody:
+        description: Update user by id
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: User updated id
+                    type: integer
+                    example: 2 
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+
+    delete:
+      tags:
+        - User
+      summary: Delete user
+      description: Delete user by id
+      operationId: deleteUserById
+      parameters:
+        - name: user_id
+          in: path
+          description: ID of user to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '404':
+          description: User not found
+
+  # Roles Paths
+  /api/role:
+    get:
+      tags:
+        - Role
+      summary: Get all Roles
+      description: List all stored roles on database
+      operationId: getAllRoles
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  next_page:
+                    type: integer
+                    example: 3
+                  prev_page:
+                    type: integer
+                    example: 1
+                  item_count:
+                    type: integer
+                    example: 1
+                  total_items:
+                    type: integer
+                    example: 1
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Role'
+
+        '404':
+          description: No Roles found
+    
+    post:
+      tags:
+        - Role
+      summary: Add a new role to the database
+      description: Add a new role to the database
+      operationId: addRole
+      requestBody:
+        description: Create a new role
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Role'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Role'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: 
+                    type: integer
+                    example: 2 
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+    
+  /api/role/{role_id}:
+    get:
+      tags:
+        - Role
+      summary: Get role by id
+      description: Get role by id
+      operationId: getRoleById
+      parameters:
+        - name: role_id
+          in: path
+          description: ID of role to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+
+        '404':
+          description: Role not found
+    
+    put:
+      tags:
+        - Role
+      summary: Update role by id
+      description: Update role data by id
+      operationId: updateRole
+      requestBody:
+        description: Update role by id
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Role'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Role'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: Role updated id
+                    type: integer
+                    example: 2 
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Bad Request
+
+    delete:
+      tags:
+        - Role
+      summary: Delete role
+      description: Delete role by id
+      operationId: deleteRoleById
+      parameters:
+        - name: role_id
+          in: path
+          description: ID of role to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '404':
+          description: Role not found
+
+
+
+  
+components:
+  schemas:
+    User:
+      required:
+        - login
+        - password
+        - name
+        - lastname
+        - role_id
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        login:
+          type: string
+          example: jjjason
+        password:
+          type: string
+          example: '12345'
+        name:
+          type: string
+          example: James
+        lastname:
+          type: string
+          example: Jason
+        user_type:
+          type: string
+          example: 'user'
+          enum:
+            - user
+            - tipo 1
+            - tipo 2
+        role_id:
+          type: integer
+          format: int64
+          example: 3
+      xml:
+        name: user
+    Role:
+      required:
+        - description
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        description:
+          type: string
+          example: admin
+      xml:
+        name: role

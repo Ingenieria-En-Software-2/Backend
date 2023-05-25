@@ -1,0 +1,2048 @@
+{
+	"info": {
+		"_postman_id": "0d27d96e-43a1-42b8-8a68-3597bb036d42",
+		"name": "Caribbean Wallet",
+		"description": "Caribbean Wallet is a mobile wallet platform\nbased on e-Banking domain. It provides to it's account holders, in addition to the classic services of a Wallet focused on the purchase and sale of products and services anywhere in the world, savings and checking accounts, as well as debit and credit cards (Visa and Master Card). virtual or physical, which can be recharged through other Wallet platforms and associated Banks of any field.\n\nThis is the backend documentation of the Caribbean Wallet application developed in python\nusing the Flask framework. The REST API standard is followed as a communication interface \nbetween information systems, through the hypertext transfer protocol (HTTP).\nTo obtain data or execute operations on the data, the JSON format is used.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27612183"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "user",
+					"item": [
+						{
+							"name": "{user_id}",
+							"item": [
+								{
+									"name": "Get user by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"",
+													"pm.test(\"Successful GET request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"pm.test(\"Response must be valid and have a body\", function () {",
+													"     pm.response.to.be.withBody;",
+													"     pm.response.to.be.json;",
+													"});",
+													"",
+													"pm.test(\"Getting a correct key\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.id).eql('number');",
+													"});",
+													"",
+													"pm.test(\"Getting a correct login\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.name).eql('string');",
+													"});",
+													"",
+													"pm.test(\"Getting a correct name\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.name ).eql('string');",
+													"});",
+													"",
+													"pm.test(\"Getting a correct lastname\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.lastname ).eql('string');",
+													"});",
+													"",
+													"pm.test(\"Getting a correct role id\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.role_id ).eql('number');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/user/{{user_id}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"user",
+												"{{user_id}}"
+											]
+										},
+										"description": "Get user by id"
+									},
+									"response": [
+										{
+											"name": "Successful operation",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"login\": \"<string>\",\n  \"password\": \"<string>\",\n  \"name\": \"<string>\",\n  \"lastname\": \"<string>\",\n  \"role_id\": \"<long>\",\n  \"id\": \"<long>\",\n  \"user_type\": \"tipo 2\"\n}"
+										},
+										{
+											"name": "User not found",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Check User Correct Updates",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"",
+													"pm.test(\"Successful GET request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"pm.test(\"Response must be valid and have a body\", function () {",
+													"     pm.response.to.be.withBody;",
+													"     pm.response.to.be.json;",
+													"});",
+													"",
+													"pm.test(\"Getting a correct key\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.id).eql('number');",
+													"});",
+													"",
+													"pm.test(\"Getting a correct login\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.name).eql('string');",
+													"});",
+													"",
+													"pm.test(\"Getting a correct name\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.name ).eql('string');",
+													"});",
+													"",
+													"pm.test(\"Getting a correct lastname\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.lastname ).eql('string');",
+													"});",
+													"",
+													"pm.test(\"Getting a correct role id\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.role_id ).eql('number');",
+													"});",
+													"",
+													"",
+													"pm.test(\"Correct login update\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.login).to.eql(\"spiderman\");",
+													"});",
+													"",
+													"pm.test(\"Correct password update\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.password).to.eql(\"I'mSpiderman\");",
+													"});",
+													"",
+													"pm.test(\"Correct name update\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.name).to.eql(\"Peter\");",
+													"});",
+													"",
+													"pm.test(\"Correct lastname update\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.lastname).to.eql(\"Parker\");",
+													"});",
+													"",
+													"pm.test(\"Correct user type update\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.user_type).to.eql(\"Hero\");",
+													"});",
+													"",
+													"pm.test(\"Correct role id update\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.role_id).to.eql(1);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/user/{{user_id}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"user",
+												"{{user_id}}"
+											]
+										},
+										"description": "Get user by id"
+									},
+									"response": [
+										{
+											"name": "Successful operation",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"login\": \"<string>\",\n  \"password\": \"<string>\",\n  \"name\": \"<string>\",\n  \"lastname\": \"<string>\",\n  \"role_id\": \"<long>\",\n  \"id\": \"<long>\",\n  \"user_type\": \"tipo 2\"\n}"
+										},
+										{
+											"name": "User not found",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Check User Correct Delete",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"",
+													"pm.test(\"Successful GET request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([404]);",
+													"});",
+													"",
+													"pm.test(\"Response must be valid and have a body\", function () {",
+													"     pm.response.to.be.withBody;",
+													"     pm.response.to.be.json;",
+													"});",
+													"",
+													"pm.test(\"Element deleted check\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql('Resource not found');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/user/{{user_id}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"user",
+												"{{user_id}}"
+											]
+										},
+										"description": "Get user by id"
+									},
+									"response": [
+										{
+											"name": "Successful operation",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"login\": \"<string>\",\n  \"password\": \"<string>\",\n  \"name\": \"<string>\",\n  \"lastname\": \"<string>\",\n  \"role_id\": \"<long>\",\n  \"id\": \"<long>\",\n  \"user_type\": \"tipo 2\"\n}"
+										},
+										{
+											"name": "User not found",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Update user by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"",
+													"pm.test(\"Response must be valid and have a body\", function () {",
+													"     pm.response.to.be.withBody;",
+													"     pm.response.to.be.json;",
+													"});",
+													"",
+													"pm.test(\"Successful PUT request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);",
+													"});",
+													"",
+													"pm.test(\"Correct Object ID\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    user_id = pm.collectionVariables.get(\"user_id\");",
+													"    pm.expect(jsonData.id).to.eql(user_id);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"login\": \"spiderman\",\n    \"password\": \"I'mSpiderman\",\n    \"name\": \"Peter\",\n    \"lastname\": \"Parker\",\n    \"user_type\": \"Hero\",\n    \"role_id\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/user/{{user_id}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"user",
+												"{{user_id}}"
+											]
+										},
+										"description": "Update user data by id"
+									},
+									"response": [
+										{
+											"name": "Successful operation",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/x-www-form-urlencoded"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "urlencoded",
+													"urlencoded": [
+														{
+															"key": "login",
+															"value": "<string>",
+															"description": "(Required) "
+														},
+														{
+															"key": "password",
+															"value": "<string>",
+															"description": "(Required) "
+														},
+														{
+															"key": "name",
+															"value": "<string>",
+															"description": "(Required) "
+														},
+														{
+															"key": "lastname",
+															"value": "<string>",
+															"description": "(Required) "
+														},
+														{
+															"key": "role_id",
+															"value": "<long>",
+															"description": "(Required) "
+														},
+														{
+															"key": "id",
+															"value": "<long>"
+														},
+														{
+															"key": "user_type",
+															"value": "tipo 2"
+														}
+													]
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": \"<integer>\"\n}"
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/x-www-form-urlencoded"
+													}
+												],
+												"body": {
+													"mode": "urlencoded",
+													"urlencoded": [
+														{
+															"key": "login",
+															"value": "<string>",
+															"description": "(Required) "
+														},
+														{
+															"key": "password",
+															"value": "<string>",
+															"description": "(Required) "
+														},
+														{
+															"key": "name",
+															"value": "<string>",
+															"description": "(Required) "
+														},
+														{
+															"key": "lastname",
+															"value": "<string>",
+															"description": "(Required) "
+														},
+														{
+															"key": "role_id",
+															"value": "<long>",
+															"description": "(Required) "
+														},
+														{
+															"key": "id",
+															"value": "<long>"
+														},
+														{
+															"key": "user_type",
+															"value": "tipo 2"
+														}
+													]
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Delete user",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"",
+													"pm.test(\"Successful DELETE request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([204]);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/user/{{user_id}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"user",
+												"{{user_id}}"
+											]
+										},
+										"description": "Delete user by id"
+									},
+									"response": [
+										{
+											"name": "User not found",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Initial get all users",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"pm.test(\"Response must be valid and have a body\", function () {",
+											"     pm.response.to.be.withBody;",
+											"     pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"Get Users Route Test\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200,404]);",
+											"});",
+											"",
+											"pm.test(\"Empty table matches response\", function () {",
+											"    if(pm.response.code == 404){",
+											"        var jsonData = pm.response.json();",
+											"        pm.expect(jsonData.message).to.eql('No resources found');",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/user?page_size=1&page_number=1&sort_order=asc",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"user"
+									],
+									"query": [
+										{
+											"key": "page_size",
+											"value": "1",
+											"description": "Number of elements per page"
+										},
+										{
+											"key": "page_number",
+											"value": "1",
+											"description": "Index for actual page"
+										},
+										{
+											"key": "sort_by",
+											"value": "",
+											"description": "Fild name to sort by",
+											"disabled": true
+										},
+										{
+											"key": "sort_order",
+											"value": "asc",
+											"description": "Sort criteria"
+										}
+									]
+								},
+								"description": "List all stored users on database"
+							},
+							"response": [
+								{
+									"name": "Successful operation",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/user?page_size=<integer>&page_number=<integer>&sort_by=<string>&sort_order=asc&=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"user"
+											],
+											"query": [
+												{
+													"key": "page_size",
+													"value": "<integer>",
+													"description": "Number of elements per page"
+												},
+												{
+													"key": "page_number",
+													"value": "<integer>",
+													"description": "Index for actual page"
+												},
+												{
+													"key": "sort_by",
+													"value": "<string>",
+													"description": "Fild name to sort by"
+												},
+												{
+													"key": "sort_order",
+													"value": "asc",
+													"description": "Sort criteria"
+												},
+												{
+													"value": "<string>",
+													"description": "The arguments for the searches are taken from the query params. These vary according to the fields that have the model."
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"next_page\": \"<integer>\",\n  \"prev_page\": \"<integer>\",\n  \"item_count\": \"<integer>\",\n  \"total_items\": \"<integer>\",\n  \"items\": [\n    {\n      \"login\": \"<string>\",\n      \"password\": \"<string>\",\n      \"name\": \"<string>\",\n      \"lastname\": \"<string>\",\n      \"role_id\": \"<long>\",\n      \"id\": \"<long>\",\n      \"user_type\": \"tipo 2\"\n    },\n    {\n      \"login\": \"<string>\",\n      \"password\": \"<string>\",\n      \"name\": \"<string>\",\n      \"lastname\": \"<string>\",\n      \"role_id\": \"<long>\",\n      \"id\": \"<long>\",\n      \"user_type\": \"tipo 2\"\n    }\n  ]\n}"
+								},
+								{
+									"name": "No Users found",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/user?page_size=<integer>&page_number=<integer>&sort_by=<string>&sort_order=asc&=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"user"
+											],
+											"query": [
+												{
+													"key": "page_size",
+													"value": "<integer>",
+													"description": "Number of elements per page"
+												},
+												{
+													"key": "page_number",
+													"value": "<integer>",
+													"description": "Index for actual page"
+												},
+												{
+													"key": "sort_by",
+													"value": "<string>",
+													"description": "Fild name to sort by"
+												},
+												{
+													"key": "sort_order",
+													"value": "asc",
+													"description": "Sort criteria"
+												},
+												{
+													"value": "<string>",
+													"description": "The arguments for the searches are taken from the query params. These vary according to the fields that have the model."
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Add a new user to the database",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);",
+											"});",
+											"",
+											"pm.test(\"Response must be valid and have a body\", function () {",
+											"     pm.response.to.be.withBody;",
+											"     pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"Getting a correct key\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.id).key;",
+											"    pm.collectionVariables.set(\"user_id\", jsonData.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"login\": \"jjjason\",\n  \"password\": \"WhoIsSpiderman\",\n  \"name\": \"James\",\n  \"lastname\": \"Jason\",\n  \"user_type\": \"user\",\n  \"role_id\": 3\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/user",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"user"
+									]
+								},
+								"description": "Add a new user to the database"
+							},
+							"response": [
+								{
+									"name": "Successful operation",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/x-www-form-urlencoded"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "login",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "password",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "name",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "lastname",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "role_id",
+													"value": "<long>",
+													"description": "(Required) "
+												},
+												{
+													"key": "id",
+													"value": "<long>"
+												},
+												{
+													"key": "user_type",
+													"value": "tipo 2"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/user",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"user"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": \"<integer>\"\n}"
+								},
+								{
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/x-www-form-urlencoded"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "login",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "password",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "name",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "lastname",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "role_id",
+													"value": "<long>",
+													"description": "(Required) "
+												},
+												{
+													"key": "id",
+													"value": "<long>"
+												},
+												{
+													"key": "user_type",
+													"value": "tipo 2"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/user",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"user"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "role",
+					"item": [
+						{
+							"name": "{role_id}",
+							"item": [
+								{
+									"name": "Get role by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"",
+													"pm.test(\"Successful GET request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"pm.test(\"Response must be valid and have a body\", function () {",
+													"     pm.response.to.be.withBody;",
+													"     pm.response.to.be.json;",
+													"});",
+													"",
+													"pm.test(\"Getting a correct key\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.id).eql('number');",
+													"});",
+													"",
+													"pm.test(\"Getting a correct description\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.description).eql('string');",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/role/{{role_id}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"role",
+												"{{role_id}}"
+											]
+										},
+										"description": "Get role by id"
+									},
+									"response": [
+										{
+											"name": "Successful operation",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/role/:role_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"role",
+														":role_id"
+													],
+													"variable": [
+														{
+															"key": "role_id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"description\": \"<string>\",\n  \"id\": \"<long>\"\n}"
+										},
+										{
+											"name": "Role not found",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/role/:role_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"role",
+														":role_id"
+													],
+													"variable": [
+														{
+															"key": "role_id"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Update role by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"",
+													"pm.test(\"Response must be valid and have a body\", function () {",
+													"     pm.response.to.be.withBody;",
+													"     pm.response.to.be.json;",
+													"});",
+													"",
+													"pm.test(\"Successful PUT request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);",
+													"});",
+													"",
+													"pm.test(\"Correct Object ID\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    role_id = pm.collectionVariables.get(\"role_id\");",
+													"    pm.expect(jsonData.id).to.eql(role_id);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"description\": \"Hero\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/role/{{role_id}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"role",
+												"{{role_id}}"
+											]
+										},
+										"description": "Update role data by id"
+									},
+									"response": [
+										{
+											"name": "Successful operation",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/x-www-form-urlencoded"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "urlencoded",
+													"urlencoded": [
+														{
+															"key": "description",
+															"value": "<string>",
+															"description": "(Required) "
+														},
+														{
+															"key": "id",
+															"value": "<long>"
+														}
+													]
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/role/:role_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"role",
+														":role_id"
+													],
+													"variable": [
+														{
+															"key": "role_id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": \"<integer>\"\n}"
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/x-www-form-urlencoded"
+													}
+												],
+												"body": {
+													"mode": "urlencoded",
+													"urlencoded": [
+														{
+															"key": "description",
+															"value": "<string>",
+															"description": "(Required) "
+														},
+														{
+															"key": "id",
+															"value": "<long>"
+														}
+													]
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/role/:role_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"role",
+														":role_id"
+													],
+													"variable": [
+														{
+															"key": "role_id"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Delete role",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"",
+													"pm.test(\"Successful DELETE request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([204]);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/role/{{role_id}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"role",
+												"{{role_id}}"
+											]
+										},
+										"description": "Delete role by id"
+									},
+									"response": [
+										{
+											"name": "Role not found",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/role/:role_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"role",
+														":role_id"
+													],
+													"variable": [
+														{
+															"key": "role_id"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Check Role Correct Updates Copy",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"",
+													"pm.test(\"Successful GET request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"pm.test(\"Response must be valid and have a body\", function () {",
+													"     pm.response.to.be.withBody;",
+													"     pm.response.to.be.json;",
+													"});",
+													"",
+													"pm.test(\"Getting a correct key\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.id).eql('number');",
+													"});",
+													"",
+													"pm.test(\"Getting a correct description\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(typeof jsonData.description).eql('string');",
+													"});",
+													"",
+													"pm.test(\"Correct description update\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.description).to.eql(\"Hero\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/role/{{role_id}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"role",
+												"{{role_id}}"
+											]
+										},
+										"description": "Get user by id"
+									},
+									"response": [
+										{
+											"name": "Successful operation",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"login\": \"<string>\",\n  \"password\": \"<string>\",\n  \"name\": \"<string>\",\n  \"lastname\": \"<string>\",\n  \"role_id\": \"<long>\",\n  \"id\": \"<long>\",\n  \"user_type\": \"tipo 2\"\n}"
+										},
+										{
+											"name": "User not found",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Check Role Correct Delete Copy",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"",
+													"pm.test(\"Successful GET request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([404]);",
+													"});",
+													"",
+													"pm.test(\"Response must be valid and have a body\", function () {",
+													"     pm.response.to.be.withBody;",
+													"     pm.response.to.be.json;",
+													"});",
+													"",
+													"pm.test(\"Element deleted check\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql('Resource not found');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/role/{{role_id}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"role",
+												"{{role_id}}"
+											]
+										},
+										"description": "Get user by id"
+									},
+									"response": [
+										{
+											"name": "Successful operation",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"login\": \"<string>\",\n  \"password\": \"<string>\",\n  \"name\": \"<string>\",\n  \"lastname\": \"<string>\",\n  \"role_id\": \"<long>\",\n  \"id\": \"<long>\",\n  \"user_type\": \"tipo 2\"\n}"
+										},
+										{
+											"name": "User not found",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Initial get all Roles",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"pm.test(\"Response must be valid and have a body\", function () {",
+											"     pm.response.to.be.withBody;",
+											"     pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"Get Roles Route Test\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200,404]);",
+											"});",
+											"",
+											"pm.test(\"Empty table matches response\", function () {",
+											"    if(pm.response.code == 404){",
+											"        var jsonData = pm.response.json();",
+											"        pm.expect(jsonData.message).to.eql('No resources found');",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/role",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"role"
+									]
+								},
+								"description": "List all stored roles on database"
+							},
+							"response": [
+								{
+									"name": "Successful operation",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/role",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"role"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"next_page\": \"<integer>\",\n  \"prev_page\": \"<integer>\",\n  \"item_count\": \"<integer>\",\n  \"total_items\": \"<integer>\",\n  \"items\": [\n    {\n      \"description\": \"<string>\",\n      \"id\": \"<long>\"\n    },\n    {\n      \"description\": \"<string>\",\n      \"id\": \"<long>\"\n    }\n  ]\n}"
+								},
+								{
+									"name": "No Roles found",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/role",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"role"
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Add a new role to the database",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);",
+											"});",
+											"",
+											"pm.test(\"Response must be valid and have a body\", function () {",
+											"     pm.response.to.be.withBody;",
+											"     pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"Getting a correct key\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.id).key;",
+											"    pm.collectionVariables.set(\"role_id\", jsonData.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"description\": \"Journalist\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/role",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"role"
+									]
+								},
+								"description": "Add a new role to the database"
+							},
+							"response": [
+								{
+									"name": "Successful operation",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/x-www-form-urlencoded"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "description",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "id",
+													"value": "<long>"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/role",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"role"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": \"<integer>\"\n}"
+								},
+								{
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/x-www-form-urlencoded"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "description",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "id",
+													"value": "<long>"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/role",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"role"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "/"
+		},
+		{
+			"key": "user_id",
+			"value": ""
+		},
+		{
+			"key": "role_id",
+			"value": ""
+		}
+	]
+}
