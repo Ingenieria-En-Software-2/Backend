@@ -1,7 +1,7 @@
 from flask_restful import fields
-from webapp.auth.models import db, Role
+from ...auth.models import db, Role
 from ..generic.CrudApi import CrudApi
-from webapp.repositories.CrudRepository import CrudRepository
+from ...repositories.CrudRepository import CrudRepository
 from .parsers import (
     role_post_parser,
     role_put_parser,

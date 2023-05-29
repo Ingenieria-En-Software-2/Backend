@@ -1,6 +1,6 @@
 from flask_restful import fields
-from webapp.auth.models import db
-from webapp.auth.UserRepository import UserRepository
+from ...auth.models import db
+from ...auth.UserRepository import UserRepository
 from ..generic.CrudApi import CrudApi
 from .parsers import (
     user_get_parser,
