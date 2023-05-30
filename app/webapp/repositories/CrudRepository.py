@@ -16,7 +16,7 @@ class CrudRepository:
         self.model = model
         self.db = db
 
-    def get_all(self, page=1, per_page=None, sort_by=None, sort_order='asc', **kwargs):
+    def get_all(self, page=1, per_page=None, sort_by=None, sort_order="asc", **kwargs):
         """
         Gets all records from the model.
 
@@ -34,7 +34,7 @@ class CrudRepository:
 
         if sort_by is not None:
             checkAttributes(self.model, **{sort_by: None})
-            if sort_order != 'desc':
+            if sort_order != "desc":
                 query = query.order_by(getattr(self.model, sort_by).asc())
             else:
                 query = query.order_by(getattr(self.model, sort_by).desc())
@@ -94,7 +94,7 @@ class CrudRepository:
         :return: The updated record.
         """
         checkAttributes(self.model, **kwargs)
-        
+
         instance = self.get_by_id(id)
         if instance is None:
             raise ValueError(f"No record found with id {id}")
@@ -145,6 +145,7 @@ class CrudRepository:
         """
         checkAttributes(self.model, **kwargs)
         return self.db.session.query(self.model).filter_by(**kwargs).first() is not None
+
 
 def checkAttributes(obj, **kwargs):
     for key in kwargs.keys():
