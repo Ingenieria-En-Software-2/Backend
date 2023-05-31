@@ -1,4 +1,7 @@
-from os import environ
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Carga las variables de entorno del archivo .env
 
 
 class DevConfig:
