@@ -40,8 +40,8 @@ def get_role_by_id(id):
 
 def populate_db():
     # add roles
-    admin_role = add_role('admin')
-    user_role = add_role('user')
+    add_role('admin')
+    add_role('user')
     # add users
     add_user('admin', 'admin', 'admin', 'admin', 'admin', 1)  # admin_role.id)
     add_user('user', 'user', 'user', 'user', 'user', 2)  # user_role.id)
