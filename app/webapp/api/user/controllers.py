@@ -18,6 +18,7 @@ import re
 
 # Definición de los esquemas para la validación de los datos de un usuario
 
+
 class Create_User_Schema(Schema):
     id = fields.Integer()
     login = fields.String(required=True, validate=validate.Length(min=4, max=20))
@@ -85,6 +86,7 @@ class Create_User_Schema(Schema):
         if not re.match(regex, value):
             raise ValidationError("El apellido solo puede contener letras y espacios")
 
+
 class Update_User_Schema(Schema):
     pass
 
@@ -103,13 +105,15 @@ user_fields = {
 
 # Instancia del repositorio de usuarios
 user_repository = UserRepository(db, Create_User_Schema, Update_User_Schema)
+
+
 class UserApi(CrudApi):
     # Llamada al constructor de la clase base CrudApi
     def __init__(self):
         super().__init__(
             user_repository,  # Repositorio de usuarios
-            user_fields,      # Campos de un usuario
-            user_post_parser, # Parser para la creación de un usuario
+            user_fields,  # Campos de un usuario
+            user_post_parser,  # Parser para la creación de un usuario
             user_put_parser,  # Parser para la actualización de un usuario
             user_get_parser,  # Parser para la obtención de usuarios
         )

@@ -9,8 +9,10 @@ from marshmallow import Schema, fields, validate
 class Create_Role_Schema(Schema):
     description = fields.Str(validate=validate.Length(min=1), required=True)
 
+
 class Update_Role_Schema(Schema):
     description = fields.Str(validate=validate.Length(min=1))
+
 
 role_fields = {
     "id": fs.Integer(),

@@ -1,5 +1,6 @@
 from marshmallow import ValidationError
 
+
 class CrudRepository:
     """
     A repository that provides basic CRUD (Create, Read, Update, Delete) operations for a given model.
@@ -83,10 +84,10 @@ class CrudRepository:
         checkAttributes(self.model, **kwargs)
 
         # Validate the data
-        try: 
+        try:
             result = self.schema_create().validate(kwargs)
         except ValidationError as err:
-            print(err.messages)  
+            print(err.messages)
             return None
 
         try:
@@ -108,10 +109,10 @@ class CrudRepository:
         :return: The updated record.
         """
         checkAttributes(self.model, **kwargs)
-        try: 
+        try:
             result = self.schema_update().load(kwargs)
         except ValidationError as err:
-            print(err.messages)  
+            print(err.messages)
             return None
 
         instance = self.get_by_id(id)
