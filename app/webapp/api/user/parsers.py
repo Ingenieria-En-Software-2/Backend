@@ -1,7 +1,5 @@
 """
-User Parsers
-
-Este archivo contiene definiciones de parsers para la gestión de usuarios en la
+Módulo que contiene definiciones de parsers para la gestión de usuarios en la
 API.
 
 Se definen tres parsers: user_post_parser, user_put_parser y user_get_parser, 
