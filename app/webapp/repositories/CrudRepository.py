@@ -81,8 +81,10 @@ class CrudRepository:
         :return: The newly created record.
         """
         checkAttributes(self.model, **kwargs)
+
+        # Validate the data
         try: 
-            result = self.schema_create().load(kwargs)
+            result = self.schema_create().validate(kwargs)
         except ValidationError as err:
             print(err.messages)  
             return None
