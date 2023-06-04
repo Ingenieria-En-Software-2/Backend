@@ -1,10 +1,11 @@
 from flask import Blueprint, request, make_response, jsonify
 from flask.views import MethodView
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required
 
 
 from .. import db, bcrypt
 
-from .models import User
+from .models import User, Role
 
 auth_blueprint = Blueprint('auth', __name__,)
 
@@ -27,11 +28,16 @@ class RegisterAPI(MethodView):
                 db.session.add(user)
                 db.session.commit()
 
-                auth_token = user.encode_token(user.id, user.role_id)
+                ## To protect an EP to ensure that is a logged user use the decorator: @jwt_required(fresh=True)
+                ## To get the value in the identity use the function: get_jwt_identity
+                auth_token = create_access_token(identity={"role": user.role_id, "user_id": user.id}, fresh=True)
+                refresh_token = create_refresh_token(identity={"role": user.role_id, "user_id": user.id})
+                
                 responseObject = {
                     'status': 'success',
                     'message': 'Successfully registered.',
-                    'auth_token': auth_token
+                    'auth_token': auth_token,
+                    'refresh_token': refresh_token
                 }
                 return make_response(jsonify(responseObject)), 201
             except Exception as e:
@@ -47,18 +53,32 @@ class RegisterAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 202
 
+class RefreshAPI(MethodView):
+    # If we are refreshing a token here we have not verified the users password in
+    # a while, so mark the newly created access token as not fresh
+    @jwt_required(refresh=True)
+    def post(self):
+        identity = get_jwt_identity()
+        access_token = create_access_token(identity=identity, fresh=False)
+        return jsonify(access_token=access_token)
+
 class LoginAPI(MethodView):
     def post(self):
         post_data = request.get_json()
         try:
             user = User.query.filter_by(login=post_data.get('login')).first()
             if user and bcrypt.check_password_hash(user.password, post_data.get('password')):
-                auth_token = user.encode_token(user.id, user.role_id)
+                ## To protect an EP to ensure that is a logged user use the decorator: @jwt_required(fresh=True)
+                ## To get the value in the identity use the function: get_jwt_identity
+                auth_token = create_access_token(identity={"role": user.role_id, "user_id": user.id}, fresh=True)
+                refresh_token = create_refresh_token(identity={"role": user.role_id, "user_id": user.id})
+
                 if auth_token:
                     responseObject = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
-                        'auth_token': auth_token
+                        'auth_token': auth_token,
+                        'refresh_token': refresh_token
                     }
                 return make_response(jsonify(responseObject)), 200
             else:
@@ -75,15 +95,12 @@ class LoginAPI(MethodView):
             return make_response(jsonify(responseObject)), 500
         
 class LogoutAPI(MethodView):
+    @jwt_required(fresh=True)
     def post(self):
-        auth_header = request.headers.get('Authorization')
-        if auth_header:
-            auth_token = auth_header.split(" ")[1]
-        else:
-            auth_token = ''
+        user_identity = get_jwt_identity()
 
-        if auth_token:
-            resp = User.decode_token(auth_token)
+        if user_identity:
+            resp = User.decode_token(user_identity)
             if not isinstance(resp, str):
                 responseObject = {
                     'status': 'success',
@@ -104,15 +121,12 @@ class LogoutAPI(MethodView):
             return make_response(jsonify(responseObject)), 403
         
 class UserAPI(MethodView):
+    @jwt_required(fresh=True)
     def get(self):
-        auth_header = request.headers.get('Authorization')
-        if auth_header:
-            auth_token = auth_header.split(" ")[1]
-        else:
-            auth_token = ''
+        user_identity = get_jwt_identity()
 
-        if auth_token:
-            resp = User.decode_token(auth_token)
+        if user_identity:
+            resp = User.decode_token(user_identity)
             if not isinstance(resp, str):
                 user = User.query.filter_by(id=resp).first()
                 responseObject = {
@@ -161,3 +175,11 @@ auth_blueprint.add_url_rule(
     view_func=user_view,
     methods=['GET']
 )
+
+refresh_view = RefreshAPI.as_view('refresh_api')
+auth_blueprint.add_url_rule(
+    '/auth/refresh',
+    view_func=refresh_view,
+    methods=['POST']
+)
+

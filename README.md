@@ -5,10 +5,10 @@
 Add .env in the root folder and add the following variables:
 
 ```bash
-POSTGRES_USER=<user>
-POSTGRES_PASSWORD=<password>
-POSTGRES_DB=<db name>
-SQLALCHEMY_DATABASE_URI=<postgresql+psycopg2://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:5432/{PG_DB} >
+POSTGRES_USER='<YOUR_POSTGRES_USER>'
+POSTGRES_PASSWORD='<YOUR_POSTGRES_PASSWORD>'
+POSTGRES_DB='<YOUR_DB_NAME>'
+SQLALCHEMY_DATABASE_URI='postgresql+psycopg2://<YOUR_POSTGRES_USER>:<YOUR_POSTGRES_PASSWORD>@<POSTGRES_HOST>:5432/<POSTGRES_DATABASE>'
 ```
 
 ## Run Backend + DB with docker compose
@@ -42,6 +42,3 @@ to run the backend:
 ```bash
 flask run
 ```
-
-
-

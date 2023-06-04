@@ -1,12 +1,13 @@
 from .. import db
+from sqlalchemy.dialects.postgresql import JSON
 import jwt, datetime
 from config import DevConfig
 
-id_str = '<id {}>'
+id_str = "<id {}>"
 
 
 class User(db.Model):
-    __tablename__ = 'user'
+    __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String())
@@ -14,7 +15,7 @@ class User(db.Model):
     name = db.Column(db.String())
     lastname = db.Column(db.String())
     user_type = db.Column(db.String())
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    role_id = db.Column(db.Integer, db.ForeignKey("role.id"))
 
     def __init__(self, login, password, name, lastname, user_type, role_id):
         self.login = login
@@ -27,24 +28,10 @@ class User(db.Model):
     def __repr__(self):
         return id_str.format(self.id)
     
-    def encode_token(self, id, role_id):
-        payload = {
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
-            'iat': datetime.datetime.utcnow(),
-            'sub': id,
-            'role': role_id
-        }
-
-        return jwt.encode(
-            payload,
-            DevConfig.SECRET_KEY,
-            algorithm='HS256')
-    
     @staticmethod
     def decode_token(token):
         try: 
-            payload = jwt.decode(token, DevConfig.SECRET_KEY)
-            return payload['sub'], payload['role']
+            return token['user_id'], payload['role']
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
         except jwt.InvalidTokenError:
@@ -52,11 +39,11 @@ class User(db.Model):
 
 
 class Role(db.Model):
-    __tablename__ = 'role'
+    __tablename__ = "role"
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String())
-    users = db.relationship('User', backref='role', lazy='dynamic')
+    users = db.relationship("User", backref="role", lazy="dynamic")
 
     def __init__(self, description):
         self.description = description
