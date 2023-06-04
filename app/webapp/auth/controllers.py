@@ -1,9 +1,10 @@
 from flask import Blueprint, request, make_response, jsonify
 from flask.views import MethodView
 
+
 from .. import db, bcrypt
 
-from app.webapp.auth.models import User, Role
+from .models import User
 
 auth_blueprint = Blueprint('auth', __name__,)
 
@@ -13,9 +14,10 @@ class RegisterAPI(MethodView):
         user = User.query.filter_by(login=post_data.get('login')).first()
         if not user:
             try:
+                hashed_password = bcrypt.generate_password_hash(post_data.get('password')).decode('utf-8')
                 user = User(
                     login=post_data.get('login'),
-                    password=post_data.get('password'),
+                    password=hashed_password,
                     name=post_data.get('name'),
                     lastname=post_data.get('lastname'),
                     user_type=post_data.get('user_type'),
@@ -29,7 +31,7 @@ class RegisterAPI(MethodView):
                 responseObject = {
                     'status': 'success',
                     'message': 'Successfully registered.',
-                    'auth_token': auth_token.decode()
+                    'auth_token': auth_token
                 }
                 return make_response(jsonify(responseObject)), 201
             except Exception as e:
@@ -56,15 +58,15 @@ class LoginAPI(MethodView):
                     responseObject = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
-                        'auth_token': auth_token.decode()
+                        'auth_token': auth_token
                     }
-                    return make_response(jsonify(responseObject)), 200
-                else:
-                    responseObject = {
-                        'status': 'fail',
-                        'message': 'Login failed.'
-                    }
-                    return make_response(jsonify(responseObject)), 401
+                return make_response(jsonify(responseObject)), 200
+            else:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'Login failed. Username or password incorrect.'
+                }
+                return make_response(jsonify(responseObject)), 401
         except:
             responseObject = {
                 'status': 'fail',

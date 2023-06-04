@@ -1,6 +1,6 @@
 from .. import db
 import jwt, datetime
-from app.config import DevConfig
+from config import DevConfig
 
 id_str = '<id {}>'
 
