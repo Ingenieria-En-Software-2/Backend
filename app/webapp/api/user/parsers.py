@@ -1,6 +1,16 @@
+"""
+Módulo que contiene definiciones de parsers para la gestión de usuarios en la
+API.
+
+Se definen tres parsers: user_post_parser, user_put_parser y user_get_parser, 
+cada uno con sus respectivos argumentos y reglas de validación.
+"""
+
 from flask_restful import reqparse
 from ..generic.parsers import generic_get_parser
 
+
+# Parser para la creación de usuarios
 user_post_parser = reqparse.RequestParser()
 user_post_parser.add_argument(
     "login",
@@ -50,6 +60,7 @@ user_post_parser.add_argument(
     location=("json", "values"),
 )
 
+# Parser para la actualización de usuarios
 user_put_parser = reqparse.RequestParser()
 user_put_parser.add_argument(
     "login",
@@ -93,6 +104,7 @@ user_put_parser.add_argument(
     store_missing=False,
 )
 
+# Parser para la obtención de usuarios
 user_get_parser = generic_get_parser.copy()
 user_get_parser.add_argument(
     "login",
