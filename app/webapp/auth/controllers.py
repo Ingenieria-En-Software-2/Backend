@@ -61,7 +61,6 @@ class RefreshAPI(MethodView):
         return jsonify(access_token=access_token)
 
 class LoginAPI(MethodView):
-    @jwt_required(fresh=True)
     def post(self):
         post_data = request.get_json()
         try:
