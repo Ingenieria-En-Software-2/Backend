@@ -2,6 +2,7 @@ from flask import Blueprint, request, make_response, jsonify
 from flask.views import MethodView
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required
 
+
 from .. import db, bcrypt
 
 from .models import User, Role
@@ -14,9 +15,10 @@ class RegisterAPI(MethodView):
         user = User.query.filter_by(login=post_data.get('login')).first()
         if not user:
             try:
+                hashed_password = bcrypt.generate_password_hash(post_data.get('password')).decode('utf-8')
                 user = User(
                     login=post_data.get('login'),
-                    password=post_data.get('password'),
+                    password=hashed_password,
                     name=post_data.get('name'),
                     lastname=post_data.get('lastname'),
                     user_type=post_data.get('user_type'),
@@ -78,13 +80,13 @@ class LoginAPI(MethodView):
                         'auth_token': auth_token,
                         'refresh_token': refresh_token
                     }
-                    return make_response(jsonify(responseObject)), 200
-                else:
-                    responseObject = {
-                        'status': 'fail',
-                        'message': 'Login failed.'
-                    }
-                    return make_response(jsonify(responseObject)), 401
+                return make_response(jsonify(responseObject)), 200
+            else:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'Login failed. Username or password incorrect.'
+                }
+                return make_response(jsonify(responseObject)), 401
         except:
             responseObject = {
                 'status': 'fail',

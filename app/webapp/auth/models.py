@@ -1,6 +1,7 @@
 from .. import db
 from sqlalchemy.dialects.postgresql import JSON
 import jwt, datetime
+from config import DevConfig
 
 id_str = "<id {}>"
 
