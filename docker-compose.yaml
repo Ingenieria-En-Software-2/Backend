@@ -9,6 +9,11 @@ services:
         ipv4_address: 192.168.41.4
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - ./postgres/data:/var/lib/postgresql/data
       - ./postgres/conf:/etc/postgresql
@@ -22,6 +27,8 @@ services:
     build:
       context: .
       network: host
+      args:
+        SQLALCHEMY_DATABASE_URI: ${SQLALCHEMY_DATABASE_URI}
     restart: always
     networks:
       project-network:
@@ -29,7 +36,10 @@ services:
     ports:
       - "9010:9010"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    environment:
+      - SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI}
 
 networks:
   project-network:
