@@ -18,12 +18,14 @@ class CrudApi(Resource):
 
         :return: The resource or a list of resources.
         """
+        
         # Si hay id especificado, se busca en la base.
         if id:
-            user = self.repository.get_by_id(id)
-            if not user:
+            resource = self.repository.get_by_id(id)
+            if not resource:
                 abort(404, "Resource not found")
-            return marshal(user, self.fields)
+            print(resource)
+            return marshal(resource, self.fields)
 
         # Consultar los recursos segun los filtros y paginarlos
         args = self.get_parser.parse_args()
@@ -43,10 +45,10 @@ class CrudApi(Resource):
             args["sort_order"],
             **filter_args
         )
-
+        
         if len(results.items) == 0:
             abort(404, "No resources found")
-
+        
         return {
             "next_page": results.next_num,
             "prev_page": results.prev_num,

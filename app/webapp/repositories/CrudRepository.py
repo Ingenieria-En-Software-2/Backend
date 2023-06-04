@@ -1,3 +1,5 @@
+from marshmallow import ValidationError
+
 class CrudRepository:
     """
     A repository that provides basic CRUD (Create, Read, Update, Delete) operations for a given model.
@@ -6,15 +8,19 @@ class CrudRepository:
     :param db: The SQLAlchemy database object to use for the repository.
     """
 
-    def __init__(self, model, db):
+    def __init__(self, model, db, schema_create, schema_update):
         """
         Initializes a new instance of the `CrudRepository` class.
 
         :param model: The SQLAlchemy model class to use for the repository.
         :param db: The SQLAlchemy database object to use for the repository.
+        :param schema_create: Marshmallow schema for validations
+        :param schema_update: Marshmallow schema for validations
         """
         self.model = model
         self.db = db
+        self.schema_create = schema_create
+        self.schema_update = schema_update
 
     def get_all(self, page=1, per_page=None, sort_by=None, sort_order="asc", **kwargs):
         """
@@ -75,6 +81,12 @@ class CrudRepository:
         :return: The newly created record.
         """
         checkAttributes(self.model, **kwargs)
+        try: 
+            result = self.schema_create().load(kwargs)
+        except ValidationError as err:
+            print(err.messages)  
+            return None
+
         try:
             instance = self.model(**kwargs)
             self.db.session.add(instance)
@@ -94,6 +106,11 @@ class CrudRepository:
         :return: The updated record.
         """
         checkAttributes(self.model, **kwargs)
+        try: 
+            result = self.schema_update().load(kwargs)
+        except ValidationError as err:
+            print(err.messages)  
+            return None
 
         instance = self.get_by_id(id)
         if instance is None:
