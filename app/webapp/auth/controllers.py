@@ -4,7 +4,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 
 from .. import db, bcrypt
 
-from app.webapp.auth.models import User, Role
+from .models import User, Role
 
 auth_blueprint = Blueprint('auth', __name__,)
 
