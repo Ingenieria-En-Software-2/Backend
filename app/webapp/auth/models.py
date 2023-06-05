@@ -31,7 +31,7 @@ class Role(db.Model):
     __tablename__ = "role"
 
     id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String())
+    description = db.Column(db.String(), unique=True)
     users = db.relationship("User", backref="role", lazy="dynamic")
 
     def __init__(self, description):
