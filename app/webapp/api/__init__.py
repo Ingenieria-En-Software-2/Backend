@@ -1,22 +1,24 @@
 from flask_restful import Api
 from .user.controllers import UserApi
 from .role.controllers import RoleApi
+from flask import Blueprint
 
-
-rest_api = Api()
+rest_api_bp = Blueprint("api", __name__, url_prefix="/api")
+rest_api = Api(rest_api_bp)
 
 
 def create_module(app, **kwargs):
     rest_api.add_resource(
         UserApi,
-        "/api/user",
-        "/api/user/<int:id>",
+        "/user",
+        "/user/<int:id>",
     )
 
     rest_api.add_resource(
         RoleApi,
-        "/api/role",
-        "/api/role/<int:id>",
+        "/role",
+        "/role/<int:id>",
     )
 
-    rest_api.init_app(app)
+    app.register_blueprint(rest_api_bp)
+    
