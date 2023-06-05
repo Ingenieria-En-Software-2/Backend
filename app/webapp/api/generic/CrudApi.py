@@ -25,7 +25,7 @@ class CrudApi(Resource):
             if not resource:
                 abort(404)
             
-            return marshal(resource, self.fields)
+            return self.repository.schema_create().dump(resource)
 
         # Consultar los recursos segun los filtros y paginarlos
         # TODO: Mover esta comprobacion a validacion get, usar Marshmallow
@@ -56,7 +56,7 @@ class CrudApi(Resource):
             "item_count": len(results.items),
             "total_pages": results.pages,
             "total_items": results.total,
-            "items": marshal(results.items, self.fields),
+            "items": self.repository.schema_create(many=True).dump(results.items),
         }
 
     def post(self):

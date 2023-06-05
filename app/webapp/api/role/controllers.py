@@ -6,8 +6,11 @@ from .parsers import role_post_parser, role_put_parser, role_get_parser
 from marshmallow import Schema, fields, validate
 
 
-class Create_Role_Schema(Schema):
+class Role_Schema(Schema):
+    id = fields.Integer(required=True)
     description = fields.Str(validate=validate.Length(min=1), required=True)
+    class Meta:
+        fields= ('id', 'description')
 
 
 class Update_Role_Schema(Schema):
@@ -19,7 +22,7 @@ role_fields = {
     "description": fs.String(),
 }
 
-role_repository = CrudRepository(Role, db, Create_Role_Schema, Update_Role_Schema)
+role_repository = CrudRepository(Role, db, Role_Schema, Update_Role_Schema)
 
 
 class RoleApi(CrudApi):
