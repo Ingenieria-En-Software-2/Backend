@@ -1,6 +1,7 @@
 from webapp.repositories.CrudRepository import CrudRepository
 from ...auth.UserRepository import UserRepository
-from ...auth.models import User, AccountHolder
+from ...auth.models import User
+from .models import AccountHolder
 from flask import abort
 
 # TODO: Import the User model and the db from app

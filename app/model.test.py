@@ -1,7 +1,7 @@
 from app import app
 from webapp import db
 from webapp.auth.models import User, Role
-from webapp.models.account_holder import AccountHolder
+from webapp.api.account_holder.models import AccountHolder
 import sys
 
 
