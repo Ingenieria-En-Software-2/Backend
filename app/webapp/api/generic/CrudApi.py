@@ -79,8 +79,6 @@ class CrudApi(Resource):
 
         :return: The id of the edited resource
         """
-        if not id:
-            abort(400, "id is required")
 
         args = self.put_parser.parse_args(strict=True)
 
@@ -97,16 +95,7 @@ class CrudApi(Resource):
     def delete(self, id=None):
         """
         Deletes the resource that is identified with id
-        """
-        if not id:
-            abort(400, "id is required")
-
-        try:
-            result = self.repository.delete(id)
-        except ValueError:
-            abort(404, "Resource not found")
-
-        if result == -1:
-            abort(500, "Something went wrong deleting resource")
+        """        
+        self.repository.delete(id)
 
         return "", 204
