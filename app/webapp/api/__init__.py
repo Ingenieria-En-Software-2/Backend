@@ -3,11 +3,17 @@ from .user.controllers import UserApi
 from .role.controllers import RoleApi
 from flask import Blueprint
 
+# Parchear el manejador de excepciones de la API
+Api.error_router = lambda self, hnd, e: hnd(e)
+
 rest_api_bp = Blueprint("api", __name__, url_prefix="/api")
 rest_api = Api(rest_api_bp)
 
 
 def create_module(app, **kwargs):
+    from .error_handlers import error_handlers
+
+
     rest_api.add_resource(
         UserApi,
         "/user",

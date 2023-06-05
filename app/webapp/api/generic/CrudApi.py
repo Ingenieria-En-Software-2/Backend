@@ -1,4 +1,4 @@
-from flask import abort, request
+from flask import abort
 from flask_restful import Resource, marshal
 
 
