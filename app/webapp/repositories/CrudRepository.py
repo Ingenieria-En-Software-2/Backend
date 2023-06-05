@@ -1,5 +1,4 @@
-from marshmallow import ValidationError
-
+from . import exceptions
 
 class CrudRepository:
     """
@@ -46,9 +45,8 @@ class CrudRepository:
             else:
                 query = query.order_by(getattr(self.model, sort_by).desc())
 
-        if per_page is not None:
-            # Error out is false to return empty list instead of 404 error when page is out of range
-            records = query.paginate(page=page, per_page=per_page, error_out=False)
+        if per_page is not None:            
+            records = query.paginate(page=page, per_page=per_page)
         else:
             records = query.all()
 
@@ -61,7 +59,10 @@ class CrudRepository:
         :param id: The ID of the record to retrieve.
         :return: The record with the specified ID, or `None` if no record was found.
         """
-        return self.db.session.query(self.model).get(id)
+        if not id:
+            raise exceptions.IdNotProvided()
+
+        return self.db.session.query(self.model).get_or_404(id)
 
     def get_by(self, **kwargs):
         """
@@ -107,8 +108,7 @@ class CrudRepository:
         result = self.schema_update().load(kwargs)
 
         instance = self.get_by_id(id)
-        if instance is None:
-            raise ValueError(f"No record found with id {id}")
+
         try:
             for key, value in kwargs.items():
                 # Check if the attribute is unique
@@ -133,10 +133,6 @@ class CrudRepository:
         :raises ValueError: If no record was found with the specified ID.
         """
         instance = self.get_by_id(id)
-        # Prevent from deleting a record that does not exist
-        if instance is None:
-            raise ValueError(f"No record found with id {id}")
-
         try:
             self.db.session.delete(instance)
             self.db.session.commit()
