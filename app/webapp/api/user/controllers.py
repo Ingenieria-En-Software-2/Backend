@@ -87,7 +87,7 @@ class Create_User_Schema(Schema):
             raise ValidationError("El apellido solo puede contener letras y espacios")
 
 
-class Update_User_Schema(Schema, Create_User_Schema):
+class Update_User_Schema(Create_User_Schema):
     id = fields.Integer()
     login = fields.String(validate=validate.Length(min=4, max=20))
     password = fields.String(validate=validate.Length(min=6, max=20))
@@ -96,17 +96,6 @@ class Update_User_Schema(Schema, Create_User_Schema):
     user_type = fields.String(validate=validate.Length(min=4, max=20))
     role_id = fields.Integer()
 
-    @validates("login")
-    def validate_login(self, value):
-        Create_User_Schema.validate_login(self, value)
-
-    @validates("name")
-    def validate_name(self, value):
-        Create_User_Schema.validate_name(self, value)
-
-    @validates("lastname")
-    def validate_lastname(self, value):
-        Create_User_Schema.validate_lastname(self, value)
 
 
 # Definición de los campos de un usuario para la serialización

@@ -12,7 +12,7 @@ def resource_not_found(e):
     return jsonify(error=f'Resource not found', code=404), 404
 
 @rest_api_bp.errorhandler(marshmallow.ValidationError)
-def validation_error(e):    
+def validation_error(e):  
     return jsonify(errors=e.messages), 400
 
 @rest_api_bp.errorhandler(IdNotProvided)

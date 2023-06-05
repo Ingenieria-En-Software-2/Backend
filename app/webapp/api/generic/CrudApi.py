@@ -68,9 +68,6 @@ class CrudApi(Resource):
         args = self.post_parser.parse_args(strict=True)
         result = self.repository.create(**args)
 
-        if not result:
-            abort(500, "Something went wrong creating resource")
-
         return {"id": result.id}, 201
 
     def put(self, id=None):
@@ -82,13 +79,8 @@ class CrudApi(Resource):
 
         args = self.put_parser.parse_args(strict=True)
 
-        try:
-            result = self.repository.update(id, **args)
-        except ValueError:
-            abort(404, "Resource not found")
-
-        if not result:
-            abort(500, "Something went wrong updating resource")
+        
+        result = self.repository.update(id, **args)
 
         return {"id": result.id}, 201
 

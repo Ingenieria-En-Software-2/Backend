@@ -59,7 +59,8 @@ class CrudRepository:
         :param id: The ID of the record to retrieve.
         :return: The record with the specified ID, or `None` if no record was found.
         """
-        if not id:
+
+        if id is None:
             raise exceptions.IdNotProvided()
 
         return self.db.session.query(self.model).get_or_404(id)
@@ -84,8 +85,7 @@ class CrudRepository:
         """
         checkAttributes(self.model, **kwargs)
 
-        # Validate the data
-        result = self.schema_create().load(kwargs)
+        self.schema_create().load(kwargs)
 
         try:
             instance = self.model(**kwargs)
@@ -105,24 +105,18 @@ class CrudRepository:
         :return: The updated record.
         """
         checkAttributes(self.model, **kwargs)
-        result = self.schema_update().load(kwargs)
+        self.schema_update().load(kwargs)
 
         instance = self.get_by_id(id)
 
         try:
             for key, value in kwargs.items():
-                # Check if the attribute is unique
-                if hasattr(self.model, key):
-                    column = getattr(self.model, key)
-                    if column.unique:
-                        raise ValueError(f"Cannot update unique attribute '{key}'")
                 setattr(instance, key, value)
             self.db.session.commit()
             return instance
         except Exception as e:
-            print(f"An error occurred while updating the record: {e}")
             self.db.session.rollback()
-            return None
+            raise e
 
     def delete(self, id):
         """
