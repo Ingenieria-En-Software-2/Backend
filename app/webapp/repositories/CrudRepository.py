@@ -84,11 +84,9 @@ class CrudRepository:
         checkAttributes(self.model, **kwargs)
 
         # Validate the data
-        try:
-            result = self.schema_create().validate(kwargs)
-        except ValidationError as err:
-            print(err.messages)
-            return None
+
+        result = self.schema_create().load(kwargs)
+
 
         try:
             instance = self.model(**kwargs)
