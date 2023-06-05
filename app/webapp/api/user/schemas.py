@@ -10,7 +10,8 @@ from marshmallow import Schema, fields, validate, validates, ValidationError
 from ..generic.GetSchema import Generic_Get_Schema
 import re
 
-# Definición de los esquemas para la validación de los datos de un usuario
+# Definition of the schemas for validation of user data
+
 class Create_User_Schema(Schema):
     id = fields.Integer()
     login = fields.String(required=True, validate=validate.Length(min=4, max=20))
@@ -23,60 +24,38 @@ class Create_User_Schema(Schema):
     @validates("login")
     def validate_login(self, value):
         """
-        Valida que el login de un usuario solo contenga letras, números y guiones bajos.
-        Lanza una excepción ValidationError en caso de que el login no cumpla con el patrón.
+        Validates that a user's login contains only letters, numbers and
+        underscores. Throws a ValidationError exception in case the login does
+        not comply with the pattern.
         """
 
         regex = r"^(?![0-9])\w+$"
         if not re.match(regex, value):
             raise ValidationError(
-                "El nombre de usuario solo puede contener letras, números y guiones bajos"
-            )
-
-    @validates("password")
-    def validate_password(self, value):
-        """
-        Valida que la contraseña de un usuario contenga al menos un número, una letra
-        mayúscula, una letra minúscula y un caracter especial. Lanza una excepción
-        ValidationError en caso de que la contraseña no cumpla con el patrón.
-        """
-        # Verifica contenga al menos un número
-        if not re.match(r".*\d+.*", value):
-            raise ValidationError("La contraseña debe contener al menos un número")
-
-        # Verifica contenga al menos una letra minúscula y una mayúscula
-        regex = r"(?=.*[A-Z])(?=.*[a-z]).*"
-        if not re.match(regex, value):
-            raise ValidationError(
-                "La contraseña debe contener al menos una letra mayúscula y una minúscula"
-            )
-
-        # Verifica contenga al menos un caracter especial
-        regex = r".*[!@#$%^&*(),.?\":{}|<>].*"
-        if not re.match(regex, value):
-            raise ValidationError(
-                "La contraseña debe contener al menos un caracter especial"
+                "The user name can only contain letters, numbers and underscores."
             )
 
     @validates("name")
     def validate_name(self, value):
         """
-        Valida que el nombre de un usuario solo contenga letras y espacios. Lanza una
-        excepción ValidationError en caso de que el nombre no cumpla con el patrón.
+        Validates that a user's name contains only letters and spaces. Throws a
+        ValidationError exception in case the name does not comply with the
+        pattern.
         """
         regex = r"^[a-zA-Z\s]+$"
         if not re.match(regex, value):
-            raise ValidationError("El nombre solo puede contener letras y espacios")
+            raise ValidationError("The name can contain only letters and spaces")
 
     @validates("lastname")
     def validate_lastname(self, value):
         """
-        Valida que el apellido de un usuario solo contenga letras y espacios. Lanza una
-        excepción ValidationError en caso de que el apellido no cumpla con el patrón.
+        Validates that a user's last name contains only letters and spaces.
+        Throws a ValidationError exception in case the last name does not 
+        comply with the pattern.
         """
         regex = r"^[a-zA-Z\s]+$"
         if not re.match(regex, value):
-            raise ValidationError("El apellido solo puede contener letras y espacios")
+            raise ValidationError("The last name can only contain letters and spaces")
 
 
 class Update_User_Schema(Create_User_Schema):    

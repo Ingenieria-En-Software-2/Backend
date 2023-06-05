@@ -1,6 +1,6 @@
 """
-Módulo que contiene la definición de la clase UserApi, la cual hereda de la clase
-CrudApi, y se encarga de manejar las peticiones HTTP relacionadas con los usuarios.
+Module containing the definition of the UserApi class, which inherits from the
+CrudApi class, and is in charge of handling HTTP requests related to users.
 """
 
 from flask_restful import fields as fs
@@ -10,12 +10,12 @@ from ..generic.CrudApi import CrudApi
 from .schemas import Create_User_Schema, Update_User_Schema, Get_User_Schema
 
 
-# Instancia del repositorio de usuarios
+# Instance of the user repository
 user_repository = UserRepository(db, Create_User_Schema, Update_User_Schema)
 
 
 class UserApi(CrudApi):
-    # Llamada al constructor de la clase base CrudApi
+    # Call to the base class constructor CrudApi
     def __init__(self):
         super().__init__(
             user_repository,  # Repositorio de usuarios
