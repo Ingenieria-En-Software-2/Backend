@@ -23,11 +23,12 @@ class CrudApi(Resource):
         if id:
             resource = self.repository.get_by_id(id)
             if not resource:
-                abort(404, "Resource not found")
-            print(resource)
+                abort(404)
+            
             return marshal(resource, self.fields)
 
         # Consultar los recursos segun los filtros y paginarlos
+        # TODO: Mover esta comprobacion a validacion get, usar Marshmallow
         args = self.get_parser.parse_args()
         if args["page_number"] <= 0 or args["page_size"] <= 0:
             abort(400, "page_number and page_size must be a non zero positive integer")
@@ -47,7 +48,7 @@ class CrudApi(Resource):
         )
 
         if len(results.items) == 0:
-            abort(404, "No resources found")
+            abort(404)
 
         return {
             "next_page": results.next_num,
