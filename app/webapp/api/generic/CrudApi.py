@@ -1,14 +1,11 @@
-from flask import abort
-from flask_restful import Resource, marshal
+from flask import abort, request
+from flask_restful import Resource
 
 
 class CrudApi(Resource):
-    def __init__(self, repository, fields, post_parser, put_parser, get_parser):
+    def __init__(self, repository, get_schema):
         self.repository = repository
-        self.fields = fields
-        self.post_parser = post_parser
-        self.put_parser = put_parser
-        self.get_parser = get_parser
+        self.get_schema = get_schema
         super().__init__()
 
     def get(self, id=None):
@@ -29,7 +26,8 @@ class CrudApi(Resource):
 
         # Consultar los recursos segun los filtros y paginarlos
         # TODO: Mover esta comprobacion a validacion get, usar Marshmallow
-        args = self.get_parser.parse_args()
+        args = self.get_schema().load(request.args)
+        print(args)
         if args["page_number"] <= 0 or args["page_size"] <= 0:
             abort(400, "page_number and page_size must be a non zero positive integer")
 

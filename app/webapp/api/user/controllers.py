@@ -8,11 +8,8 @@ from webapp.auth.models import db
 from webapp.auth.UserRepository import UserRepository
 from ..generic.CrudApi import CrudApi
 from marshmallow import Schema, fields, validate, validates, ValidationError
-from .parsers import (
-    user_get_parser,
-    user_post_parser,
-    user_put_parser,
-)
+from ..generic.GetSchema import Generic_Get_Schema
+
 import re
 
 
@@ -98,16 +95,8 @@ class Update_User_Schema(Create_User_Schema):
 
 
 
-# Definición de los campos de un usuario para la serialización
-user_fields = {
-    "id": fs.Integer(),
-    "login": fs.String(),
-    "password": fs.String(),
-    "name": fs.String(),
-    "lastname": fs.String(),
-    "user_type": fs.String(),
-    "role_id": fs.Integer(),
-}
+class Get_Role_Schema(Generic_Get_Schema):
+    pass
 
 
 # Instancia del repositorio de usuarios
@@ -119,8 +108,5 @@ class UserApi(CrudApi):
     def __init__(self):
         super().__init__(
             user_repository,  # Repositorio de usuarios
-            user_fields,  # Campos de un usuario
-            user_post_parser,  # Parser para la creación de un usuario
-            user_put_parser,  # Parser para la actualización de un usuario
-            user_get_parser,  # Parser para la obtención de usuarios
+            Get_Role_Schema,
         )
