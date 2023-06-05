@@ -84,19 +84,16 @@ class CrudRepository:
         checkAttributes(self.model, **kwargs)
 
         # Validate the data
-
         result = self.schema_create().load(kwargs)
-
 
         try:
             instance = self.model(**kwargs)
             self.db.session.add(instance)
             self.db.session.commit()
             return instance
-        except Exception as e:
-            print(f"An error occurred while creating the record: {e}")
+        except Exception as e:            
             self.db.session.rollback()
-            return None
+            raise e
 
     def update(self, id, **kwargs):
         """
@@ -107,11 +104,7 @@ class CrudRepository:
         :return: The updated record.
         """
         checkAttributes(self.model, **kwargs)
-        try:
-            result = self.schema_update().load(kwargs)
-        except ValidationError as err:
-            print(err.messages)
-            return None
+        result = self.schema_update().load(kwargs)
 
         instance = self.get_by_id(id)
         if instance is None:

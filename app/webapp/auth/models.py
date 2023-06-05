@@ -8,7 +8,7 @@ class User(db.Model):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
-    login = db.Column(db.String())
+    login = db.Column(db.String(), unique=True)
     password = db.Column(db.String())
     name = db.Column(db.String())
     lastname = db.Column(db.String())
