@@ -25,12 +25,8 @@ class CrudApi(Resource):
             return self.repository.schema_create().dump(resource)
 
         # Consultar los recursos segun los filtros y paginarlos
-        # TODO: Mover esta comprobacion a validacion get, usar Marshmallow
         args = self.get_schema().load(request.args)
-        print(args)
-        if args["page_number"] <= 0 or args["page_size"] <= 0:
-            abort(400, "page_number and page_size must be a non zero positive integer")
-
+ 
         filter_args = {
             key: args[key]
             for key in args
@@ -63,8 +59,8 @@ class CrudApi(Resource):
 
         :return: The id of the created resource
         """
-        args = self.post_parser.parse_args(strict=True)
-        result = self.repository.create(**args)
+        print(request.get_json())
+        result = self.repository.create(**request.get_json())
 
         return {"id": result.id}, 201
 
@@ -74,11 +70,8 @@ class CrudApi(Resource):
 
         :return: The id of the edited resource
         """
-
-        args = self.put_parser.parse_args(strict=True)
-
-        
-        result = self.repository.update(id, **args)
+        print(request.get_json())
+        result = self.repository.update(id, **request.get_json())
 
         return {"id": result.id}, 201
 
