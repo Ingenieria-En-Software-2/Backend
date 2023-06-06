@@ -1,3 +1,5 @@
+from . import exceptions
+
 class CrudRepository:
     """
     A repository that provides basic CRUD (Create, Read, Update, Delete) operations for a given model.
@@ -6,15 +8,19 @@ class CrudRepository:
     :param db: The SQLAlchemy database object to use for the repository.
     """
 
-    def __init__(self, model, db):
+    def __init__(self, model, db, schema_create, schema_update):
         """
         Initializes a new instance of the `CrudRepository` class.
 
         :param model: The SQLAlchemy model class to use for the repository.
         :param db: The SQLAlchemy database object to use for the repository.
+        :param schema_create: Marshmallow schema for validations
+        :param schema_update: Marshmallow schema for validations
         """
         self.model = model
         self.db = db
+        self.schema_create = schema_create
+        self.schema_update = schema_update
 
     def get_all(self, page=1, per_page=None, sort_by=None, sort_order="asc", **kwargs):
         """
@@ -39,9 +45,8 @@ class CrudRepository:
             else:
                 query = query.order_by(getattr(self.model, sort_by).desc())
 
-        if per_page is not None:
-            # Error out is false to return empty list instead of 404 error when page is out of range
-            records = query.paginate(page=page, per_page=per_page, error_out=False)
+        if per_page is not None:            
+            records = query.paginate(page=page, per_page=per_page)
         else:
             records = query.all()
 
@@ -54,7 +59,11 @@ class CrudRepository:
         :param id: The ID of the record to retrieve.
         :return: The record with the specified ID, or `None` if no record was found.
         """
-        return self.db.session.query(self.model).get(id)
+
+        if id is None:
+            raise exceptions.IdNotProvided()
+
+        return self.db.session.query(self.model).get_or_404(id)
 
     def get_by(self, **kwargs):
         """
@@ -75,15 +84,17 @@ class CrudRepository:
         :return: The newly created record.
         """
         checkAttributes(self.model, **kwargs)
+
+        self.schema_create().load(kwargs)
+
         try:
             instance = self.model(**kwargs)
             self.db.session.add(instance)
             self.db.session.commit()
             return instance
-        except Exception as e:
-            print(f"An error occurred while creating the record: {e}")
+        except Exception as e:            
             self.db.session.rollback()
-            return None
+            raise e
 
     def update(self, id, **kwargs):
         """
@@ -94,24 +105,18 @@ class CrudRepository:
         :return: The updated record.
         """
         checkAttributes(self.model, **kwargs)
+        self.schema_update().load(kwargs)
 
         instance = self.get_by_id(id)
-        if instance is None:
-            raise ValueError(f"No record found with id {id}")
+
         try:
             for key, value in kwargs.items():
-                # Check if the attribute is unique
-                if hasattr(self.model, key):
-                    column = getattr(self.model, key)
-                    if column.unique:
-                        raise ValueError(f"Cannot update unique attribute '{key}'")
                 setattr(instance, key, value)
             self.db.session.commit()
             return instance
         except Exception as e:
-            print(f"An error occurred while updating the record: {e}")
             self.db.session.rollback()
-            return None
+            raise e
 
     def delete(self, id):
         """
@@ -122,10 +127,6 @@ class CrudRepository:
         :raises ValueError: If no record was found with the specified ID.
         """
         instance = self.get_by_id(id)
-        # Prevent from deleting a record that does not exist
-        if instance is None:
-            raise ValueError(f"No record found with id {id}")
-
         try:
             self.db.session.delete(instance)
             self.db.session.commit()
