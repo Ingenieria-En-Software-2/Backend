@@ -11,12 +11,13 @@ from webapp.api.generic.CrudApi import CrudApi
 from .schemas import (
     Create_Account_Holder_Schema,
     Update_Account_Holder_Schema,
-    Get_Account_Holder_Schema
+    Get_Account_Holder_Schema,
 )
 
 # Instance of the account holder repository
 account_holder_repository = AccountHolderRepository(
-    db, Create_Account_Holder_Schema, Update_Account_Holder_Schema)
+    db, Create_Account_Holder_Schema, Update_Account_Holder_Schema
+)
 
 
 class AccountHolderApi(CrudApi):
@@ -27,7 +28,8 @@ class AccountHolderApi(CrudApi):
             Get_Account_Holder_Schema,  # Esquema Get para roles
         )
 
-#ah_fields = {
+
+# ah_fields = {
 #    "id": fields.Integer(),
 #    "login": fields.String(),
 #    "password": fields.String(),
@@ -35,8 +37,8 @@ class AccountHolderApi(CrudApi):
 #    "lastname": fields.String(),
 #    "user_type": fields.String(),
 #    "role_id": fields.Integer(),
-#}
-#ah_fields = {
+# }
+# ah_fields = {
 #    "id": fields.Integer(),
 #    "user_id": fields.Integer(),
 #    "identification_document": fields.String(),
@@ -60,4 +62,4 @@ class AccountHolderApi(CrudApi):
 #    "employer_province": fields.String(),
 #    "employer_township": fields.String(),
 #    "employer_address": fields.String(),
-#}
+# }
