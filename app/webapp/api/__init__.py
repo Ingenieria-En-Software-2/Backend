@@ -2,7 +2,7 @@ from flask_restful import Api
 from .user.controllers import UserApi
 from .role.controllers import RoleApi
 from flask import Blueprint
-from .account_holder.controllers import AccountHolderAPI
+from .account_holder.controllers import AccountHolderApi
 
 # Parchear el manejador de excepciones de la API
 Api.error_router = lambda self, hnd, e: hnd(e)
@@ -27,7 +27,7 @@ def create_module(app, **kwargs):
     )
 
     rest_api.add_resource(
-        AccountHolderAPI,
+        AccountHolderApi,
         "/api/account_holder",
         "/api/account_holder/<int:id>",
     )
