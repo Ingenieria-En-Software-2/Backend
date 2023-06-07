@@ -11,16 +11,65 @@ def add_user(login, password, name, lastname, user_type, role_id):
     db.session.commit()
     return user
 
-def add_account_holder(login, password, name, lastname, user_type, role_id, identification_document,
-                       gender, civil_status, birthdate, phone, nacionality, street, sector, city,
-                       country, province, township, address, employer_name, employer_rif,
-                       employer_phone, employer_city, employer_country, employer_province,
-                       employer_township, employer_address):
-    ah = AccountHolder(login, password, name, lastname, user_type, role_id, identification_document,
-                       gender, civil_status, birthdate, phone, nacionality, street, sector, city,
-                       country, province, township, address, employer_name, employer_rif,
-                       employer_phone, employer_city, employer_country, employer_province,
-                       employer_township, employer_address)
+
+def add_account_holder(
+    login,
+    password,
+    name,
+    lastname,
+    user_type,
+    role_id,
+    identification_document,
+    gender,
+    civil_status,
+    birthdate,
+    phone,
+    nacionality,
+    street,
+    sector,
+    city,
+    country,
+    province,
+    township,
+    address,
+    employer_name,
+    employer_rif,
+    employer_phone,
+    employer_city,
+    employer_country,
+    employer_province,
+    employer_township,
+    employer_address,
+):
+    ah = AccountHolder(
+        login,
+        password,
+        name,
+        lastname,
+        user_type,
+        role_id,
+        identification_document,
+        gender,
+        civil_status,
+        birthdate,
+        phone,
+        nacionality,
+        street,
+        sector,
+        city,
+        country,
+        province,
+        township,
+        address,
+        employer_name,
+        employer_rif,
+        employer_phone,
+        employer_city,
+        employer_country,
+        employer_province,
+        employer_township,
+        employer_address,
+    )
     db.session.add(ah)
     db.session.commit()
     return ah
@@ -61,12 +110,35 @@ def populate_db():
     add_user("admin", "admin", "admin", "admin", "admin", 1)  # admin_role.id)
     add_user("user", "user", "user", "user", "user", 2)  # user_role.id)
     # add Account holder
-    add_account_holder('login', 'password', 'name', 'lastname', 'user_type', 2, 'identification_document',
-                       'gender', 'civil_status', 'birthdate', 'phone', 'nacionality', 'street', 'sector', 'city',
-                       'country', 'province', 'township', 'address', 'employer_name', 'employer_rif',
-                       'employer_phone', 'employer_city', 'employer_country', 'employer_province',
-                       'employer_township', 'employer_address')
-    
+    add_account_holder(
+        "login",
+        "password",
+        "name",
+        "lastname",
+        "user_type",
+        2,
+        "identification_document",
+        "gender",
+        "civil_status",
+        "birthdate",
+        "phone",
+        "nacionality",
+        "street",
+        "sector",
+        "city",
+        "country",
+        "province",
+        "township",
+        "address",
+        "employer_name",
+        "employer_rif",
+        "employer_phone",
+        "employer_city",
+        "employer_country",
+        "employer_province",
+        "employer_township",
+        "employer_address",
+    )
 
 
 if __name__ == "__main__":

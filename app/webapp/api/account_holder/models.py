@@ -1,4 +1,3 @@
-
 from ... import db
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import relationship
@@ -7,18 +6,18 @@ from sqlalchemy.orm import relationship
 class AccountHolder(db.Model):
     __tablename__ = "account_holder"
 
-    user = relationship("User", cascade="delete" )
-    
-    # Personal Data 
+    user = relationship("User", cascade="delete")
+
+    # Personal Data
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete='cascade'))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="cascade"))
     identification_document = db.Column(db.String())
     gender = db.Column(db.String())
     civil_status = db.Column(db.String())
     birthdate = db.Column(db.String())
     phone = db.Column(db.String())
     nacionality = db.Column(db.String())
-    
+
     # Residence address
     street = db.Column(db.String())
     sector = db.Column(db.String())
@@ -27,7 +26,7 @@ class AccountHolder(db.Model):
     province = db.Column(db.String())
     township = db.Column(db.String())
     address = db.Column(db.Text())
-    
+
     # Employer data
     employer_name = db.Column(db.String())
     employer_rif = db.Column(db.String())
@@ -37,15 +36,32 @@ class AccountHolder(db.Model):
     employer_province = db.Column(db.String())
     employer_township = db.Column(db.String())
     employer_address = db.Column(db.Text())
-    
-    def __init__(self, user_id,
-                identification_document, gender, civil_status, 
-                birthdate, phone, nacionality, street,
-                sector, city, country, province, township, address,
-                employer_name, employer_rif, employer_phone, employer_city, employer_country,
-                employer_province, employer_township, employer_address):
-        
-        
+
+    def __init__(
+        self,
+        user_id,
+        identification_document,
+        gender,
+        civil_status,
+        birthdate,
+        phone,
+        nacionality,
+        street,
+        sector,
+        city,
+        country,
+        province,
+        township,
+        address,
+        employer_name,
+        employer_rif,
+        employer_phone,
+        employer_city,
+        employer_country,
+        employer_province,
+        employer_township,
+        employer_address,
+    ):
         # Personal Data
         self.user_id = user_id
         self.identification_document = identification_document
@@ -54,7 +70,7 @@ class AccountHolder(db.Model):
         self.birthdate = birthdate
         self.phone = phone
         self.nacionality = nacionality
-        
+
         # Residence address
         self.street = street
         self.sector = sector
@@ -63,7 +79,7 @@ class AccountHolder(db.Model):
         self.province = province
         self.township = township
         self.address = address
-        
+
         # Employer Data
         self.employer_name = employer_name
         self.employer_rif = employer_rif
@@ -75,4 +91,4 @@ class AccountHolder(db.Model):
         self.employer_address = employer_address
 
     def __repr__(self):
-        return '<AccountHolder id {}>'.format(self.id)
+        return "<AccountHolder id {}>".format(self.id)

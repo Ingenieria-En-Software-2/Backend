@@ -21,12 +21,12 @@ class CrudApi(Resource):
             resource = self.repository.get_by_id(id)
             if not resource:
                 abort(404)
-            
+
             return self.repository.schema_create().dump(resource)
 
         # Consultar los recursos segun los filtros y paginarlos
         args = self.get_schema().load(request.args)
- 
+
         filter_args = {
             key: args[key]
             for key in args
@@ -78,7 +78,7 @@ class CrudApi(Resource):
     def delete(self, id=None):
         """
         Deletes the resource that is identified with id
-        """        
+        """
         self.repository.delete(id)
 
         return "", 204

@@ -14,7 +14,6 @@ rest_api = Api(rest_api_bp)
 def create_module(app, **kwargs):
     from .error_handlers import error_handlers
 
-
     rest_api.add_resource(
         UserApi,
         "/user",
@@ -26,7 +25,7 @@ def create_module(app, **kwargs):
         "/role",
         "/role/<int:id>",
     )
-    
+
     rest_api.add_resource(
         AccountHolderAPI,
         "/api/account_holder",
@@ -34,4 +33,3 @@ def create_module(app, **kwargs):
     )
 
     app.register_blueprint(rest_api_bp)
-    

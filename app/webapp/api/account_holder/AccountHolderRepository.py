@@ -22,8 +22,12 @@ class AccountHolderRepository(CrudRepository):
         :param login: The login of the user to retrieve.
         :return: The user with the specified login, or `None` if no user was found or is not accountholder.
         """
-        return self.db.session.query(User).join(AccountHolder).filter(User.id == AccountHolder.user_id and login == User.login ).first()
-
+        return (
+            self.db.session.query(User)
+            .join(AccountHolder)
+            .filter(User.id == AccountHolder.user_id and login == User.login)
+            .first()
+        )
 
     def get_user(self):
         """
@@ -32,12 +36,19 @@ class AccountHolderRepository(CrudRepository):
         :return: The user model to the specific account holder.
         :raises: UserErrorinconsistency if no user was found for the specified account holder.
         """
-        user = self.db.session.query(User).join(AccountHolder).filter(AccountHolder.user_id == User.id).first()
+        user = (
+            self.db.session.query(User)
+            .join(AccountHolder)
+            .filter(AccountHolder.user_id == User.id)
+            .first()
+        )
         if user:
             return user
         else:
-            raise ValueError(f"User Error Inconsistency for {self.model.id} account holder")
-        
+            raise ValueError(
+                f"User Error Inconsistency for {self.model.id} account holder"
+            )
+
     def create(self, **kwargs):
         """
         Creates a new User And a new AccountHolder in the database.
@@ -46,19 +57,34 @@ class AccountHolderRepository(CrudRepository):
         :return: The newly created record.
         """
         try:
-            user_data = { k: kwargs[k] for k in ( 'login', 'name', 'lastname', 'password', 'user_type', 'role_id' ) }
+            user_data = {
+                k: kwargs[k]
+                for k in (
+                    "login",
+                    "name",
+                    "lastname",
+                    "password",
+                    "user_type",
+                    "role_id",
+                )
+            }
             user = User(**user_data)
             self.db.session.add(user)
             self.db.session.commit()
-            account_holder_data = { k: kwargs[k] for k  in kwargs.keys() if k not in ( 'login', 'name', 'lastname', 'password', 'user_type', 'role_id' ) }
-            account_holder_data['user_id'] = user.id
+            account_holder_data = {
+                k: kwargs[k]
+                for k in kwargs.keys()
+                if k
+                not in ("login", "name", "lastname", "password", "user_type", "role_id")
+            }
+            account_holder_data["user_id"] = user.id
             return super().create(**account_holder_data)
 
         except Exception as e:
             print(f"An error occurred while creating the user for account holder: {e}")
             self.db.session.rollback()
             return None
-        
+
     def update(self, id, **kwargs):
         """
         Updates an existing record in the model.
@@ -75,7 +101,6 @@ class AccountHolderRepository(CrudRepository):
         if user is None:
             raise ValueError(f"No associated user for account holder {id}")
         try:
-            
             for key, value in kwargs.items():
                 # Check if the attribute is unique in Account Holder
                 if hasattr(self.model, key):
@@ -94,6 +119,5 @@ class AccountHolderRepository(CrudRepository):
         except Exception as e:
             self.db.session.rollback()
             print(f"An error occurred while updating the record: {e}")
-            
+
             return None
-        

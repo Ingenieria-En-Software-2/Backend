@@ -6,9 +6,7 @@ from .schemas import Role_Schema, Update_Role_Schema, Get_Role_Schema
 
 role_repository = CrudRepository(Role, db, Role_Schema, Update_Role_Schema)
 
+
 class RoleApi(CrudApi):
     def __init__(self):
-        super().__init__(
-            role_repository,
-            Get_Role_Schema
-        )
+        super().__init__(role_repository, Get_Role_Schema)

@@ -412,7 +412,7 @@ account_holder_put_parser.add_argument(
     location=("json", "values"),
 )
 
-# Get Requests  TODO: Verify needed search fields 
+# Get Requests  TODO: Verify needed search fields
 account_holder_get_parser = generic_get_parser.copy()
 
 

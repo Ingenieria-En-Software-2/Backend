@@ -12,6 +12,7 @@ import re
 
 # Definition of the schemas for validation of user data
 
+
 class Create_User_Schema(Schema):
     id = fields.Integer()
     login = fields.String(required=True, validate=validate.Length(min=4, max=20))
@@ -50,7 +51,7 @@ class Create_User_Schema(Schema):
     def validate_lastname(self, value):
         """
         Validates that a user's last name contains only letters and spaces.
-        Throws a ValidationError exception in case the last name does not 
+        Throws a ValidationError exception in case the last name does not
         comply with the pattern.
         """
         regex = r"^[a-zA-Z\s]+$"
@@ -58,22 +59,27 @@ class Create_User_Schema(Schema):
             raise ValidationError("The last name can only contain letters and spaces")
 
 
-class Update_User_Schema(Create_User_Schema):    
+class Update_User_Schema(Create_User_Schema):
     login = fields.String(validate=validate.Length(min=4, max=20))
     password = fields.String(validate=validate.Length(min=6, max=20))
     name = fields.String(validate=validate.Length(min=2, max=20))
     lastname = fields.String(validate=validate.Length(min=2, max=20))
     user_type = fields.String(validate=validate.Length(min=4, max=20))
     role_id = fields.Integer()
+
     class Meta:
-        exclude = ('id',)
+        exclude = ("id",)
 
 
 class Get_User_Schema(Generic_Get_Schema):
-    login = fields.String()    
+    login = fields.String()
     name = fields.String()
     lastname = fields.String()
     user_type = fields.String()
     role_id = fields.Integer()
-    sort_by = fields.Str(load_default=None, validate=validate.OneOf(
-        ["id", "login", "name", "lastname", "user_type", "role_id"]))
+    sort_by = fields.Str(
+        load_default=None,
+        validate=validate.OneOf(
+            ["id", "login", "name", "lastname", "user_type", "role_id"]
+        ),
+    )

@@ -1,5 +1,6 @@
 from . import exceptions
 
+
 class CrudRepository:
     """
     A repository that provides basic CRUD (Create, Read, Update, Delete) operations for a given model.
@@ -45,7 +46,7 @@ class CrudRepository:
             else:
                 query = query.order_by(getattr(self.model, sort_by).desc())
 
-        if per_page is not None:            
+        if per_page is not None:
             records = query.paginate(page=page, per_page=per_page)
         else:
             records = query.all()
@@ -92,7 +93,7 @@ class CrudRepository:
             self.db.session.add(instance)
             self.db.session.commit()
             return instance
-        except Exception as e:            
+        except Exception as e:
             self.db.session.rollback()
             raise e
 

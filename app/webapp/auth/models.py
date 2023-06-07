@@ -1,6 +1,7 @@
 from .. import db
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import relationship
+
 id_str = "<id {}>"
 
 
@@ -39,6 +40,3 @@ class Role(db.Model):
 
     def __repr__(self):
         return id_str.format(self.id)
-
-
-

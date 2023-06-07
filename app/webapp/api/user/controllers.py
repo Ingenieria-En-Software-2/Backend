@@ -19,5 +19,5 @@ class UserApi(CrudApi):
     def __init__(self):
         super().__init__(
             user_repository,  # Repositorio de usuarios
-            Get_User_Schema, # Esquema Get para roles
+            Get_User_Schema,  # Esquema Get para roles
         )
