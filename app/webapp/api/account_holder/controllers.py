@@ -1,8 +1,13 @@
+"""
+Module containing the definition of the AccountHolderApi class, which inherits from the
+CrudApi class, and is in charge of handling HTTP requests related to account holders.
+"""
+
 from flask import abort
 from flask_restful import fields
 from webapp.auth.models import db
 from webapp.api.account_holder.AccountHolderRepository import AccountHolderRepository
-from ..generic.CrudApi import CrudApi
+from webapp.api.generic.CrudApi import CrudApi
 from .parsers import (
     account_holder_get_parser,
     account_holder_post_parser,
