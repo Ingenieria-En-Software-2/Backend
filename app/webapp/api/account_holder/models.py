@@ -16,7 +16,7 @@ class AccountHolder(db.Model):
     civil_status = db.Column(db.String())
     birthdate = db.Column(db.String())
     phone = db.Column(db.String())
-    nacionality = db.Column(db.String())
+    nationality = db.Column(db.String())
 
     # Residence address
     street = db.Column(db.String())
@@ -45,7 +45,7 @@ class AccountHolder(db.Model):
         civil_status,
         birthdate,
         phone,
-        nacionality,
+        nationality,
         street,
         sector,
         city,
@@ -69,7 +69,7 @@ class AccountHolder(db.Model):
         self.civil_status = civil_status
         self.birthdate = birthdate
         self.phone = phone
-        self.nacionality = nacionality
+        self.nationality = nationality
 
         # Residence address
         self.street = street

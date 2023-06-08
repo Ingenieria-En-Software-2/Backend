@@ -12,8 +12,8 @@ class AccountHolderRepository(CrudRepository):
     A repository for managing Acc objects.
     """
 
-    def __init__(self, db):
-        super().__init__(AccountHolder, db)
+    def __init__(self, db, create_schema, update_schema):
+        super().__init__(AccountHolder, db, create_schema, update_schema)
 
     def get_account_holder_by_login(self, login):
         """
