@@ -1,5 +1,6 @@
 from .. import db
 from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.orm import relationship
 import jwt, datetime
 from config import DevConfig
 
@@ -11,7 +12,7 @@ class User(db.Model):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
-    login = db.Column(db.String())
+    login = db.Column(db.String(), unique=True)
     password = db.Column(db.String())
     name = db.Column(db.String())
     lastname = db.Column(db.String())
@@ -52,7 +53,7 @@ class Role(db.Model):
     __tablename__ = "role"
 
     id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String())
+    description = db.Column(db.String(), unique=True)
     users = db.relationship("User", backref="role", lazy="dynamic")
 
     def __init__(self, description):
