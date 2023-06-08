@@ -17,11 +17,12 @@ import re
 class Create_Account_Holder_Schema(Create_User_Schema):
     # Override password
     password = fields.String(required=False, validate=validate.Length(min=6, max=20))
+    user_id = fields.Integer()
     
     # Account holder fields
     id = fields.Integer()
     identification_document = fields.String(required=True, validate=validate.Length(min=4, max=20))
-    gender = fields.String(required=True, validate=validate.Length(min=4, max=20))
+    gender = fields.String(required=True, validate=validate.Length(min=1, max=1))
     civil_status = fields.String(required=True, validate=validate.Length(min=4, max=20))
     birthdate = fields.String(required=True, validate=validate.Length(min=4, max=20))
     phone = fields.String(required=True, validate=validate.Length(min=4, max=20))
@@ -54,9 +55,9 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         regex = r"^[VJGE]-[0-9]{8,10}$"
         if not re.match(regex, value):
             raise ValidationError(
-                "The identification document most be of the given format <Type>-<number>\
-                    e.g. V-123456789\nPosible values for type: V,J,G,E and number\
-                        most have between 8 and 10 digits"
+                "The identification document most be of the given format <Type>-<number> " +
+                    "e.g. V-123456789 Posible values for type: V,J,G,E and number" +
+                        " most have between 8 and 10 digits"
             )
 
     @validates("gender")
@@ -145,16 +146,16 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         if not re.match(regex, value):
             raise ValidationError("The city can only contain letters")
 
-    @validates("contry")
-    def validate_contry(self, value):
+    @validates("country")
+    def validate_country(self, value):
         """
-        Validates that a user's contry contains only letters.
+        Validates that a user's country contains only letters.
         Throws a ValidationError exception in case does not
         comply with the pattern.
         """
         regex = r"^[\w\s]+$"
         if not re.match(regex, value):
-            raise ValidationError("The contry can only contain letters")
+            raise ValidationError("The country can only contain letters")
 
     @validates("province")
     def validate_province(self, value):
@@ -234,16 +235,16 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         if not re.match(regex, value):
             raise ValidationError("The employer_city can only contain letters")
 
-    @validates("employer_contry")
-    def validate_employer_contry(self, value):
+    @validates("employer_country")
+    def validate_employer_country(self, value):
         """
-        Validates that a user's employer_contry contains only letters.
+        Validates that a user's employer_country contains only letters.
         Throws a ValidationError exception in case does not
         comply with the pattern.
         """
         regex = r"^[\w\s]+$"
         if not re.match(regex, value):
-            raise ValidationError("The employer_contry can only contain letters")
+            raise ValidationError("The employer_country can only contain letters")
 
     @validates("employer_province")
     def validate_employer_province(self, value):
@@ -290,7 +291,7 @@ class Update_Account_Holder_Schema(Create_Account_Holder_Schema):
     
     # Account holder fields
     identification_document = fields.String( validate=validate.Length(min=4, max=20))
-    gender = fields.String( validate=validate.Length(min=4, max=20))
+    gender = fields.String( validate=validate.Length(min=1, max=1))
     civil_status = fields.String( validate=validate.Length(min=4, max=20))
     birthdate = fields.String( validate=validate.Length(min=4, max=20))
     phone = fields.String( validate=validate.Length(min=4, max=20))
@@ -310,6 +311,8 @@ class Update_Account_Holder_Schema(Create_Account_Holder_Schema):
     employer_province = fields.String( validate=validate.Length(min=4, max=20))
     employer_township = fields.String( validate=validate.Length(min=4, max=20))
     employer_address = fields.String( validate=validate.Length(min=4, max=200))
+    user_id = fields.Integer()
+    
 
     class Meta:
         exclude = ("id",)
@@ -317,6 +320,7 @@ class Update_Account_Holder_Schema(Create_Account_Holder_Schema):
 
 class Get_Account_Holder_Schema(Generic_Get_Schema):
     
+    user_id = fields.Integer()
     identification_document = fields.String()
     gender = fields.String()
     civil_status = fields.String()

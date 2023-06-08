@@ -2,6 +2,7 @@ from webapp.repositories.CrudRepository import CrudRepository
 from ...auth.UserRepository import UserRepository
 from ...auth.models import User
 from .models import AccountHolder
+from ..user.schemas import Create_User_Schema_No_Password
 from flask import abort
 
 # TODO: Import the User model and the db from app
@@ -56,34 +57,43 @@ class AccountHolderRepository(CrudRepository):
         :param kwargs: The keyword arguments to use to create the new record.
         :return: The newly created record.
         """
-        try:
-            user_data = {
-                k: kwargs[k]
-                for k in (
+        self.schema_create().load(kwargs)
+        user_data = {}
+        for i in (
                     "login",
                     "name",
                     "lastname",
                     "password",
                     "user_type",
                     "role_id",
-                )
-            }
+                ):
+            if i in kwargs:
+                user_data[i] = kwargs[i]
+            else:
+                user_data[i] = ""
+        
+        Create_User_Schema_No_Password().load(user_data)
+        account_holder_data = {
+            k: kwargs[k]
+            for k in kwargs.keys()
+            if k
+            not in ("login", "name", "lastname", "password", "user_type", "role_id")
+        }
+        
+        try:
             user = User(**user_data)
             self.db.session.add(user)
             self.db.session.commit()
-            account_holder_data = {
-                k: kwargs[k]
-                for k in kwargs.keys()
-                if k
-                not in ("login", "name", "lastname", "password", "user_type", "role_id")
-            }
             account_holder_data["user_id"] = user.id
-            return super().create(**account_holder_data)
+            
+            instance = AccountHolder(**account_holder_data)
+            self.db.session.add(instance)
+            self.db.session.commit()
+            return instance
 
         except Exception as e:
-            print(f"An error occurred while creating the user for account holder: {e}")
             self.db.session.rollback()
-            return None
+            raise e
 
     def update(self, id, **kwargs):
         """
@@ -95,11 +105,24 @@ class AccountHolderRepository(CrudRepository):
         """
 
         instance = self.get_by_id(id)
+        self.schema_update().load(kwargs)
         if instance is None:
             raise ValueError(f"No record found with id {id}")
         user = self.get_user()
         if user is None:
             raise ValueError(f"No associated user for account holder {id}")
+        
+        for key, value in kwargs.items():
+            # Check if the attribute is unique in Account Holder
+            if hasattr(self.model, key):
+                setattr(instance, key, value)
+            # Check if the attribute is unique in User
+            if hasattr(User, key):
+                setattr(user, key, value)
+        self.db.session.commit()
+        return instance
+        
+        
         try:
             for key, value in kwargs.items():
                 # Check if the attribute is unique in Account Holder

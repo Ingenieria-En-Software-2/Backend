@@ -83,3 +83,7 @@ class Get_User_Schema(Generic_Get_Schema):
             ["id", "login", "name", "lastname", "user_type", "role_id"]
         ),
     )
+
+
+class Create_User_Schema_No_Password(Create_User_Schema):
+    password = fields.String(required=False)

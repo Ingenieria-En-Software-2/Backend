@@ -28,8 +28,8 @@ def create_module(app, **kwargs):
 
     rest_api.add_resource(
         AccountHolderAPI,
-        "/api/account_holder",
-        "/api/account_holder/<int:id>",
+        "/account_holder",
+        "/account_holder/<int:id>",
     )
 
     app.register_blueprint(rest_api_bp)
