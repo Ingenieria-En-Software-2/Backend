@@ -111,31 +111,15 @@ class AccountHolderRepository(CrudRepository):
         user = self.get_user()
         if user is None:
             raise ValueError(f"No associated user for account holder {id}")
-        
-        for key, value in kwargs.items():
-            # Check if the attribute is unique in Account Holder
-            if hasattr(self.model, key):
-                setattr(instance, key, value)
-            # Check if the attribute is unique in User
-            if hasattr(User, key):
-                setattr(user, key, value)
-        self.db.session.commit()
-        return instance
-        
+               
         
         try:
             for key, value in kwargs.items():
                 # Check if the attribute is unique in Account Holder
                 if hasattr(self.model, key):
-                    column = getattr(self.model, key)
-                    if column.unique:
-                        raise ValueError(f"Cannot update unique attribute '{key}'")
                     setattr(instance, key, value)
                 # Check if the attribute is unique in User
                 if hasattr(User, key):
-                    column = getattr(User, key)
-                    if column.unique:
-                        raise ValueError(f"Cannot update unique attribute '{key}'")
                     setattr(user, key, value)
             self.db.session.commit()
             return instance
