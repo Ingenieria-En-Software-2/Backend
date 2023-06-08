@@ -3,6 +3,8 @@ from flask.views import MethodView
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 
 
+auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
+
 from .. import db, bcrypt
 
 from .models import User, Role
@@ -182,4 +184,3 @@ auth_blueprint.add_url_rule(
     view_func=refresh_view,
     methods=['POST']
 )
-
