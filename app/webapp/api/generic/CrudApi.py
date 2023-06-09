@@ -59,7 +59,7 @@ class CrudApi(Resource):
 
         :return: The id of the created resource
         """
-        print(request.get_json())
+        #print(request.get_json())
         result = self.repository.create(**request.get_json())
 
         return {"id": result.id}, 201

@@ -2,7 +2,7 @@
 Module containing definitions of schemas for account holder management in the API.
 """
 
-from marshmallow import Schema, fields, validate, validates, ValidationError
+from marshmallow import Schema, fields, validate, validates, ValidationError, validates_schema
 from webapp.api.generic.GetSchema import Generic_Get_Schema
 import re
 import datetime
@@ -33,7 +33,7 @@ class Create_Account_Holder_Schema(Schema):
     birthdate = fields.String(
         required=True,
         Validate=validate.Regexp(
-            r"\d{2}-\d{2}-\d{4}", error="The birthdate must have the format DD-MM-YYYY"
+            r"\d{2}-\d{2}-\d{4}", error="The birthdate must have the format MM-DD-YYYY"
         ),
     )
     phone = fields.String(required=True)
@@ -69,8 +69,8 @@ class Create_Account_Holder_Schema(Schema):
                 min=3, max=50, error="The sector must have between 3 and 50 characters"
             ),
             validate.Regexp(
-                r"[a-zA-Z0-9\s\.\-\/#]",
-                error="The sector must only contain spaces, letters, numbers and the characters . - / #",
+                r"[a-zA-Z0-9\s\.\-\/#()]+",
+                error="The sector must only contain spaces, letters, numbers and the characters . - / # ( )",
             ),
         ],
     )
@@ -80,7 +80,7 @@ class Create_Account_Holder_Schema(Schema):
             validate.Length(
                 min=3, max=40, error="TThe city must have between 3 and 40 characters"
             ),
-            validate.Regexp(r"^[a-zA-Z]+$", error="The city must only contain letters"),
+            validate.Regexp(r"^[a-zA-Z\s]+$", error="The city must only contain letters and spaces"),
         ],
     )
     country = fields.String(required=True)
@@ -93,7 +93,7 @@ class Create_Account_Holder_Schema(Schema):
                 error="The province must have between 3 and 50 characters",
             ),
             validate.Regexp(
-                r"^[a-zA-Z]+", error="The province must only contain letters"
+                r"^[a-zA-Z\s]+", error="The province must only contain letters and spaces"
             ),
         ],
     )
@@ -106,7 +106,7 @@ class Create_Account_Holder_Schema(Schema):
                 error="The township must have between 3 and 40 characters",
             ),
             validate.Regexp(
-                r"^[a-zA-Z]+", error="The township must only contain letters"
+                r"^[a-zA-Z\s]+", error="The township must only contain letters and spaces"
             ),
         ],
     )
@@ -117,8 +117,8 @@ class Create_Account_Holder_Schema(Schema):
                 min=3, max=50, error="The address must have between 3 and 50 characters"
             ),
             validate.Regexp(
-                r"[a-zA-Z0-9\s\.\-\/#]",
-                error="The address must only contain spaces, letters, numbers and the characters . - / #",
+                r"[a-zA-Z0-9\s\.\-\/#()]+",
+                error="The address must only contain spaces, letters, numbers and the characters . - / # ( )",
             ),
         ],
     )
@@ -168,7 +168,8 @@ class Create_Account_Holder_Schema(Schema):
                 error="The employer province must have between 3 and 50 characters",
             ),
             validate.Regexp(
-                r"^[a-zA-Z]+", error="The employer province must only contain letters"
+                r"^[a-zA-Z\s]+", 
+                error="The employer province must only contain spaces and letters",
             ),
         ],
     )
@@ -181,7 +182,8 @@ class Create_Account_Holder_Schema(Schema):
                 error="The employer township must have between 3 and 40 characters",
             ),
             validate.Regexp(
-                r"^[a-zA-Z]+", error="The township must only contain letters"
+                r"^[a-zA-Z\s]+",
+                error="The township must only contain spaces and letters",
             ),
         ],
     )
@@ -194,8 +196,8 @@ class Create_Account_Holder_Schema(Schema):
                 error="The employer address must have between 3 and 50 characters",
             ),
             validate.Regexp(
-                r"[a-zA-Z0-9\s\.\-\/#]",
-                error="The employer address entered is invalid, it must have only letters, numbers, spaces, and the following characters: ., -, /, #",
+                r"[a-zA-Z0-9\s\.\-\/#()]+",
+                error="The employer address entered is invalid, it must have only letters, numbers, spaces, and the following characters: ., -, /, #( )",
             ),
         ],
     )
@@ -240,35 +242,35 @@ class Create_Account_Holder_Schema(Schema):
         """
 
         # Convert birthdate a tipo Date using datetime library
-        y, m, d = value.split("-")
-        y, m, d = int(y), int(m), int(d)
-        birthdate_t = datetime.date(y, m, d)
+        m, d, y = value.split("-")
+        m, d, y = int(m), int(d), int(y)
+        birthdate_t = datetime.date(month=m, day=d, year=y)
 
         today = datetime.date.today()
         age = (
             today.year
-            - birthdate.year
-            - ((today.month, today.day) < (birthdate.month, birthdate.day))
+            - birthdate_t.year
+            - ((today.month, today.day) < (birthdate_t.month, birthdate_t.day))
         )
 
         if age < 18:
-            raise ClientError("The minimum age to register is 18 years")
+            raise ValidationError("The minimum age to register is 18 years")
         elif age > 100:
-            raise ClientError("The maximun age to register is 100 years")
+            raise ValidationError("The maximun age to register is 100 years")
 
-    @validates("phone")
-    def validate_phone(self, value):
+    @validates_schema(skip_on_field_errors=True)
+    def validate_phone_number(self, data, **kwargs):
         """
         Throws an exception if the phone number is not valid
 
         A phone number is valid if it is a valid number in the country entered.
         """
         # Get the country code from the country name
-        country = pycountry.countries.search_fuzzy(self.country)[0]
+        country = pycountry.countries.search_fuzzy(data["country"])[0]
         iso_code = country.alpha_2
 
         # Validate the phone number using the country code
-        phone_number = phonenumbers.parse(value, iso_code)
+        phone_number = phonenumbers.parse(data["phone"], iso_code)
         is_valid = phonenumbers.is_valid_number(phone_number)
 
         if not is_valid:
@@ -280,19 +282,19 @@ class Create_Account_Holder_Schema(Schema):
         if country is None:
             raise ValidationError("The country entered is invalid")
 
-    @validates("employer_phone")
-    def validate_employer_phone(self, value):
+    @validates_schema(skip_on_field_errors=True)
+    def validate_employer_phone(self, data, **kwargs):
         """
         Throws an exception if the phone number is not valid
 
         A employer phone number is valid if it is a valid number in the country entered.
         """
         # Get the country code from the country name
-        country = pycountry.countries.search_fuzzy(self.country)[0]
+        country = pycountry.countries.search_fuzzy(data["employer_country"])[0]
         iso_code = country.alpha_2
 
         # Validate the phone number using the country code
-        phone_number = phonenumbers.parse(value, iso_code)
+        phone_number = phonenumbers.parse(data["employer_phone"], iso_code)
         is_valid = phonenumbers.is_valid_number(phone_number)
 
         if not is_valid:
