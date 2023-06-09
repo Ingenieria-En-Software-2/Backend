@@ -35,4 +35,4 @@ def integrity_error(e):
         details = details[9:]
         return jsonify(error={f"{violation_key}": details}), 400
 
-    return jsonify(msg=f"You found an unhandled exception!"), 400
+    return jsonify(msg="You found an unhandled exception!"), 400
