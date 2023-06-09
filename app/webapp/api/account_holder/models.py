@@ -11,10 +11,10 @@ class AccountHolder(db.Model):
     # Personal Data
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="cascade"))
-    identification_document = db.Column(db.String())
+    id_number = db.Column(db.String())
     gender = db.Column(db.String())
     civil_status = db.Column(db.String())
-    birthdate = db.Column(db.String())
+    birthdate = db.Column(db.Date())
     phone = db.Column(db.String())
     nationality = db.Column(db.String())
 
@@ -40,7 +40,7 @@ class AccountHolder(db.Model):
     def __init__(
         self,
         user_id,
-        identification_document,
+        id_number,
         gender,
         civil_status,
         birthdate,
@@ -64,7 +64,7 @@ class AccountHolder(db.Model):
     ):
         # Personal Data
         self.user_id = user_id
-        self.identification_document = identification_document
+        self.id_number = id_number
         self.gender = gender
         self.civil_status = civil_status
         self.birthdate = birthdate

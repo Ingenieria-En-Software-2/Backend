@@ -1,14 +1,27 @@
+"""
+Module containing the definition of the AccountHolderApi class, which inherits from the
+CrudApi class, and is in charge of handling HTTP requests related to account holders.
+"""
+
+from flask import abort
+from flask_restful import fields
 from webapp.auth.models import db
 from webapp.api.account_holder.AccountHolderRepository import AccountHolderRepository
-from ..generic.CrudApi import CrudApi
-from .schemas import Create_Account_Holder_Schema, Update_Account_Holder_Schema, Get_Account_Holder_Schema
+from webapp.api.generic.CrudApi import CrudApi
+from .schemas import (
+    Create_Account_Holder_Schema,
+    Update_Account_Holder_Schema,
+    Get_Account_Holder_Schema,
+)
 
-# Instance of the user repository
-account_holder_repository = AccountHolderRepository(db, Create_Account_Holder_Schema,
-                                                    Update_Account_Holder_Schema)
+# Instance of the account holder repository
+account_holder_repository = AccountHolderRepository(
+    db, Create_Account_Holder_Schema, Update_Account_Holder_Schema
+)
 
 
-class AccountHolderAPI(CrudApi):
+class AccountHolderApi(CrudApi):
+>>>>>>> api-error-handling
     # Call to the base class constructor CrudApi
     def __init__(self):
         super().__init__(

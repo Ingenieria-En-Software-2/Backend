@@ -1,13 +1,12 @@
 """
-Módulo que contiene definiciones de esquemas para la gestión de usuarios en la
-API.
+Module containing definitions of schemas for user management in the API.
 
-Se definen tres esquemas: Create_User_Schema, Update_User_Schema y Get_Role_Schema, 
-cada uno con sus respectivos argumentos y reglas de validación.
+Theree schemas are defined: Create_User_Schema, Update_User_Schema and Get_Role_Schema,
+each one with its respective arguments and validation rules.
 """
 
 from marshmallow import Schema, fields, validate, validates, ValidationError
-from ..generic.GetSchema import Generic_Get_Schema
+from webapp.api.generic.GetSchema import Generic_Get_Schema
 import re
 
 # Definition of the schemas for validation of user data

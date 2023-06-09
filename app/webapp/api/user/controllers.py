@@ -6,7 +6,7 @@ CrudApi class, and is in charge of handling HTTP requests related to users.
 from flask_restful import fields as fs
 from webapp.auth.models import db
 from webapp.auth.UserRepository import UserRepository
-from ..generic.CrudApi import CrudApi
+from webapp.api.generic.CrudApi import CrudApi
 from .schemas import Create_User_Schema, Update_User_Schema, Get_User_Schema
 
 
