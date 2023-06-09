@@ -7,7 +7,7 @@ from webapp.api.generic.GetSchema import Generic_Get_Schema
 
 
 class Role_Schema(Schema):
-    id = fields.Integer(required=True)
+    id = fields.Integer()
     description = fields.Str(validate=validate.Length(min=1), required=True)
 
 
