@@ -57,36 +57,39 @@ class AccountHolderRepository(CrudRepository):
         :param kwargs: The keyword arguments to use to create the new record.
         :return: The newly created record.
         """
-        self.schema_create().load(kwargs)
+        result = self.schema_create().load(kwargs)
         user_data = {}
         for i in (
-                    "login",
-                    "name",
-                    "lastname",
-                    "password",
-                    "user_type",
-                    "role_id",
-                ):
+            "login",
+            "name",
+            "lastname",
+            "password",
+            "user_type",
+            "role_id",
+        ):
             if i in kwargs:
                 user_data[i] = kwargs[i]
-            else:
-                user_data[i] = ""
+
+            user_data["password"] = None
         
         Create_User_Schema_No_Password().load(user_data)
-        account_holder_data = {
-            k: kwargs[k]
-            for k in kwargs.keys()
-            if k
-            not in ("login", "name", "lastname", "password", "user_type", "role_id")
-        }
-        
         try:
+            # Create the user
             user = User(**user_data)
             self.db.session.add(user)
             self.db.session.commit()
-            account_holder_data["user_id"] = user.id
             
-            instance = AccountHolder(**account_holder_data)
+            # Filter the account holder data to remove the user data
+            filtered_data = {
+                k: result[k]
+                for k in result.keys()
+                if k not in ("login", "name", "lastname", "password", "user_type", "role_id")
+            }
+            # Add the user_id to the filtered data
+            filtered_data["user_id"] = user.id
+
+            # Create the instance
+            instance = AccountHolder(**filtered_data)
             self.db.session.add(instance)
             self.db.session.commit()
             return instance

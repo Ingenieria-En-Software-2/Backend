@@ -21,7 +21,6 @@ account_holder_repository = AccountHolderRepository(
 
 
 class AccountHolderApi(CrudApi):
->>>>>>> api-error-handling
     # Call to the base class constructor CrudApi
     def __init__(self):
         super().__init__(
