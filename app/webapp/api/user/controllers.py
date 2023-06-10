@@ -16,6 +16,7 @@ user_fields = {
     "lastname": fields.String(),
     "user_type": fields.String(),
     "role_id": fields.Integer(),
+    "verified": fields.Boolean(),
 }
 
 user_repository = UserRepository(db)

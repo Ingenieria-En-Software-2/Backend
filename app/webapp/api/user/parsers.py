@@ -50,6 +50,14 @@ user_post_parser.add_argument(
     location=("json", "values"),
 )
 
+user_post_parser.add_argument(
+    "verified",
+    type=bool,
+    required=True,
+    help="role_id is required",
+    location=("json", "values"),
+)
+
 user_put_parser = reqparse.RequestParser()
 user_put_parser.add_argument(
     "login",
@@ -93,6 +101,13 @@ user_put_parser.add_argument(
     store_missing=False,
 )
 
+user_put_parser.add_argument(
+    "verified",
+    type=bool,
+    location=("json", "values"),
+    store_missing=False,
+)
+
 user_get_parser = generic_get_parser.copy()
 user_get_parser.add_argument(
     "login",
@@ -130,9 +145,16 @@ user_get_parser.add_argument(
 )
 
 user_get_parser.add_argument(
+    "verified",
+    type=bool,
+    location="args",
+    store_missing=False,
+)
+
+user_get_parser.add_argument(
     "sort_by",
     type=str,
     location="args",
-    choices=["id", "login", "name", "lastname", "user_type", "role_id"],
+    choices=["id", "login", "name", "lastname", "user_type", "role_id","verified"],
     default=None,
 )
