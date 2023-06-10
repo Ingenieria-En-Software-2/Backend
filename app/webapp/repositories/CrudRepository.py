@@ -76,6 +76,7 @@ class CrudRepository:
         """
         checkAttributes(self.model, **kwargs)
         try:
+            print("Creating new record\n\n")
             instance = self.model(**kwargs)
             self.db.session.add(instance)
             self.db.session.commit()

@@ -1,6 +1,7 @@
-from flask import abort, request
+from flask import abort, request, url_for, render_template
+from flask_mail import Mail
 from flask_restful import Resource, marshal
-
+from webapp.auth.token import *
 
 class CrudApi(Resource):
     def __init__(self, repository, fields, post_parser, put_parser, get_parser):
@@ -19,6 +20,9 @@ class CrudApi(Resource):
         :return: The resource or a list of resources.
         """
         # Si hay id especificado, se busca en la base.
+
+        print("\n\nget\n\n")
+
         if id:
             user = self.repository.get_by_id(id)
             if not user:
@@ -27,6 +31,7 @@ class CrudApi(Resource):
 
         # Consultar los recursos segun los filtros y paginarlos
         args = self.get_parser.parse_args()
+        print("args: ", args)
         if args["page_number"] <= 0 or args["page_size"] <= 0:
             abort(400, "page_number and page_size must be a non zero positive integer")
 
@@ -62,11 +67,30 @@ class CrudApi(Resource):
 
         :return: The id of the created resource
         """
+        print("\n\npost\n\n")
         args = self.post_parser.parse_args(strict=True)
+        print("args: ", args)
         result = self.repository.create(**args)
-
+        #print("resultado: ", result)
+        
         if not result:
             abort(500, "Something went wrong creating resource")
+        
+        #try:
+        if args.user_type == 'user':
+            mail = Mail()
+            print("enviar correo de verificacion a : ", args.login)
+            token = generate_token(args.login)
+            #print("token creado: ", token)
+            confirm_url = url_for('verifyapi', token=token, _external=True)
+            print("confirm_url: ", confirm_url)
+            html = render_template('confirm_email.html', confirm_url=confirm_url)
+            print("html creado")
+            email = create_email(args.login, "Confirm your email", html)
+            print("email creado")
+            #mail.send(email)
+        #except:
+        #    pass
 
         return {"id": result.id}, 201
 

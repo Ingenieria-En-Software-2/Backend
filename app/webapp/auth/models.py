@@ -14,7 +14,7 @@ class User(db.Model):
     lastname = db.Column(db.String())
     user_type = db.Column(db.String())
     role_id = db.Column(db.Integer, db.ForeignKey("role.id"))
-    verified = db.Column(db.Boolean, default=False)
+    verified = db.Column(db.Boolean)
 
     def __init__(self, login, password, name, lastname, user_type, role_id, verified=False):
         self.login = login
