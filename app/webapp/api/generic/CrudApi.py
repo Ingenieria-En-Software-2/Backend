@@ -59,7 +59,7 @@ class CrudApi(Resource):
 
         :return: The id of the created resource
         """
-        
+
         result = self.repository.create(**request.get_json())
 
         return {"id": result.id}, 201
@@ -70,7 +70,7 @@ class CrudApi(Resource):
 
         :return: The id of the edited resource
         """
-        
+
         result = self.repository.update(id, **request.get_json())
 
         return {"id": result.id}, 201

@@ -71,19 +71,20 @@ class AccountHolderRepository(CrudRepository):
                 user_data[i] = kwargs[i]
 
             user_data["password"] = None
-        
+
         Create_User_Schema_No_Password().load(user_data)
         try:
             # Create the user
             user = User(**user_data)
             self.db.session.add(user)
             self.db.session.commit()
-            
+
             # Filter the account holder data to remove the user data
             filtered_data = {
                 k: result[k]
                 for k in result.keys()
-                if k not in ("login", "name", "lastname", "password", "user_type", "role_id")
+                if k
+                not in ("login", "name", "lastname", "password", "user_type", "role_id")
             }
             # Add the user_id to the filtered data
             filtered_data["user_id"] = user.id
@@ -114,8 +115,7 @@ class AccountHolderRepository(CrudRepository):
         user = self.get_user()
         if user is None:
             raise ValueError(f"No associated user for account holder {id}")
-               
-        
+
         try:
             for key, value in kwargs.items():
                 # Check if the attribute is unique in Account Holder
