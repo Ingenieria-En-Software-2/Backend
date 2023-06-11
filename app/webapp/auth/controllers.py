@@ -6,6 +6,7 @@ from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
 )
+from webapp.auth.token import *
 
 
 auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
@@ -22,6 +23,7 @@ auth_blueprint = Blueprint(
 
 class RegisterAPI(MethodView):
     def post(self):
+        print("RegisterAPI\n\n")
         post_data = request.get_json()
         user = User.query.filter_by(login=post_data.get("login")).first()
         if not user:
@@ -165,9 +167,34 @@ class UserAPI(MethodView):
             responseObject = {"status": "fail", "message": resp}
             return make_response(jsonify(responseObject)), 401
 
+class VerifyAPI(MethodView):
+    
+    def get(self):
+
+        token = request.args.get('token')
+        if token:
+
+            if confirm_token(token) != False:
+                user = User.query.filter_by(login=confirm_token(token)).first()
+                user.verified = True
+                db.session.commit()
+                
+                responseObject = {
+                    "status": "success",
+                    "data": {"id": user.id},}
+                
+                return make_response(jsonify(responseObject)), 200
+        
+        
+        responseObject = {"status": "fail", "message": "Token invalido"}
+        return make_response(jsonify(responseObject)), 401
+
 
 register_view = RegisterAPI.as_view("register_api")
 auth_blueprint.add_url_rule("/auth/register", view_func=register_view, methods=["POST"])
+
+verify_view = VerifyAPI.as_view("verify_api")
+auth_blueprint.add_url_rule("/auth/verify", view_func=verify_view, methods=["GET"])
 
 login_view = LoginAPI.as_view("login_api")
 auth_blueprint.add_url_rule("/auth/login", view_func=login_view, methods=["POST"])

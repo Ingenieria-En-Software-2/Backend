@@ -26,6 +26,7 @@ class Create_User_Schema(Schema):
     lastname = fields.String(required=True, validate=validate.Length(min=2, max=20))
     user_type = fields.String(required=True, validate=validate.Length(min=4, max=20))
     role_id = fields.Integer(required=True)
+    verified = fields.String(required=False)
 
     @validates("name")
     def validate_name(self, value):
@@ -73,10 +74,11 @@ class Get_User_Schema(Generic_Get_Schema):
     lastname = fields.String()
     user_type = fields.String()
     role_id = fields.Integer()
+    verified = fields.Boolean()
     sort_by = fields.Str(
         load_default=None,
         validate=validate.OneOf(
-            ["id", "login", "name", "lastname", "user_type", "role_id"]
+            ["id", "login", "name", "lastname", "user_type", "role_id", "verified"]
         ),
     )
 
