@@ -27,6 +27,7 @@ class CrudApi(Resource):
             if confirm_token(token) != False:
                 usuario = self.repository.get_by(login=confirm_token(token))
                 self.repository.update(usuario[0].id, verified=True)
+                return {"id": usuario[0].id}
         except:
             pass
         
