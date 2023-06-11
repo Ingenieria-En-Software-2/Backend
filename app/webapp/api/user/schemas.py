@@ -14,26 +14,18 @@ import re
 
 class Create_User_Schema(Schema):
     id = fields.Integer()
-    login = fields.String(required=True, validate=validate.Length(min=4, max=20))
+    login = fields.String(
+        required=True,
+        validate=[
+            validate.Length(min=6, max=50),
+            validate.Email(error="Not a valid email address"),
+        ],
+    )
     password = fields.String(required=True, validate=validate.Length(min=6, max=20))
     name = fields.String(required=True, validate=validate.Length(min=2, max=20))
     lastname = fields.String(required=True, validate=validate.Length(min=2, max=20))
     user_type = fields.String(required=True, validate=validate.Length(min=4, max=20))
     role_id = fields.Integer(required=True)
-
-    @validates("login")
-    def validate_login(self, value):
-        """
-        Validates that a user's login contains only letters, numbers and
-        underscores. Throws a ValidationError exception in case the login does
-        not comply with the pattern.
-        """
-
-        regex = r"^(?![0-9])\w+$"
-        if not re.match(regex, value):
-            raise ValidationError(
-                "The user name can only contain letters, numbers and underscores."
-            )
 
     @validates("name")
     def validate_name(self, value):
@@ -59,7 +51,12 @@ class Create_User_Schema(Schema):
 
 
 class Update_User_Schema(Create_User_Schema):
-    login = fields.String(validate=validate.Length(min=4, max=20))
+    login = fields.String(
+        validate=[
+            validate.Email(error="Not a valid emailaddress"),
+            validate.Length(min=6, max=50),
+        ]
+    )
     password = fields.String(validate=validate.Length(min=6, max=20))
     name = fields.String(validate=validate.Length(min=2, max=20))
     lastname = fields.String(validate=validate.Length(min=2, max=20))
