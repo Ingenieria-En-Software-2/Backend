@@ -1,6 +1,7 @@
-from flask import abort, request
-from flask_restful import Resource
-
+from flask import abort, request, url_for, render_template
+from flask_mail import Mail
+from flask_restful import Resource, marshal
+from webapp.auth.token import *
 
 class CrudApi(Resource):
     def __init__(self, repository, get_schema):
@@ -17,6 +18,19 @@ class CrudApi(Resource):
         """
 
         # Si hay id especificado, se busca en la base.
+
+        # Si se recibe el token de verificacion, actualizar el usuario en la BD
+        try:
+            token = request.args.get('token')
+            if confirm_token(token) != False:
+                usuario = self.repository.get_by(login=confirm_token(token))
+                self.repository.update(usuario[0].id, verified=True)
+                return {"id": usuario[0].id}
+        except:
+            pass
+        
+        print("id: ", id)
+
         if id:
             resource = self.repository.get_by_id(id)
             if not resource:
@@ -61,6 +75,22 @@ class CrudApi(Resource):
         """
 
         result = self.repository.create(**request.get_json())
+        args = self.post_parser.parse_args(strict=True)        
+                
+        if not result:
+            abort(500, "Something went wrong creating resource")
+        
+        # Crear token de verificacion y enviar correo para verificar usuario
+        if args.user_type == 'user':
+            mail = Mail()
+            token = generate_token(args.login)
+            confirm_url = url_for('verifyapi', token=token, _external=True)
+            html = render_template('confirm_email.html', confirm_url=confirm_url)
+            email = create_email(args.login, "Confirm your email", html)
+            try:
+                mail.send(email)
+            except:
+                pass
 
         return {"id": result.id}, 201
 

@@ -5,8 +5,8 @@ from webapp.api.account_holder.models import AccountHolder
 import sys
 
 
-def add_user(login, password, name, lastname, user_type, role_id):
-    user = User(login, password, name, lastname, user_type, role_id)
+def add_user(login, password, name, lastname, user_type, role_id,verified=False):
+    user = User(login, password, name, lastname, user_type, role_id,verified)
     db.session.add(user)
     db.session.commit()
     return user
@@ -107,8 +107,8 @@ def populate_db():
     add_role("admin")
     add_role("user")
     # add users
-    add_user("admin", "admin", "admin", "admin", "admin", 1)  # admin_role.id)
-    add_user("user", "user", "user", "user", "user", 2)  # user_role.id)
+    add_user("admin", "admin", "admin", "admin", "admin", 1, True)  # admin_role.id)
+    add_user("user", "user", "user", "user", "user", 2, True)  # user_role.id)
     # add Account holder
     add_account_holder(
         "login",
