@@ -9,8 +9,8 @@ class UserRepository(CrudRepository):
     A repository for managing User objects.
     """
 
-    def __init__(self, db):
-        super().__init__(User, db)
+    def __init__(self, db, create_schema, update_schema):
+        super().__init__(User, db, create_schema, update_schema)
 
     def get_user_by_login(self, login):
         """

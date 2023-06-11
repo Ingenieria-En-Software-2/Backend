@@ -166,3 +166,4 @@ postgres
 
 # vscode folder
 .vscode
+migrations/versions/1fb1d5008eac_.py

@@ -1,15 +1,12 @@
 from flask import abort, request, url_for, render_template
 from flask_mail import Mail
-from flask_restful import Resource, marshal
+from flask_restful import Resource
 from webapp.auth.token import *
 
 class CrudApi(Resource):
-    def __init__(self, repository, fields, post_parser, put_parser, get_parser):
+    def __init__(self, repository, get_schema):
         self.repository = repository
-        self.fields = fields
-        self.post_parser = post_parser
-        self.put_parser = put_parser
-        self.get_parser = get_parser
+        self.get_schema = get_schema
         super().__init__()
 
     def get(self, id=None):
@@ -19,6 +16,7 @@ class CrudApi(Resource):
 
         :return: The resource or a list of resources.
         """
+
         # Si hay id especificado, se busca en la base.
 
         # Si se recibe el token de verificacion, actualizar el usuario en la BD
@@ -34,16 +32,14 @@ class CrudApi(Resource):
         print("id: ", id)
 
         if id:
-            user = self.repository.get_by_id(id)
-            if not user:
-                abort(404, "Resource not found")
-            return marshal(user, self.fields)
+            resource = self.repository.get_by_id(id)
+            if not resource:
+                abort(404)
+
+            return self.repository.schema_create().dump(resource)
 
         # Consultar los recursos segun los filtros y paginarlos
-        args = self.get_parser.parse_args()
-        print("args: ", args)
-        if args["page_number"] <= 0 or args["page_size"] <= 0:
-            abort(400, "page_number and page_size must be a non zero positive integer")
+        args = self.get_schema().load(request.args)
 
         filter_args = {
             key: args[key]
@@ -60,7 +56,7 @@ class CrudApi(Resource):
         )
 
         if len(results.items) == 0:
-            abort(404, "No resources found")
+            abort(404)
 
         return {
             "next_page": results.next_num,
@@ -68,7 +64,7 @@ class CrudApi(Resource):
             "item_count": len(results.items),
             "total_pages": results.pages,
             "total_items": results.total,
-            "items": marshal(results.items, self.fields),
+            "items": self.repository.schema_create(many=True).dump(results.items),
         }
 
     def post(self):
@@ -77,24 +73,8 @@ class CrudApi(Resource):
 
         :return: The id of the created resource
         """
-        
-        args = self.post_parser.parse_args(strict=True)        
-        result = self.repository.create(**args)
-                
-        if not result:
-            abort(500, "Something went wrong creating resource")
-        
-        # Crear token de verificacion y enviar correo para verificar usuario
-        if args.user_type == 'user':
-            mail = Mail()
-            token = generate_token(args.login)
-            confirm_url = url_for('verifyapi', token=token, _external=True)
-            html = render_template('confirm_email.html', confirm_url=confirm_url)
-            email = create_email(args.login, "Confirm your email", html)
-            try:
-                mail.send(email)
-            except:
-                pass
+
+        result = self.repository.create(**request.get_json())
 
         return {"id": result.id}, 201
 
@@ -104,18 +84,8 @@ class CrudApi(Resource):
 
         :return: The id of the edited resource
         """
-        if not id:
-            abort(400, "id is required")
 
-        args = self.put_parser.parse_args(strict=True)
-
-        try:
-            result = self.repository.update(id, **args)
-        except ValueError:
-            abort(404, "Resource not found")
-
-        if not result:
-            abort(500, "Something went wrong updating resource")
+        result = self.repository.update(id, **request.get_json())
 
         return {"id": result.id}, 201
 
@@ -123,15 +93,6 @@ class CrudApi(Resource):
         """
         Deletes the resource that is identified with id
         """
-        if not id:
-            abort(400, "id is required")
-
-        try:
-            result = self.repository.delete(id)
-        except ValueError:
-            abort(404, "Resource not found")
-
-        if result == -1:
-            abort(500, "Something went wrong deleting resource")
+        self.repository.delete(id)
 
         return "", 204
