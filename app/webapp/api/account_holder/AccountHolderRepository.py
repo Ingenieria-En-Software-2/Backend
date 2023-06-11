@@ -70,7 +70,7 @@ class AccountHolderRepository(CrudRepository):
             if i in kwargs:
                 user_data[i] = kwargs[i]
 
-            user_data["password"] = None
+        user_data["password"] = None
 
         Create_User_Schema_No_Password().load(user_data)
         try:
@@ -109,7 +109,7 @@ class AccountHolderRepository(CrudRepository):
         """
 
         instance = self.get_by_id(id)
-        self.schema_update().load(kwargs)
+        result = self.schema_update().load(kwargs)
         if instance is None:
             raise ValueError(f"No record found with id {id}")
         user = self.get_user()
@@ -117,7 +117,7 @@ class AccountHolderRepository(CrudRepository):
             raise ValueError(f"No associated user for account holder {id}")
 
         try:
-            for key, value in kwargs.items():
+            for key, value in result.items():
                 # Check if the attribute is unique in Account Holder
                 if hasattr(self.model, key):
                     setattr(instance, key, value)

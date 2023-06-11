@@ -456,6 +456,22 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         data["birthdate"] = datetime.date(month=m, day=d, year=y)
         return data
 
+    @post_load
+    def formated_id_number(self, data, **kwargs):
+        """
+        Returns the id number transformed to a standard format:
+         - Begins with a capital letter.
+         - Followed by a dash and 7 or 8 digits.
+        """
+        # Remove spaces and dots from the number
+        table = str.maketrans("", "", ". ")
+        id_number = data["id_number"].translate(table)
+
+        # To upper case
+        id_number = id_number.upper()
+        data["id_number"] = id_number
+        return data
+
 
 class Update_Account_Holder_Schema(Create_Account_Holder_Schema):
     # User data
