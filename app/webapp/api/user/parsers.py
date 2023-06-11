@@ -49,15 +49,6 @@ user_post_parser.add_argument(
     help="role_id is required",
     location=("json", "values"),
 )
-
-user_post_parser.add_argument(
-    "verified",
-    type=bool,
-    required=True,
-    help="role_id is required",
-    location=("json", "values"),
-)
-
 user_put_parser = reqparse.RequestParser()
 user_put_parser.add_argument(
     "login",

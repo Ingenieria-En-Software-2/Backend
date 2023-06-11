@@ -1,9 +1,6 @@
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
 
-#from src import app
-
-
 def generate_token(email):
     serializer = URLSafeTimedSerializer("fkslkfsdlksadacsfas")
     return serializer.dumps(email, salt="fkslkfsdlksadacsfas")
@@ -24,6 +21,6 @@ def create_email(to, subject, template):
         subject,
         recipients=[to],
         html=template,
-        sender="noreply@flask.com"
+        sender="pruebasoswer2@gmail.com"
     )
     return msg

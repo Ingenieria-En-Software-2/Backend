@@ -21,7 +21,16 @@ class CrudApi(Resource):
         """
         # Si hay id especificado, se busca en la base.
 
-        print("\n\nget\n\n")
+        # Si se recibe el token de verificacion, actualizar el usuario en la BD
+        try:
+            token = request.args.get('token')
+            if confirm_token(token) != False:
+                usuario = self.repository.get_by(login=confirm_token(token))
+                self.repository.update(usuario[0].id, verified=True)
+        except:
+            pass
+        
+        print("id: ", id)
 
         if id:
             user = self.repository.get_by_id(id)
@@ -67,30 +76,24 @@ class CrudApi(Resource):
 
         :return: The id of the created resource
         """
-        print("\n\npost\n\n")
-        args = self.post_parser.parse_args(strict=True)
-        print("args: ", args)
-        result = self.repository.create(**args)
-        #print("resultado: ", result)
         
+        args = self.post_parser.parse_args(strict=True)        
+        result = self.repository.create(**args)
+                
         if not result:
             abort(500, "Something went wrong creating resource")
         
-        #try:
+        # Crear token de verificacion y enviar correo para verificar usuario
         if args.user_type == 'user':
             mail = Mail()
-            print("enviar correo de verificacion a : ", args.login)
             token = generate_token(args.login)
-            #print("token creado: ", token)
             confirm_url = url_for('verifyapi', token=token, _external=True)
-            print("confirm_url: ", confirm_url)
             html = render_template('confirm_email.html', confirm_url=confirm_url)
-            print("html creado")
             email = create_email(args.login, "Confirm your email", html)
-            print("email creado")
-            #mail.send(email)
-        #except:
-        #    pass
+            try:
+                mail.send(email)
+            except:
+                pass
 
         return {"id": result.id}, 201
 

@@ -22,7 +22,7 @@ def create_module(app, **kwargs):
 
     rest_api.add_resource(
         VerifyApi,
-        "/api/verify/",
+        "/api/verify",
         "/api/verify/<int:id>"
     )
 
