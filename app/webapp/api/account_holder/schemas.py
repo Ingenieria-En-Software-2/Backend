@@ -213,7 +213,6 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             - birthdate_t.year
             - ((today.month, today.day) < (birthdate_t.month, birthdate_t.day))
         )
-        print(age)
 
         if age < 18:
             raise ValidationError("The minimum age to register is 18 years")
@@ -227,7 +226,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
 
         A nationality is valid if only contains letters
         """
-        regex = r"^[a-zA-Z\s]+$"
+        regex = r"^[a-zA-Z\sáéíóúÁÉÍÓÚñÑüÜ]+"
         if not re.fullmatch(regex, value):
             raise ValidationError("The nationality must only contain letters and spaces")
 
@@ -239,7 +238,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         A street is valid if it only contains letters, numbers and the
         following characters: ., _, -, /, #, (, )
         """
-        regex = r"^[a-zA-Z0-9\s\.\-\/#()]+$"
+        regex = r"^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑüÜ\.\-\/#()]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
                 "The street must only contain letters, spaces, numbers"
@@ -254,7 +253,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         A sector is valid if it only contains letters, numbers and the
         following characters: ., _, -, /, #, (, )
         """
-        regex = r"^[a-zA-Z0-9\s\.\-\/#()]+$"
+        regex = r"^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑüÜ\.\-\/#()]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
                 "The sector must only contain letters, spaces, numbers"
@@ -268,7 +267,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
 
         A city is valid if it only contains letters and spaces
         """
-        regex = r"^[a-zA-Z\s]+$"
+        regex = r"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError("The city must only contain letters and spaces")
 
@@ -285,7 +284,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
 
         A province is valid if it only contains letters and spaces
         """
-        regex = r"^[a-zA-Z\s]+$"
+        regex = r"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError("The province must only contain letters and spaces")
 
@@ -296,7 +295,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
 
         A township is valid if it only contains letters and spaces
         """
-        regex = r"^[a-zA-Z\s]+$"
+        regex = r"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError("The township must only contain letters and spaces")
 
@@ -308,7 +307,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         An address is valid if it only contains letters, numbers and the
         following characters: ., _, -, /, #, (, )
         """
-        regex = r"^[a-zA-Z0-9\s\.\-\/#()]+$"
+        regex = r"^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑüÜ\.\-\/#()]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
                 "The address must only contain letters, spaces, numbers"
@@ -322,7 +321,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
 
         An employer name is valid if it only contains letters and spaces
         """
-        regex = r"^[a-zA-Z\s]+$"
+        regex = r"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
                 "The employer name must only contain letters and spaces"
@@ -355,7 +354,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
 
         An employer city is valid if it only contains letters and spaces
         """
-        regex = r"^[a-zA-Z\s]+$"
+        regex = r"^[a-zA-Z\sáéíóúÁÉÍÓÚñÑüÜ]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
                 "The employer city must only contain letters and spaces"
@@ -378,7 +377,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
 
         An employer province is valid if it only contains letters and spaces
         """
-        regex = r"^[a-zA-Z\s]+$"
+        regex = r"^[a-zA-Z\sáéíóúÁÉÍÓÚñÑüÜ]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
                 "The employer province must only contain letters and spaces"
@@ -391,7 +390,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
 
         An employer township is valid if it only contains letters and spaces
         """
-        regex = r"^[a-zA-Z\s]+$"
+        regex = r"^[a-zA-Z\sáéíóúÁÉÍÓÚñÑüÜ]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
                 "The employer township must only contain letters and spaces"
@@ -405,7 +404,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         An employer address is valid if it only contains letters, numbers and
         the following characters: ., _, -, /, #, (, )
         """
-        regex = r"^[a-zA-Z0-9\s\.\-\/#()]+$"
+        regex = r"^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑüÜ\.\-\/#()]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
                 "The employer address must only contain letters, spaces,"
