@@ -16,7 +16,7 @@ bcrypt = Bcrypt()
 
 
 def create_app(object_name):
-    app = Flask(__name__,template_folder='templates')
+    app = Flask(__name__, template_folder="templates")
     app.config.from_object(object_name)
     app.config[
         "JWT_SECRET_KEY"
@@ -25,16 +25,18 @@ def create_app(object_name):
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
     jwt = JWTManager(app)
 
-    app.config.update(dict(
-        MAIL_DEFAULT_SENDER = "noreply@flask.com",
-        MAIL_SERVER = "smtp.gmail.com",
-        MAIL_PORT = 465,
-        MAIL_USE_TLS = False,
-        MAIL_USE_SSL = True,
-        MAIL_DEBUG = False,
-        MAIL_USERNAME = "pruebasoswer2@gmail.com",
-        MAIL_PASSWORD = "xvfyzzeqmqdjmifi"
-    ))
+    app.config.update(
+        dict(
+            MAIL_DEFAULT_SENDER="noreply@flask.com",
+            MAIL_SERVER="smtp.gmail.com",
+            MAIL_PORT=465,
+            MAIL_USE_TLS=False,
+            MAIL_USE_SSL=True,
+            MAIL_DEBUG=False,
+            MAIL_USERNAME="pruebasoswer2@gmail.com",
+            MAIL_PASSWORD="xvfyzzeqmqdjmifi",
+        )
+    )
 
     db.init_app(app)
     migrate.init_app(app, db)

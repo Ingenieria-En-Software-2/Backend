@@ -5,8 +5,8 @@ from webapp.api.account_holder.models import AccountHolder
 import sys
 
 
-def add_user(login, password, name, lastname, user_type, role_id,verified=False):
-    user = User(login, password, name, lastname, user_type, role_id,verified)
+def add_user(login, password, name, lastname, user_type, role_id, verified=False):
+    user = User(login, password, name, lastname, user_type, role_id, verified)
     db.session.add(user)
     db.session.commit()
     return user

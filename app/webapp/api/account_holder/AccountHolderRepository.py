@@ -88,7 +88,6 @@ class AccountHolderRepository(CrudRepository):
             }
             # Add the user_id to the filtered data
             filtered_data["user_id"] = user.id
-
             # Create the instance
             instance = AccountHolder(**filtered_data)
             self.db.session.add(instance)
@@ -109,12 +108,15 @@ class AccountHolderRepository(CrudRepository):
         """
 
         instance = self.get_by_id(id)
-        result = self.schema_update().load(kwargs)
         if instance is None:
             raise ValueError(f"No record found with id {id}")
         user = self.get_user()
         if user is None:
             raise ValueError(f"No associated user for account holder {id}")
+
+        kwargs["id"] = id
+        result = self.schema_update().load(kwargs)
+        result.pop("id")
 
         try:
             for key, value in result.items():
