@@ -7,6 +7,7 @@ import phonenumbers
 import pycountry
 import re
 from webapp.api.user.schemas import Create_User_Schema
+from webapp.api.account_holder.models import AccountHolder
 from webapp.api.generic.GetSchema import Generic_Get_Schema
 from marshmallow import (
     Schema,
@@ -417,16 +418,31 @@ class Create_Account_Holder_Schema(Create_User_Schema):
 
         A phone number is valid if it is a valid number in the country entered.
         """
-        # Get the country code from the country name
-        country = pycountry.countries.search_fuzzy(data["country"])[0]
-        iso_code = country.alpha_2
+        # If the phone number is entered but not the country, get the country
+        if "phone" in data and "country" not in data:
+            # Get the country of the user
+            istance = AccountHolder.query.filter_by(id=data["id"]).first()
+            country = pycountry.countries.search_fuzzy(istance.country)[0]
+            iso_code = country.alpha_2
 
-        # Validate the phone number using the country code
-        phone_number = phonenumbers.parse(data["phone"], iso_code)
-        is_valid = phonenumbers.is_valid_number(phone_number)
+            # Validate the phone number using the country code
+            phone_number = phonenumbers.parse(data["phone"], iso_code)
+            is_valid = phonenumbers.is_valid_number(phone_number)
 
-        if not is_valid:
-            raise ValidationError("The phone number entered is invalid")
+            if not is_valid:
+                raise ValidationError("The phone number entered is invalid")
+        # If the phone number and country is entered, validate the phone number
+        elif "phone" in data and "country" in data:
+            # Get the country code from the country name
+            country = pycountry.countries.search_fuzzy(data["country"])[0]
+            iso_code = country.alpha_2
+
+            # Validate the phone number using the country code
+            phone_number = phonenumbers.parse(data["phone"], iso_code)
+            is_valid = phonenumbers.is_valid_number(phone_number)
+
+            if not is_valid:
+                raise ValidationError("The phone number entered is invalid")
 
     @validates_schema(skip_on_field_errors=True)
     def validate_employer_phone(self, data, **kwargs):
@@ -435,25 +451,42 @@ class Create_Account_Holder_Schema(Create_User_Schema):
 
         A employer phone number is valid if it is a valid number in the country entered.
         """
-        # Get the country code from the country name
-        country = pycountry.countries.search_fuzzy(data["employer_country"])[0]
-        iso_code = country.alpha_2
+        # If the phone number is entered but not the country, get the country
+        if "employer_phone" in data and "employer_country" not in data:
+            # Get the country of the user
+            istance = AccountHolder.query.filter_by(id=data["id"]).first()
+            country = pycountry.countries.search_fuzzy(istance.country)[0]
+            iso_code = country.alpha_2
 
-        # Validate the phone number using the country code
-        phone_number = phonenumbers.parse(data["employer_phone"], iso_code)
-        is_valid = phonenumbers.is_valid_number(phone_number)
+            # Validate the phone number using the country code
+            phone_number = phonenumbers.parse(data["employer_phone"], iso_code)
+            is_valid = phonenumbers.is_valid_number(phone_number)
 
-        if not is_valid:
-            raise ValidationError("The employer phone number entered is invalid")
+            if not is_valid:
+                raise ValidationError("The employer phone number entered is invalid")
+        # If the phone number or country is not entered, skip the validation
+        elif "employer_phone" in data and "employer_country" in data:
+            # Get the country code from the country name
+            country = pycountry.countries.search_fuzzy(data["employer_country"])[0]
+            iso_code = country.alpha_2
+
+            # Validate the phone number using the country code
+            phone_number = phonenumbers.parse(data["employer_phone"], iso_code)
+            is_valid = phonenumbers.is_valid_number(phone_number)
+
+            if not is_valid:
+                raise ValidationError("The employer phone number entered is invalid")
 
     @post_load
     def convert_birthdate(self, data, **kwargs):
         """
         Convert the birthdate to a date type
         """
-        m, d, y = data["birthdate"].split("-")
-        m, d, y = int(m), int(d), int(y)
-        data["birthdate"] = datetime.date(month=m, day=d, year=y)
+        # If the birthdate is not entered, skip the validation
+        if "birthdate" in data:
+            m, d, y = data["birthdate"].split("-")
+            m, d, y = int(m), int(d), int(y)
+            data["birthdate"] = datetime.date(month=m, day=d, year=y)
         return data
 
     @post_load
@@ -463,13 +496,15 @@ class Create_Account_Holder_Schema(Create_User_Schema):
          - Begins with a capital letter.
          - Followed by a dash and 7 or 8 digits.
         """
-        # Remove spaces and dots from the number
-        table = str.maketrans("", "", ". ")
-        id_number = data["id_number"].translate(table)
+        # If the id number is not entered, skip the validation
+        if "id_number" in data:
+            # Remove spaces and dots from the number
+            table = str.maketrans("", "", ". ")
+            id_number = data["id_number"].translate(table)
 
-        # To upper case
-        id_number = id_number.upper()
-        data["id_number"] = id_number
+            # To upper case
+            id_number = id_number.upper()
+            data["id_number"] = id_number
         return data
 
 
@@ -505,9 +540,6 @@ class Update_Account_Holder_Schema(Create_Account_Holder_Schema):
     employer_township = fields.String(validate=validate.Length(min=3, max=20))
     employer_address = fields.String(validate=validate.Length(min=3, max=150))
     user_id = fields.Integer()
-
-    class Meta:
-        exclude = ("id",)
 
 
 class Get_Account_Holder_Schema(Generic_Get_Schema):
