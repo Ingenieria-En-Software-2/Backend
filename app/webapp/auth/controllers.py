@@ -88,9 +88,11 @@ class LoginAPI(MethodView):
         post_data = request.get_json()
         try:
             user = User.query.filter_by(login=post_data.get("login")).first()
-            if user and bcrypt.check_password_hash(
-                user.password, post_data.get("password")
-            ) and user.verified == True:
+            if (
+                user
+                and bcrypt.check_password_hash(user.password, post_data.get("password"))
+                and user.verified == True
+            ):
                 ## To protect an EP to ensure that is a logged user use the decorator: @jwt_required(fresh=True)
                 ## To get the value in the identity use the function: get_jwt_identity
                 auth_token = create_access_token(
