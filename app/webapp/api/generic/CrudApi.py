@@ -69,7 +69,7 @@ class CrudApi(Resource):
 
         # Crear token de verificacion y enviar correo para verificar usuario
         args = request.get_json()
-        if args["user_type"] == "user":
+        if args.get("user_type") == "user":
             mail = Mail()
             token = generate_token(args["login"])
             confirm_url = url_for("auth.verify_api", token=token, _external=True)
