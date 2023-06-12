@@ -117,13 +117,11 @@ class UserRepository(CrudRepository):
             return user.role
         else:
             raise ValueError(f"No user found with id {id}")
-    
-    def update_verified_user(self, id):
 
+    def update_verified_user(self, id):
         user = self.db.session.query(self.model).filter_by(id=id).first()
         if user:
             user.verified = True
             self.db.session.commit()
         else:
             raise ValueError(f"No user found with id {id}")
-            

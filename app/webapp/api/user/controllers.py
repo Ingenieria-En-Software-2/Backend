@@ -23,6 +23,7 @@ user_fields = {
 # Instance of the user repository
 user_repository = UserRepository(db, Create_User_Schema, Update_User_Schema)
 
+
 class UserApi(CrudApi):
     # Call to the base class constructor CrudApi
     def __init__(self):

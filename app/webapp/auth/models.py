@@ -20,7 +20,9 @@ class User(db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey("role.id"))
     verified = db.Column(db.Boolean)
 
-    def __init__(self, login, password, name, lastname, user_type, role_id, verified=False):
+    def __init__(
+        self, login, password, name, lastname, user_type, role_id, verified=False
+    ):
         self.login = login
         self.password = password
         self.name = name

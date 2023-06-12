@@ -167,25 +167,23 @@ class UserAPI(MethodView):
             responseObject = {"status": "fail", "message": resp}
             return make_response(jsonify(responseObject)), 401
 
+
 class VerifyAPI(MethodView):
-    
     def get(self):
-
-        token = request.args.get('token')
+        token = request.args.get("token")
         if token:
-
             if confirm_token(token) != False:
                 user = User.query.filter_by(login=confirm_token(token)).first()
                 user.verified = True
                 db.session.commit()
-                
+
                 responseObject = {
                     "status": "success",
-                    "data": {"id": user.id},}
-                
+                    "data": {"id": user.id},
+                }
+
                 return make_response(jsonify(responseObject)), 200
-        
-        
+
         responseObject = {"status": "fail", "message": "Token invalido"}
         return make_response(jsonify(responseObject)), 401
 
