@@ -213,6 +213,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             - birthdate_t.year
             - ((today.month, today.day) < (birthdate_t.month, birthdate_t.day))
         )
+        print(age)
 
         if age < 18:
             raise ValidationError("The minimum age to register is 18 years")
@@ -226,9 +227,9 @@ class Create_Account_Holder_Schema(Create_User_Schema):
 
         A nationality is valid if only contains letters
         """
-        regex = r"^[a-zA-Z]+$"
+        regex = r"^[a-zA-Z\s]+$"
         if not re.fullmatch(regex, value):
-            raise ValidationError("The nationality must only contain letters")
+            raise ValidationError("The nationality must only contain letters and spaces")
 
     @validates("street")
     def validate_street(self, value):
