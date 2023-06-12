@@ -1,6 +1,7 @@
-from flask import abort, request
-from flask_restful import Resource
-
+from flask import abort, request, url_for, render_template
+from flask_mail import Mail
+from flask_restful import Resource, marshal
+from webapp.auth.token import *
 
 class CrudApi(Resource):
     def __init__(self, repository, get_schema):
@@ -15,7 +16,7 @@ class CrudApi(Resource):
 
         :return: The resource or a list of resources.
         """
-
+        
         # Si hay id especificado, se busca en la base.
         if id:
             resource = self.repository.get_by_id(id)
@@ -62,6 +63,24 @@ class CrudApi(Resource):
 
         result = self.repository.create(**request.get_json())
 
+        if not result:
+            abort(500, "Something went wrong creating resource")
+        
+        # Crear token de verificacion y enviar correo para verificar usuario
+        args = request.get_json()
+        if args['user_type'] == 'user':
+            mail = Mail()
+            token = generate_token(args['login'])
+            confirm_url = url_for('auth.verify_api', token=token, _external=True)
+            print(confirm_url)
+            html = render_template('confirm_email.html', confirm_url=confirm_url)
+            email = create_email(args['login'], "Confirm your email", html)
+            
+            try:
+                mail.send(email)
+            except:
+                pass
+        
         return {"id": result.id}, 201
 
     def put(self, id=None):

@@ -18,14 +18,16 @@ class User(db.Model):
     lastname = db.Column(db.String())
     user_type = db.Column(db.String())
     role_id = db.Column(db.Integer, db.ForeignKey("role.id"))
+    verified = db.Column(db.Boolean)
 
-    def __init__(self, login, password, name, lastname, user_type, role_id):
+    def __init__(self, login, password, name, lastname, user_type, role_id, verified=False):
         self.login = login
         self.password = password
         self.name = name
         self.lastname = lastname
         self.user_type = user_type
         self.role_id = role_id
+        self.verified = verified
 
     def __repr__(self):
         return id_str.format(self.id)
