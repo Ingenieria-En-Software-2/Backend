@@ -21,7 +21,8 @@ class AccountHolderRepository(CrudRepository):
         Gets a account holder by login.
 
         :param login: The login of the user to retrieve.
-        :return: The user with the specified login, or `None` if no user was found or is not accountholder.
+        :return: The user with the specified login, or `None` if no user was
+                 found or is not accountholder.
         """
         return (
             self.db.session.query(User)
@@ -47,7 +48,7 @@ class AccountHolderRepository(CrudRepository):
             return user
         else:
             raise ValueError(
-                f"User Error Inconsistency for {self.model.id} account holder"
+                f"Error de usuario inconsistente para {self.model.id} account holder,"
             )
 
     def create(self, **kwargs):
@@ -109,10 +110,10 @@ class AccountHolderRepository(CrudRepository):
 
         instance = self.get_by_id(id)
         if instance is None:
-            raise ValueError(f"No record found with id {id}")
+            raise ValueError(f"Registro no encontrado para {id}")
         user = self.get_user()
         if user is None:
-            raise ValueError(f"No associated user for account holder {id}")
+            raise ValueError(f"No hay usuario asociado con account holder {id}")
 
         kwargs["id"] = id
         result = self.schema_update().load(kwargs)
@@ -130,6 +131,6 @@ class AccountHolderRepository(CrudRepository):
             return instance
         except Exception as e:
             self.db.session.rollback()
-            print(f"An error occurred while updating the record: {e}")
+            print(f"A ocurrido un error al actualizar el registro: {e}") #falta
 
             return None

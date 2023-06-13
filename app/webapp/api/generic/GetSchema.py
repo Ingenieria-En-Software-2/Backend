@@ -1,6 +1,7 @@
 """
 A generic schema for accepting pagination parameters in Get requests. 
-It is necessary to implement the 'sort by' field in the classes that inherit from this schema
+It is necessary to implement the 'sort by' field in the classes that inherit
+from this schema
 """
 
 from marshmallow import Schema, fields, validate

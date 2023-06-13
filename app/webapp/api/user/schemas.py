@@ -17,14 +17,46 @@ class Create_User_Schema(Schema):
     login = fields.String(
         required=True,
         validate=[
-            validate.Length(min=6, max=50),
-            validate.Email(error="Not a valid email address"),
+            validate.Length(
+                min=6,
+                max=50,
+                error="El correo electrónico debe tener entre 6 y 50 caracteres",
+            ),
+            validate.Email(error="Correo electrónico no válido"),
         ],
     )
-    password = fields.String(required=True, validate=validate.Length(min=6, max=20))
-    name = fields.String(required=True, validate=validate.Length(min=2, max=20))
-    lastname = fields.String(required=True, validate=validate.Length(min=2, max=20))
-    user_type = fields.String(required=True, validate=validate.Length(min=4, max=20))
+    password = fields.String(
+        required=True,
+        validate=validate.Length(
+            min=6,
+            max=20,
+            error="La contraseña debe tener entre 6 y 20 caracteres",
+        ),
+    )
+    name = fields.String(
+        required=True,
+        validate=validate.Length(
+            min=2,
+            max=20,
+            error="El nombre debe tener entre 2 y 20 caracteres",
+        ),
+    )
+    lastname = fields.String(
+        required=True,
+        validate=validate.Length(
+            min=2,
+            max=20,
+            error="El apellido debe tener entre 2 y 20 caracteres",
+        ),
+    )
+    user_type = fields.String(
+        required=True,
+        validate=validate.Length(
+            min=4,
+            max=20,
+            error="El tipo de usuario debe tener entre 4 y 20 caracteres",
+        ),
+    )
     role_id = fields.Integer(required=True)
     verified = fields.String(required=False)
 
@@ -37,7 +69,9 @@ class Create_User_Schema(Schema):
         """
         regex = r"^[a-zA-Z\s]+$"
         if not re.match(regex, value):
-            raise ValidationError("The name can contain only letters and spaces")
+            raise ValidationError(
+                "El nombre solo puede contener letras y espacios"
+            )
 
     @validates("lastname")
     def validate_lastname(self, value):
@@ -48,20 +82,46 @@ class Create_User_Schema(Schema):
         """
         regex = r"^[a-zA-Z\s]+$"
         if not re.match(regex, value):
-            raise ValidationError("The last name can only contain letters and spaces")
+            raise ValidationError(
+                "El apellido solo puede contener letras y espacios"
+            )
 
 
 class Update_User_Schema(Create_User_Schema):
     login = fields.String(
         validate=[
-            validate.Email(error="Not a valid emailaddress"),
+            validate.Email(error="Correo electrónico no válido"),
             validate.Length(min=6, max=50),
-        ]
+        ],
     )
-    password = fields.String(validate=validate.Length(min=6, max=20))
-    name = fields.String(validate=validate.Length(min=2, max=20))
-    lastname = fields.String(validate=validate.Length(min=2, max=20))
-    user_type = fields.String(validate=validate.Length(min=4, max=20))
+    password = fields.String(
+        validate=validate.Length(
+            min=6,
+            max=20,
+            error="La contraseña debe tener entre 6 y 20 caracteres",
+        ),
+    )
+    name = fields.String(
+        validate=validate.Length(
+            min=2,
+            max=20,
+            error="El nombre debe tener entre 2 y 20 caracteres",
+        )
+    )
+    lastname = fields.String(
+        validate=validate.Length(
+            min=2,
+            max=20,
+            error="El apellido debe tener entre 2 y 20 caracteres",
+        ),
+    )
+    user_type = fields.String(
+        validate=validate.Length(
+            min=4,
+            max=20,
+            error="El tipo de usuario debe tener entre 4 y 20 caracteres",
+        ),
+    )
     role_id = fields.Integer()
 
     class Meta:
