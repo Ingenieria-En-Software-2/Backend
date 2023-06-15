@@ -60,7 +60,6 @@ class AccountHolderRepository(CrudRepository):
         :return: The newly created record.
         """
 
-        print("\n\n\nAccountHolderRepository create\n\n\n")
         result = self.schema_create().load(kwargs)
         user_data = {}
         for i in (
@@ -76,7 +75,6 @@ class AccountHolderRepository(CrudRepository):
 
         user_data["password"] = None
 
-        correo = user_data.get("login")
         if user_data.get("user_type") != None:
             mail = Mail()
             token = generate_token(user_data["login"])

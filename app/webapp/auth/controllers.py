@@ -1,4 +1,4 @@
-from flask import Blueprint, request, make_response, jsonify
+from flask import Blueprint, request, make_response, jsonify, redirect, url_for
 from flask.views import MethodView
 from flask_jwt_extended import (
     create_access_token,
@@ -23,7 +23,7 @@ auth_blueprint = Blueprint(
 
 class RegisterAPI(MethodView):
     def post(self):
-        print("\n\nRegisterAPI\n\n")
+        
         post_data = request.get_json()
         user = User.query.filter_by(login=post_data.get("login")).first()
         if not user:
@@ -189,7 +189,11 @@ class VerifyAPI(MethodView):
                     "status": "success",
                     "data": {"id": user.id},
                 }
-
+                """return redirect(
+                    request.base_url.replace("/auth/verify", "/verify"),
+                    200,
+                    make_response(jsonify(responseObject))
+                )"""
                 return make_response(jsonify(responseObject)), 200
 
         responseObject = {"status": "fail", "message": "Token invalido"}
