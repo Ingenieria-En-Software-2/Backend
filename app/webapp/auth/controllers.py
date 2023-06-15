@@ -189,12 +189,11 @@ class VerifyAPI(MethodView):
                     "status": "success",
                     "data": {"id": user.id},
                 }
-                """return redirect(
-                    request.base_url.replace("/auth/verify", "/verify"),
+                return redirect(
+                    "http://localhost:5173/verify",
                     200,
-                    make_response(jsonify(responseObject))
-                )"""
-                return make_response(jsonify(responseObject)), 200
+                    make_response(jsonify(responseObject)))
+                #return make_response(jsonify(responseObject)), 200
 
         responseObject = {"status": "fail", "message": "Token invalido"}
         return make_response(jsonify(responseObject)), 401
