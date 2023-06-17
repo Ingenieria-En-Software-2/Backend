@@ -49,6 +49,15 @@ class Create_User_Schema(Schema):
             error="El apellido debe tener entre 2 y 20 caracteres",
         ),
     )
+    person_type = fields.String(
+        required=True,
+        validate=validate.Length(
+            min=5,
+            max=20,
+            error="El tipo de persona debe tener entre 4 y 20 caracteres",
+        ),
+    )
+
     user_type = fields.String(
         required=True,
         validate=validate.Length(
@@ -84,6 +93,19 @@ class Create_User_Schema(Schema):
         if not re.match(regex, value):
             raise ValidationError(
                 "El apellido solo puede contener letras y espacios"
+            )
+
+    @validates("person_type")
+    def validate_person_type(self, value):
+        """
+        Validates that a user's person type contains only letters and spaces.
+        Throws a ValidationError exception in case the person type does not
+        comply with the pattern.
+        """
+        allowed_types = ["natural", "legal"]
+        if value not in allowed_types:
+            raise ValidationError(
+                "El tipo de persona solo puede ser natural o legal"
             )
 
 
