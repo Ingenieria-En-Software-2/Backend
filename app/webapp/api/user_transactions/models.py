@@ -49,7 +49,8 @@ class UserTransaction(db.Model):
     user = relationship("User", cascade="delete")
     currency = relationship("Currency", cascade="delete")
     transaction_status = relationship("TransactionStatus", cascade="delete")
-    user_accounts = relationship("UserAccount", cascade="delete")
+    user_accounts = relationship("UserAccount", cascade="delete",
+    primaryjoin="UserTransaction.origin_account == UserAccount.id or UserTransaction.destination_account == UserAccount.id")
 
     # Personal Data
     id = db.Column(db.Integer, primary_key=True)
