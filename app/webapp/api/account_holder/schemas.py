@@ -39,7 +39,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         validate=validate.Length(
             min=3,
             max=30,
-            error="The nationality must have between 3 and 30 characters",
+            error="La nacionalidad debe tener entre 3 y 30 caracteres",
         ),
     )
     street = fields.String(
@@ -47,7 +47,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         validate=validate.Length(
             min=3,
             max=50,
-            error="The street must have between 3 and 50 characters",
+            error="La calle debe tener entre 3 y 50 caracteres",
         ),
     )
     sector = fields.String(
@@ -56,7 +56,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         validate=validate.Length(
             min=3,
             max=50,
-            error="The sector must have between 3 and 50 characters",
+            error="El sector debe tener entre 3 y 50 caracteres",
         ),
     )
     city = fields.String(
@@ -65,7 +65,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         validate=validate.Length(
             min=3,
             max=50,
-            error="The city must have between 3 and 50 characters",
+            error="La ciudad debe tener entre 3 y 50 caracteres",
         ),
     )
     country = fields.String(required=True)
@@ -75,7 +75,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         validate=validate.Length(
             min=3,
             max=20,
-            error="The province must have between 3 and 20 characters",
+            error="La provincia debe tener entre 3 y 20 caracteres",
         ),
     )
     township = fields.String(
@@ -83,7 +83,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         validate=validate.Length(
             min=3,
             max=20,
-            error="The township must have between 3 and 20 characters",
+            error="El municipio debe tener entre 3 y 20 caracteres",
         ),
     )
     address = fields.String(
@@ -91,7 +91,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         validate=validate.Length(
             min=3,
             max=150,
-            error="The address must have between 3 and 150 characters",
+            error="La dirección debe tener entre 3 y 150 caracteres",
         ),
     )
     employer_name = fields.String(
@@ -99,7 +99,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         validate=validate.Length(
             min=3,
             max=50,
-            error="The employer name must have between 3 and 50 characters",
+            error="El nombre del empleador debe tener entre 3 y 50 caracteres",
         ),
     )
     employer_rif = fields.String(required=True)
@@ -110,7 +110,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         validate=validate.Length(
             min=3,
             max=50,
-            error="The employer city must have between 3 and 50 characters",
+            error="La ciudad del empleador debe tener entre 3 y 50 caracteres",
         ),
     )
     employer_country = fields.String(required=True)
@@ -120,7 +120,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         validate=validate.Length(
             min=3,
             max=20,
-            error="The employer province must have between 3 and 20 characters",
+            error="La provincia del empleador debe tener entre 3 y 20 caracteres",
         ),
     )
     employer_township = fields.String(
@@ -128,7 +128,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         validate=validate.Length(
             min=3,
             max=20,
-            error="The employer township must have between 3 and 20 characters",
+            error="El municipio del empleador debe tener entre 3 y 20 caracteres",
         ),
     )
     employer_address = fields.String(
@@ -136,7 +136,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         validate=validate.Length(
             min=3,
             max=150,
-            error="The employer address must have between 3 and 150 characters",
+            error="La dirección del empleador debe tener entre 3 y 150 caracteres",
         ),
     )
 
@@ -162,9 +162,9 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         regex = r"[V|E|J|G|C]-\d{7,8}"
         if not re.fullmatch(regex, id_number):
             raise ValidationError(
-                "The id number entered is invalid, it must have the format "
-                + "<Type>-<number> Posible values for type: V,J,G,E,C and "
-                "number most have between 7 and 8 digits"
+                "El número de cédula ingresado es inválido, debe tener el "
+                + "formato <Tipo>-<número> Posibles valores para tipo: V,J,G,E,C "
+                + "y número debe tener entre 7 y 8 dígitos"
             )
 
     @validates("gender")
@@ -177,7 +177,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         regex = r"^[M|F|O]$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
-                "The gender must have be one of the following: M, F, O"
+                "El género debe ser uno de los siguientes: M, F, O"
             )
 
     @validates("civil_status")
@@ -190,7 +190,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         regex = r"^[S|C|D|V]$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
-                "The civil status must have be one of the following: S, C, D, V"
+                "El estado civil debe ser uno de los siguientes: S, C, D, V"
             )
 
     @validates("birthdate")
@@ -205,7 +205,9 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         """
         regex = r"^\d{2}-\d{2}-\d{4}$"
         if not re.fullmatch(regex, value):
-            raise ValidationError("The birthdate must have the format MM-DD-YYYY")
+            raise ValidationError(
+                "La fecha de nacimiento debe tener el formato MM-DD-YYYY"
+            )
 
         # Convert birthdate a tipo Date using datetime library
         m, d, y = value.split("-")
@@ -220,9 +222,9 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         )
 
         if age < 18:
-            raise ValidationError("The minimum age to register is 18 years")
+            raise ValidationError("La edad mínima para registrarse es 18 años")
         elif age > 100:
-            raise ValidationError("The maximun age to register is 100 years")
+            raise ValidationError("La edad máxima para registrarse es 100 años")
 
     @validates("nationality")
     def validate_nationality(self, value):
@@ -234,7 +236,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         regex = r"^[a-zA-Z\sáéíóúÁÉÍÓÚñÑüÜ]+"
         if not re.fullmatch(regex, value):
             raise ValidationError(
-                "The nationality must only contain letters and spaces"
+                "La nacionalidad debe contener solo letras y espacios"
             )
 
     @validates("street")
@@ -248,8 +250,8 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         regex = r"^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑüÜ\.\-\/#()]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
-                "The street must only contain letters, spaces, numbers"
-                + " and the characters ., _, -, /,  #, (, )"
+                "La calle debe contener solo letras, espacios, números y los "
+                + "caracteres ., _, -, /, #, (, )"
             )
 
     @validates("sector")
@@ -265,8 +267,8 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             regex = r"^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑüÜ\.\-\/#()]+$"
             if not re.fullmatch(regex, value):
                 raise ValidationError(
-                    "The sector must only contain letters, spaces, numbers"
-                    + " and the characters ., _, -, /,  #, (, )"
+                    "El sector debe contener solo letras, espacios, números y "
+                    + "los caracteres ., _, -, /, #, (, )"
                 )
 
     @validates("city")
@@ -280,13 +282,15 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         if value is not None:
             regex = r"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$"
             if not re.fullmatch(regex, value):
-                raise ValidationError("The city must only contain letters and spaces")
+                raise ValidationError(
+                    "La ciudad debe contener solo letras y espacios"
+                )
 
     @validates("country")
     def validate_country(self, value):
         country = pycountry.countries.search_fuzzy(value)[0]
         if country is None:
-            raise ValidationError("The country entered is invalid")
+            raise ValidationError("El país ingresado no es válido")
 
     @validates("province")
     def validate_province(self, value):
@@ -300,7 +304,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             regex = r"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$"
             if not re.fullmatch(regex, value):
                 raise ValidationError(
-                    "The province must only contain letters and spaces"
+                    "La provincia debe contener solo letras y espacios"
                 )
 
     @validates("township")
@@ -312,7 +316,9 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         """
         regex = r"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$"
         if not re.fullmatch(regex, value):
-            raise ValidationError("The township must only contain letters and spaces")
+            raise ValidationError(
+                "El municipio debe contener solo letras y espacios"
+            )
 
     @validates("address")
     def validate_address(self, value):
@@ -325,8 +331,8 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         regex = r"^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑüÜ\.\-\/#()]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
-                "The address must only contain letters, spaces, numbers"
-                + " and the characters ., _, -, /,  #, (, )"
+                "La dirección debe contener solo letras, espacios, números y "
+                + "los caracteres ., _, -, /, #, (, )"
             )
 
     @validates("employer_name")
@@ -339,7 +345,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         regex = r"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
-                "The employer name must only contain letters and spaces"
+                "El nombre del empleador debe contener solo letras y espacios"
             )
 
     @validates("employer_rif")
@@ -356,10 +362,10 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         regex = r"^[V|E|J|P|G|v|e|j|p|g]-\d{7,8}-\d$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
-                "The employer RIF must have the format"
-                + " <letter>-<number>-<digit> Possible letters: V, E, J, P, G,"
-                + " numbers must have between 7 and 8 digits and the digit must"
-                + " be between 0 and 9"
+                "El RIF del empleador debe tener el formato"
+                + " <letra>-<número>-<dígito> Letras posibles: V, E, J, P, G,"
+                + " números deben tener entre 7 y 8 dígitos y el dígito debe"
+                + " estar entre 0 y 9"
             )
 
     @validates("employer_city")
@@ -374,7 +380,8 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             regex = r"^[a-zA-Z\sáéíóúÁÉÍÓÚñÑüÜ]+$"
             if not re.fullmatch(regex, value):
                 raise ValidationError(
-                    "The employer city must only contain letters and spaces"
+                    "La ciudad del empleador debe contener solo letras y "
+                    + "espacios"
                 )
 
     @validates("employer_country")
@@ -385,7 +392,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         """
         country = pycountry.countries.search_fuzzy(value)[0]
         if country is None:
-            raise ValidationError("The employer country entered is invalid")
+            raise ValidationError("El país del empleador es inválido")
 
     @validates("employer_province")
     def validate_employer_province(self, value):
@@ -399,7 +406,8 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             regex = r"^[a-zA-Z\sáéíóúÁÉÍÓÚñÑüÜ]+$"
             if not re.fullmatch(regex, value):
                 raise ValidationError(
-                    "The employer province must only contain letters and spaces"
+                    "La provincia del empleador debe contener solo letras y "
+                    + "espacios"
                 )
 
     @validates("employer_township")
@@ -412,7 +420,8 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         regex = r"^[a-zA-Z\sáéíóúÁÉÍÓÚñÑüÜ]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
-                "The employer township must only contain letters and spaces"
+                "El municipio del empleador debe contener solo letras y "
+                + "espacios"
             )
 
     @validates("employer_address")
@@ -426,8 +435,8 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         regex = r"^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑüÜ\.\-\/#()]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
-                "The employer address must only contain letters, spaces,"
-                + " numbers and the characters ., _, -, /,  #, (, )"
+                "La dirección del empleador debe contener solo letras, "
+                + "espacios, números y los caracteres ., _, -, /, #, (, )"
             )
 
     @validates_schema(skip_on_field_errors=True)
@@ -449,7 +458,9 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             is_valid = phonenumbers.is_valid_number(phone_number)
 
             if not is_valid:
-                raise ValidationError("The phone number entered is invalid")
+                raise ValidationError(
+                    "El número de teléfono ingresado es inválido"
+                )
         # If the phone number and country is entered, validate the phone number
         elif "phone" in data and "country" in data:
             # Get the country code from the country name
@@ -461,7 +472,9 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             is_valid = phonenumbers.is_valid_number(phone_number)
 
             if not is_valid:
-                raise ValidationError("The phone number entered is invalid")
+                raise ValidationError(
+                    "El número de teléfono ingresado es inválido"
+                )
 
     @validates_schema(skip_on_field_errors=True)
     def validate_employer_phone(self, data, **kwargs):
@@ -482,7 +495,9 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             is_valid = phonenumbers.is_valid_number(phone_number)
 
             if not is_valid:
-                raise ValidationError("The employer phone number entered is invalid")
+                raise ValidationError(
+                    "El número de teléfono del empleador ingresado es inválido"
+                )
         # If the phone number or country is not entered, skip the validation
         elif "employer_phone" in data and "employer_country" in data:
             # Get the country code from the country name
@@ -494,7 +509,9 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             is_valid = phonenumbers.is_valid_number(phone_number)
 
             if not is_valid:
-                raise ValidationError("The employer phone number entered is invalid")
+                raise ValidationError(
+                    "El número de teléfono del empleador ingresado es inválido"
+                )
 
     @post_load
     def convert_birthdate(self, data, **kwargs):

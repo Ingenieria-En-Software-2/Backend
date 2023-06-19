@@ -65,7 +65,7 @@ class CrudApi(Resource):
         result = self.repository.create(**request.get_json())
 
         if not result:
-            abort(500, "Something went wrong creating resource")
+            abort(500, "Algo salio mal creando el recurso")
 
         # Crear token de verificacion y enviar correo para verificar usuario
         args = request.get_json()

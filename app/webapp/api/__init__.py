@@ -3,6 +3,8 @@ from .user.controllers import UserApi
 from .role.controllers import RoleApi
 from flask import Blueprint
 from .account_holder.controllers import AccountHolderApi
+from .user_account.controllers import UserAccountApi
+from .user_transactions.controllers import UserTransactionsApi
 
 # Parchear el manejador de excepciones de la API
 Api.error_router = lambda self, hnd, e: hnd(e)
@@ -30,6 +32,18 @@ def create_module(app, **kwargs):
         AccountHolderApi,
         "/account_holder",
         "/account_holder/<int:id>",
+    )
+
+    rest_api.add_resource(
+        UserAccountApi,
+        "/user_account",
+        "/user_account/<int:id>",
+    )
+
+    rest_api.add_resource(
+        UserTransactionsApi,
+        "/user_transactions",
+        "/user_transactions/<int:id>",
     )
 
     app.register_blueprint(rest_api_bp)
