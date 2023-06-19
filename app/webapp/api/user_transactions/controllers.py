@@ -9,16 +9,10 @@ from webapp.auth.models import db
 from .models import UserTransaction
 from .UserTransactionsRepository import UserTransactionsRepository
 from webapp.api.generic.CrudApi import CrudApi
-from .schemas import (
-    Create_User_Transaction_Schema,
-    Update_User_Transaction_Schema,
-    Get_User_Transaction_Schema,
-)
+from .schemas import Get_User_Transaction_Schema
 
 # Instance of the account holder repository
-user_transactions_repository = UserTransactionsRepository(
-    UserTransaction, db, Create_User_Transaction_Schema, Update_User_Transaction_Schema
-)
+user_transactions_repository = UserTransactionsRepository(db)
 
 
 class UserTransactionsApi(CrudApi):

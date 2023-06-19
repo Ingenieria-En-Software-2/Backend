@@ -53,8 +53,8 @@ class AccountType(db.Model):
 class UserAccount(db.Model):
     __tablename__ = "user_account"
 
-    user = relationship("User", cascade="delete")
-    account_type = relationship("AccountType", cascade="delete")
+    user = relationship("User")
+    account_type = relationship("AccountType")
 
     # Personal Data
     id = db.Column(db.Integer, primary_key=True)
