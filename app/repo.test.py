@@ -109,13 +109,15 @@ def create_transactions():
         'transaction_type' : 'Paypal',
         'transaction_date' : str(datetime.datetime.now()),
         'user_id' : 1,
-        'amount' : 500,
+        'amount' : 100,
         'currency_id' : 1,
-        'origin_account': 2,
+        'origin_account': 1,
         'destination_account' : 3,
         'transaction_status_id' : 1,
         'transaction_description' : 'testing'
     })
+
+    #repo.update_transaction_status_to_finished(1)
     
 
 if __name__ == "__main__":

@@ -51,7 +51,7 @@ class UserTransactionsRepository(CrudRepository):
 
         # Transactions between diferent account owners have a 5% tax
         outcome_to_diferent_owner = self.db.session.query(
-            functions.sum(self.model.amount)*1.05
+            functions.sum(self.model.amount)*1.02
         ).join(ua, UserTransaction.origin_account == ua.id
         ).join(ua2, UserTransaction.destination_account == ua2.id
         ).filter(
