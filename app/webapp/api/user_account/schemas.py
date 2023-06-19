@@ -19,7 +19,7 @@ from marshmallow import (
 
 
 class Create_User_Account_Schema(Schema):
-        
+    id = fields.Integer()
     user_id = fields.Integer(required=True)
     account_number = fields.String(
         required=True,
@@ -71,6 +71,8 @@ class Update_User_Account_Schema(Create_User_Account_Schema):
         ),
     )
     account_type_id = fields.Integer()
+    class Meta:
+        exclude = ('id',)
 
 class Get_User_Account_Schema(Generic_Get_Schema):
     # Account holder fields
