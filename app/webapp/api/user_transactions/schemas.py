@@ -3,14 +3,18 @@ Module containing definitions of schemas for account holder management in the AP
 """
 
 import datetime
-
+import phonenumbers
+import pycountry
+import re
+from webapp.api.user.schemas import Create_User_Schema
 from webapp.api.user_account.models import UserAccount
 from webapp.auth.models import User
-from .models import Currency, TransactionStatus
+from .models import UserTransaction, Currency, TransactionStatus
 from webapp.api.generic.GetSchema import Generic_Get_Schema
 from marshmallow import (
     Schema,
     fields,
+    post_load,
     validate,
     validates,
     ValidationError,
@@ -18,17 +22,24 @@ from marshmallow import (
 )
 
 
-class Create_User_Transaction_Schema(Schema):    
+class Create_User_Transaction_Schema(Schema):
+    id = fields.Integer()
     user_id = fields.Integer(required=True)
-    origin_account = fields.Integer(required=True)
-    destination_account = fields.Integer(required=True)
+    origin_account = fields.Integer()
+    destination_account = fields.Integer()
     amount = fields.Float(required=True)
     transaction_type = fields.String(required=True)
     transaction_date = fields.DateTime(required=True)
-    transaction_description = fields.String(required=True)
-    currency_id = fields.Integer(required=True)
-    transaction_status_id = fields.Integer(required=True)
+    transaction_description = fields.String()
+    currency_id = fields.Integer()
+    transaction_status_id = fields.Integer()
 
+    @validates("user_id")
+    def validate_user_id(self, value):
+        # validations for user id
+        # check if user id exists in the database
+        if not User.query.get(value):
+            raise ValidationError("El usuario no existe")
 
     @validates("origin_account")
     def validate_origin_account(self, value):
@@ -80,6 +91,13 @@ class Create_User_Transaction_Schema(Schema):
         if not Currency.query.get(value):
             raise ValidationError("La moneda no existe en la base de datos")
 
+    @validates("transaction_status_id")
+    def validate_transaction_status_id(self, value):
+        # validations for transaction status id
+        # check if transaction status id exists in the database
+        if not TransactionStatus.query.get(value):
+            raise ValidationError(
+                "El estado de la transacción no existe en la base de datos")
 
     @validates_schema
     def validate_transaction(self, data, **kwargs):
@@ -95,7 +113,16 @@ class Create_User_Transaction_Schema(Schema):
                 "La fecha de transacción no puede ser en el futuro")
 
 
-class Update_User_Transaction_Schema(Schema):
+class Update_User_Transaction_Schema(Create_User_Transaction_Schema):
+    id = fields.Integer()
+    user_id = fields.Integer(required=True)
+    origin_account = fields.Integer()
+    destination_account = fields.Integer()
+    amount = fields.Float(required=True)
+    transaction_type = fields.String(required=True)
+    transaction_date = fields.DateTime(required=True)
+    transaction_description = fields.String()
+    currency_id = fields.Integer()
     transaction_status_id = fields.Integer()
 
 

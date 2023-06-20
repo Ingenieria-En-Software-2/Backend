@@ -73,6 +73,7 @@ class CrudApi(Resource):
             mail = Mail()
             token = generate_token(args["login"])
             confirm_url = url_for("auth.verify_api", token=token, _external=True)
+            print(confirm_url)
             html = render_template("confirm_email.html", confirm_url=confirm_url)
             email = create_email(args["login"], "Confirm your email", html)
 
