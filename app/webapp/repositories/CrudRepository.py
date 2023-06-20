@@ -63,7 +63,7 @@ class CrudRepository:
 
         if id is None:
             raise exceptions.IdNotProvided()
-        
+
         return self.db.session.query(self.model).get_or_404(id)
 
     def get_by(self, **kwargs):
@@ -106,9 +106,8 @@ class CrudRepository:
         :return: The updated record.
         """
         checkAttributes(self.model, **kwargs)
-        
         self.schema_update().load(kwargs)
-        
+
         instance = self.get_by_id(id)
 
         try:
@@ -134,9 +133,10 @@ class CrudRepository:
             self.db.session.commit()
             # Return the number of elements remaining in the model
             return self.db.session.query(self.model).count()
-        except Exception as e:            
+        except Exception as e:
+            print(f"An error occurred while deleting the record: {e}")
             self.db.session.rollback()
-            raise e
+            return -1
 
     def exists(self, **kwargs):
         """
