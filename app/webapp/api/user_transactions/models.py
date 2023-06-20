@@ -1,12 +1,10 @@
 from ... import db
-from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import relationship
 
 
 class Currency(db.Model):
     __tablename__ = "currency"
-
-    # Personal Data
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
     symbol = db.Column(db.String())
@@ -29,7 +27,7 @@ class Currency(db.Model):
 class TransactionStatus(db.Model):
     __tablename__ = "transaction_status"
 
-    # Personal Data
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
 
@@ -46,12 +44,14 @@ class TransactionStatus(db.Model):
 class UserTransaction(db.Model):
     __tablename__ = "user_transaction"
 
-    user = relationship("User", cascade="delete")
-    currency = relationship("Currency", cascade="delete")
-    transaction_status = relationship("TransactionStatus", cascade="delete")
-    user_accounts = relationship("UserAccount", cascade="delete")
+    user = relationship("User")
+    currency = relationship("Currency")
+    transaction_status = relationship("TransactionStatus")
+    user_accounts = relationship("UserAccount",
+    primaryjoin="UserTransaction.origin_account == UserAccount.id or UserTransaction.destination_account == UserAccount.id"
+    )
 
-    # Personal Data
+    
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(
         "user.id", ondelete="cascade"))

@@ -2,9 +2,6 @@
 Module containing definitions of schemas for account holder management in the API.
 """
 
-import datetime
-import phonenumbers
-import pycountry
 import re
 from webapp.api.user.schemas import Create_User_Schema
 from webapp.api.user_account.models import UserAccount
@@ -12,20 +9,17 @@ from webapp.auth.models import User
 from webapp.api.generic.GetSchema import Generic_Get_Schema
 from marshmallow import (
     Schema,
-    fields,
-    post_load,
+    fields,    
     validate,
     validates,
-    ValidationError,
-    validates_schema,
+    ValidationError,    
 )
 
 # Definition of the schemas for validation of account holder data
 
 
 class Create_User_Account_Schema(Schema):
-    # Account holder fields
-    id = fields.Integer()
+        
     user_id = fields.Integer(required=True)
     account_number = fields.String(
         required=True,
@@ -37,12 +31,6 @@ class Create_User_Account_Schema(Schema):
     )
     account_type_id = fields.Integer(required=True)
 
-    @validates("user_id")
-    def validate_user_id(self, value):
-        # validations for user id
-        # check if user id exists in the database
-        if not User.query.get(value):
-            raise ValidationError("El usuario no existe")
 
     @validates("account_number")
     def validate_account_number(self, value):
@@ -70,52 +58,19 @@ class Create_User_Account_Schema(Schema):
         if value not in [1, 2]:
             raise ValidationError(
                 "El tipo de cuenta debe ser 1 (corriente) o 2 (ahorro)")
-        # check person type of user id and check the number of accounts
-        # natural person can only have one account of each type
-        # legal person can only have two savings accounts and six current accounts
-        user = User.query.get(self.context["user_id"])
-        if user.person_type == "natural":
-            if value == 1 and UserAccount.query.filter_by(
-                    user_id=user.id, account_type_id=1).first():
-                raise ValidationError(
-                    "El usuario ya tiene una cuenta corriente")
-            if value == 2 and UserAccount.query.filter_by(
-                    user_id=user.id, account_type_id=2).first():
-                raise ValidationError(
-                    "El usuario ya tiene una cuenta de ahorro")
-
-        if user.person_type == "legal":
-            if value == 1 and UserAccount.query.filter_by(
-                    user_id=user.id, account_type_id=1).count() == 6:
-                raise ValidationError(
-                    "El usuario ya tiene seis cuentas corrientes")
-            if value == 2 and UserAccount.query.filter_by(
-                    user_id=user.id, account_type_id=2).count() == 2:
-                raise ValidationError(
-                    "El usuario ya tiene dos cuentas de ahorro")
-
-    @post_load
-    def make_user_account(self, data, **kwargs):
-        return UserAccount(**data)
 
 
 class Update_User_Account_Schema(Create_User_Account_Schema):
-    # Account holder fields
-    id = fields.Integer()
-    user_id = fields.Integer(required=True)
-    account_number = fields.String(
-        required=True,
+    # Account holder fields    
+    
+    account_number = fields.String(        
         validate=validate.Length(
             min=20,
             max=20,
             error="El número de cuenta debe tener 20 caracteres",
         ),
     )
-    account_type_id = fields.Integer(required=True)
-
-    class Meta:
-        exclude = ("id",)
-
+    account_type_id = fields.Integer()
 
 class Get_User_Account_Schema(Generic_Get_Schema):
     # Account holder fields

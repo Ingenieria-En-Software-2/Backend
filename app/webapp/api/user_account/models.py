@@ -9,9 +9,9 @@ class AccountAffiliates(db.Model):
     # Personal Data
     id = db.Column(db.Integer, primary_key=True)
     owner_id = db.Column(db.Integer, db.ForeignKey(
-        "account.id", ondelete="cascade"))
+        "user_account.id", ondelete="cascade"))
     affiliate_id = db.Column(db.Integer, db.ForeignKey(
-        "account.id", ondelete="cascade"))
+        "user_account.id", ondelete="cascade"))
     alias = db.Column(db.String())
 
     def __init__(
@@ -51,10 +51,10 @@ class AccountType(db.Model):
 
 
 class UserAccount(db.Model):
-    __tablename__ = "account"
+    __tablename__ = "user_account"
 
-    user = relationship("User", cascade="delete")
-    account_type = relationship("AccountType", cascade="delete")
+    user = relationship("User")
+    account_type = relationship("AccountType")
 
     # Personal Data
     id = db.Column(db.Integer, primary_key=True)
