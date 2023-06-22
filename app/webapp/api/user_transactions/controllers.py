@@ -55,7 +55,7 @@ class UserTransactionsApi(CrudApi):
             user_id = User.decode_token(user_identity)
             data = request.get_json()
             wallet_origin = data.get('origin')
-            wallet_destiny = data.get('destiny')
+            wallet_destination = data.get('destination')
             amount = data.get('amount')
             trans_type = data.get('transaction_type')
             currency = data.get('currency')
@@ -64,12 +64,12 @@ class UserTransactionsApi(CrudApi):
 
             #verificar si el origen y destino son del mismo dueno, de terceros o de un wallet diferente
             user_origin = user_account_repository.get_user_account_by_id(wallet_origin)
-            user_destiny = user_account_repository.get_user_account_by_id(wallet_destiny)
+            user_destination = user_account_repository.get_user_account_by_id(wallet_destination)
 
             new_amount = amount
-            if user_origin.user_id != user_origin.user_id and trans_type == "Caribbean Wallet": #2%
+            if user_origin.user_id != user_destination.user_id and trans_type == "Caribbean Wallet": #2%
                 new_amount = amount + ((amount*2)/100)
-            elif user_origin.user_id != user_origin.user_id and trans_type != "Caribbean Wallet": #5%
+            elif user_origin.user_id != user_destination.user_id and trans_type != "Caribbean Wallet": #5%
                 new_amount = amount + ((amount*5)/100)
 
             try:
@@ -80,7 +80,7 @@ class UserTransactionsApi(CrudApi):
                     'amount' : float(new_amount),
                     'currency_id' : currency,
                     'origin_account': wallet_origin,
-                    'destination_account' : wallet_destiny,
+                    'destination_account' : wallet_destination,
                     'transaction_status_id' : status,
                     'transaction_description' : description
                 })
