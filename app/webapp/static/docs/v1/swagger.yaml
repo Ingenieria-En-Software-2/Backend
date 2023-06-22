@@ -23,6 +23,10 @@ tags:
     description: Control and management of application users
   - name: Role
     description: Predefined category that can be assigned to users on the basis of their job or other criteria.
+  - name: UserAccount
+    description: Account owned by a user.
+  - name: UserTransaction
+    description: Transactions done by a user.
 paths:
 
 # Users Paths
@@ -37,15 +41,15 @@ paths:
         - name: page_size
           in: query
           description: Number of elements per page
-          default: 10
           schema:
             type: integer
+            default: 10
         - name: page_number
           in: query
           description: Index for actual page
-          default: 3
           schema:
             type: integer
+            default: 3
         - name: sort_by
           in: query
           description: Fild name to sort by
@@ -55,13 +59,13 @@ paths:
         - name: sort_order
           in: query
           description: Sort criteria
-          default: asc
           schema:
             type: string
+            default: asc
             enum:
               - asc
               - desc
-        - <fild Name>:
+        - name: <fild Name>
           in: query
           description: The arguments for the searches are taken 
             from the query params. These vary according to the fields that have the model.
@@ -131,7 +135,7 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           description: Bad Request
-    
+
   /api/user/{user_id}:
     get:
       tags:
@@ -140,8 +144,8 @@ paths:
       description: Get user by id
       operationId: getUserById
       parameters:
-        - name: user_id
-          in: path
+        - in: path
+          name: user_id
           description: ID of user to return
           required: true
           schema:
@@ -157,13 +161,21 @@ paths:
 
         '404':
           description: User not found
-    
+          
     put:
       tags:
         - User
       summary: Update user by id
       description: Update user data by id
       operationId: updateUser
+      parameters:
+        - in: path
+          name: user_id
+          description: ID of user to return
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         description: Update user by id
         content:
@@ -293,8 +305,8 @@ paths:
       description: Get role by id
       operationId: getRoleById
       parameters:
-        - name: role_id
-          in: path
+        - in: path
+          name: role_id
           description: ID of role to return
           required: true
           schema:
@@ -317,6 +329,14 @@ paths:
       summary: Update role by id
       description: Update role data by id
       operationId: updateRole
+      parameters:
+        - in: path
+          name: role_id
+          description: ID of role to return
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         description: Update role by id
         content:
@@ -365,10 +385,216 @@ paths:
       responses:
         '404':
           description: Role not found
-
-
-
-  
+          
+          
+  /api/user_account:
+    get:
+      tags:
+        - UserAccount
+      summary: Get all accounts associated with the current user.
+      description: List all stored accounts owned by the current user on the database.
+      operationId: getAllUsersAccounts
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  corriente:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserAccount'
+                    example: ["32218104000000000000"]
+                  ahorro:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserAccount'
+                    example: ["32218100000000000000"]
+        '401':
+          description: The user is not logged
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: No se ha iniciado sesión.
+                    
+  /api/user_transactions:
+    get:
+      tags:
+        - UserTransaction
+      summary: Makes a transaction between two wallets.
+      description: Transfer money between two wallets.
+      operationId: makeTransaction
+      parameters:
+        - name: origin
+          in: query
+          description: Id of the user account that will transfer the money.
+          schema:
+            type: integer
+            example: 1
+        - name: destination
+          in: query
+          description: Id of the user account that will receive the money.
+          schema:
+            type: integer
+            example: 8
+        - name: amount
+          in: query
+          description: Amount of money to be transferred.
+          schema:
+            type: number
+            example: 152.55
+        - name: transaction_type
+          in: query
+          description: Name of the wallet that will receive the money.
+          schema:
+            type: string
+            example: Paypal
+        - name: currency
+          in: query
+          description: Id of the currency on the database.
+          schema:
+            type: integer
+            example: 1
+        - name: description
+          in: query
+          description: Description of the transaction input by the user.
+          schema:
+            type: string
+            example: Money for shoes.
+        - name: status
+          in: query
+          description: Status of the transaction. 1 is for done, 3 is for cancelled.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Se ha realizado la transferencia.
+                  transaction_id:
+                    type: integer
+                    example: 2
+        '401':
+          description: The user is not logged
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: No se ha iniciado sesión.
+        '500':
+          description: Exception handler that will catch errors during the transaction.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  message:
+                    type: string
+                    example: La cuenta de origen no existe
+                    
+  /api/user_transactions/{transaction_id}:
+    post:
+      tags:
+        - UserTransaction
+      summary: Revert a transaction.
+      description: Cancel the transaction knowing its id.
+      operationId: cancelTransaction
+      parameters:
+        - in: path
+          name: transaction_id
+          description: Id of the transaction.
+          required: true
+          schema:
+            type: integer
+            example: 20
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Se ha cancelado la transferencia.
+                  transaction_id:
+                    type: integer
+                    example: 2
+        '401':
+          description: The user is not logged
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: No se ha iniciado sesión.
+        '400':
+          description: The user trying to cancel the transaction didn't made it from their account.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: La transferencia solo puede ser cancelada por el usuario que la realizó.
+        '500':
+          description: Exception handler that will catch errors during the transaction.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  message:
+                    type: string
+                    example: La moneda no existe en la base de datos
+                    
 components:
   schemas:
     User:
@@ -386,10 +612,10 @@ components:
           example: 10
         login:
           type: string
-          example: jjjason
+          example: jamesjason@gmail.com
         password:
           type: string
-          example: '12345'
+          example: 'A#12345mk3'
         name:
           type: string
           example: James
@@ -423,3 +649,66 @@ components:
           example: admin
       xml:
         name: role
+        
+    UserTransaction:
+      required:
+        - user_id
+        - origin_account
+        - destination_account
+        - amount
+        - transaction_type
+        - transaction_date
+        - transaction_description
+        - currency_id
+        - transaction_status_id
+        - status
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        origin_account:
+          type: integer
+          example: 20
+        destination_account:
+          type: integer
+          example: 100
+        amount:
+          type: number
+          example: 120.45
+        transaction_type:
+          type: string
+          example: Binance
+        transaction_description:
+          type: string
+          example: Pago de servicios.
+        currency_id:
+          type: integer
+          format: int64
+          example: 3
+        status:
+          type: integer
+          format: int64
+          example: 3
+      xml:
+        name: user_transaction
+        
+    UserAccount:
+      required:
+        - user_id
+        - account_number
+        - account_type_id
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        account_number:
+          type: integer
+          example: 32218100000000000000
+        account_type_id:
+          type: integer
+          example: 1
+      xml:
+        name: user_account
+        
