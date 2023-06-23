@@ -439,16 +439,16 @@ paths:
       parameters:
         - name: origin
           in: query
-          description: Id of the user account that will transfer the money.
+          description: Number of the user account that will transfer the money.
           schema:
             type: integer
-            example: 1
+            example: 32218100000000000000
         - name: destination
           in: query
-          description: Id of the user account that will receive the money.
+          description: Number of the user account that will receive the money.
           schema:
             type: integer
-            example: 8
+            example: 32218100000000000000
         - name: amount
           in: query
           description: Amount of money to be transferred.
@@ -522,6 +522,65 @@ paths:
                   message:
                     type: string
                     example: La cuenta de origen no existe
+    put:
+      tags:
+        - UserTransaction
+      summary: Look for all the trasactions done by a user.
+      description: Return all the transactions done by a user.
+      operationId: madeTransactions
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  transactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserTransaction'
+                    example: [
+                              {
+                                  "origin": 32238100000000000000,
+                                  "destination": 32218100000000000000,
+                                  "amount": 5000.0,
+                                  "transaction_type": "Paypal",
+                                  "transaction_date": "06/19/2023, 00:00:12",
+                                  "currency": "dolar",
+                                  "status": 1
+                              }
+                              ]
+        
+        '401':
+          description: The user is not logged
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: No se ha iniciado sesión.
+        '400':
+          description: The current user has not made any transactions.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: No se ha realizado ninguna transferencia.
                     
   /api/user_transactions/{transaction_id}:
     post:
