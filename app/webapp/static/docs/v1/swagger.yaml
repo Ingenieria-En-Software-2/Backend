@@ -525,8 +525,8 @@ paths:
     put:
       tags:
         - UserTransaction
-      summary: Look for all the transactions done by a user.
-      description: Return all the transactions done by a user.
+      summary: Look for all the transactions done by an user.
+      description: Return all the transactions done by an user.
       operationId: madeTransactions
       responses:
         '200':
