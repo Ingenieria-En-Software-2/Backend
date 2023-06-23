@@ -63,8 +63,8 @@ class UserTransactionsApi(CrudApi):
             status = data.get('status')
 
             #verificar si el origen y destino son del mismo dueno, de terceros o de un wallet diferente
-            user_origin = user_account_repository.get_user_account_by_id(wallet_origin)
-            user_destination = user_account_repository.get_user_account_by_id(wallet_destination)
+            user_origin = user_account_repository.get_user_account_by_account_number(wallet_origin)
+            user_destination = user_account_repository.get_user_account_by_account_number(wallet_destination)
 
             new_amount = amount
             if user_origin.user_id != user_destination.user_id and trans_type == "Caribbean Wallet": #2%
@@ -137,6 +137,26 @@ class UserTransactionsApi(CrudApi):
                         'message' : "La transferencia solo puede ser cancelada por el usuario que la realizó."
                     }
                 return response, 400
+        else:
+            response = { "status" : 401, "message": "No se ha iniciado sesión." }
+            return response, 401
+
+    @jwt_required(fresh=True)
+    def put(self):
+        user_identity = get_jwt_identity()
+        if user_identity:
+            user_id = User.decode_token(user_identity)
+            A = user_transactions_repository.get_transactions_by_user_id(user_id)
+            if len(A) == 0:
+                response = { "status" : 400, "message": "No se ha realizado ninguna transferencia." }
+                return response, 400
+            else:
+                B = list(map(lambda x: {"origin" : x.origin_account, "destination" : x.destination_account, "amount" : x.amount,
+                                        "transaction_type" : x.transaction_type, "transaction_date" : x.transaction_date.strftime("%m/%d/%Y, %H:%M:%S"), 
+                                        "currency" : user_transactions_repository.get_currency_by_currency_id(x.currency_id).name,
+                                        "status" : x.transaction_status_id}, A))
+                response = { "status" : 200, "transactions": B }
+                return response, 200
         else:
             response = { "status" : 401, "message": "No se ha iniciado sesión." }
             return response, 401
