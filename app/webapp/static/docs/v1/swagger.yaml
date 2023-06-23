@@ -433,8 +433,8 @@ paths:
     get:
       tags:
         - UserTransaction
-      summary: Makes a transaction between two wallets.
-      description: Transfer money between two wallets.
+      summary: Transfer money between two wallets.
+      description: Make transactions between two wallets.
       operationId: makeTransaction
       parameters:
         - name: origin
@@ -525,7 +525,7 @@ paths:
     put:
       tags:
         - UserTransaction
-      summary: Look for all the trasactions done by a user.
+      summary: Look for all the transactions done by a user.
       description: Return all the transactions done by a user.
       operationId: madeTransactions
       responses:
