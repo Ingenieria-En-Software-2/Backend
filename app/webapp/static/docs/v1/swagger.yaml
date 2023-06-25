@@ -29,7 +29,7 @@ tags:
     description: Transactions done by a user.
 paths:
 
-# Users Paths
+  # Users Paths
   /api/user:
     get:
       tags:
@@ -385,7 +385,87 @@ paths:
       responses:
         '404':
           description: Role not found
-          
+
+# Account Holder Paths
+  /api/account_holder:
+    get:
+      summary: Retrieve a list of account holders
+      responses:
+        '200':
+          description: A list of account holders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountHolder'
+    post:
+      summary: Create a new account holder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Create_Account_Holder_Schema'
+      responses:
+        '201':
+          description: The created account holder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountHolder'
+  
+  /api/account_holder/{account_holder_id}:
+    get:
+      summary: Retrieve an account holder by ID
+      parameters:
+        - in: path
+          name: account_holder_id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the account holder to retrieve
+      responses:
+        '200':
+          description: The requested account holder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountHolder'
+    put:
+      summary: Update an existing account holder by ID
+      parameters:
+        - in: path
+          name: account_holder_id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the account holder to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Create_Account_Holder_Schema'
+      responses:
+        '200':
+          description: The updated account holder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountHolder'
+    delete:
+      summary: Delete an existing account holder by ID
+      parameters:
+        - in: path
+          name: account_holder_id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the account holder to delete
+      responses:
+        '204':
+          description: The account holder was successfully deleted          
           
   /api/user_account:
     get:
@@ -708,6 +788,132 @@ components:
           example: admin
       xml:
         name: role
+
+    Account_holder:
+      required:
+        - id_number
+        - gender
+        - civil_status
+        - birthdate
+        - phone
+        - nationality
+        - street
+        - sector
+        - city
+        - country       
+        - province
+        - township
+        - address
+        - employer_name
+        - employer_rif        
+        - employer_phone        
+        - employer_city
+        - employer_country        
+        - employer_province
+        - employer_township
+        - employer_address
+      type: object
+      properties:
+        password:
+          type: string
+          minLength: 6
+          maxLength: 20
+          description: The password for the account holder. Optional.
+        user_id:
+          type: integer
+          description: The user ID for the account holder. Optional.
+        id:
+          type: integer
+          description: The ID for the account holder. Optional.
+        id_number:
+          type: string
+          description: The ID number for the account holder. Required.
+        gender:
+          type: string
+          description: The gender of the account holder. Required.
+        civil_status:
+          type: string
+          description: The civil status of the account holder. Required.
+        birthdate:
+          type: string
+          description: The birthdate of the account holder. Required.
+        phone:
+          type: string
+          description: The phone number of the account holder. Required.
+        nationality:
+          type: string
+          minLength: 3
+          maxLength: 30
+          description: The nationality of the account holder. Required.
+        street:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: The street of the account holder's address. Required.
+        sector:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: The sector of the account holder's address. Required.
+        city:
+          type: string
+          minLength: 3
+          maxLength: 50 
+          description: The city of the account holder's address. Required.
+        country:
+          type: string 
+          description: The country of the account holder's address. Required.
+        province:
+          type: string 
+          minLength: 3 
+          maxLength: 20 
+          description: The province of the account holder's address. Required.
+        township:
+          type: string 
+          minLength: 3 
+          maxLength: 20 
+          description: The township of the account holder's address.Required.
+        address :
+          type: string 
+          minLength: 3 
+          maxLength: 150 
+          description: The full address of the account holder.Required.
+        employer_name :
+          type: string 
+          minLength: 3 
+          maxLength: 50 
+          description: The name of the account holder's employer.Required.
+        employer_rif :
+          type: string 
+          description: The RIF (tax identification number) of the account holder's employer.Required.
+        employer_phone :
+          type: string 
+          description: The phone number of the account holder's employer.Required.
+        employer_city :
+          type: string 
+          minLength: 3 
+          maxLength: 50 
+          description: The city where the account holder's employer is located.Required.
+        employer_country :
+          type: string 
+          description: The country where the account holder's employer is located.Required.
+        employer_province :
+          type: string 
+          minLength: 3 
+          maxLength: 20 
+          description: The province where the account holder's employer is located.Required.
+        employer_township :
+          type: string 
+          minLength: 3 
+          maxLength: 20 
+          description: The township where the account holder's employer is located.Required.
+        employer_address :
+          type: string 
+          minLength: 3 
+          maxLength: 150 
+          description: The full address of the account holder's employer.Required.
+      xml:
+        name: account_holder
         
     UserTransaction:
       required:
@@ -770,4 +976,3 @@ components:
           example: 1
       xml:
         name: user_account
-        
