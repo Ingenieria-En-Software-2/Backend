@@ -143,7 +143,7 @@ class UserAccountRepository(CrudRepository):
         zeros = "0" * (10 - len(last_id))
 
         account_number = f"015030000{zeros}{last_id}"
-        account_number += self.luhn_number(account_number)
+        account_number += str(self.luhn_number(account_number))
 
         data = kwargs
         data["account_number"] = account_number
