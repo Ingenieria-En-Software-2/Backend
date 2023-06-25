@@ -49,59 +49,61 @@ class UserTransactionsApi(CrudApi):
         )
 
     @jwt_required(fresh=True)
-    def get(self):
+    def post(self):
         user_identity = get_jwt_identity()
         if user_identity:
             user_id = User.decode_token(user_identity)
             data = request.get_json()
+
+
             wallet_origin = data.get('origin')
             wallet_destination = data.get('destination')
             amount = data.get('amount')
             trans_type = data.get('transaction_type')
             currency = data.get('currency')
             description = data.get('description')
-            status = data.get('status')
+            status = 2
 
             #verificar si el origen y destino son del mismo dueno, de terceros o de un wallet diferente
-            user_origin = user_account_repository.get_user_account_by_account_number(wallet_origin)
-            user_destination = user_account_repository.get_user_account_by_account_number(wallet_destination)
+            origin = user_account_repository.get_user_account_by_account_number(wallet_origin)
+            if not origin:
+                return {'code':404, 'error':f'No existe la cuenta de origen: {wallet_origin}'}, 404
+            destination = user_account_repository.get_user_account_by_account_number(wallet_destination)
+            if not destination:
+                return {'code':404, 'error':f'No existe la cuenta de destino: {wallet_destination}:'}
+            
 
-            new_amount = amount
-            if user_origin.user_id != user_destination.user_id and trans_type == "Caribbean Wallet": #2%
-                new_amount = amount + ((amount*2)/100)
-            elif user_origin.user_id != user_destination.user_id and trans_type != "Caribbean Wallet": #5%
-                new_amount = amount + ((amount*5)/100)
+            # new_amount = amount
+            # if user_origin.user_id != user_destination.user_id and trans_type == "Caribbean Wallet": #2%
+            #     new_amount = amount + ((amount*2)/100)
+            # elif user_origin.user_id != user_destination.user_id and trans_type != "Caribbean Wallet": #5%
+            #     new_amount = amount + ((amount*5)/100)
 
-            try:
-                A = user_transactions_repository.create(**{
-                    'transaction_type' : str(trans_type),
-                    'transaction_date' : str(datetime.datetime.now()),
-                    'user_id' : user_id,
-                    'amount' : float(new_amount),
-                    'currency_id' : currency,
-                    'origin_account': wallet_origin,
-                    'destination_account' : wallet_destination,
-                    'transaction_status_id' : status,
-                    'transaction_description' : description
-                })
-                response = {
-                    'status' : 200,
-                    'message' : 'Se ha realizado la transferencia.',
-                    'transaction_id' : A.id,
-                }
-                return response, 200
-            except ValidationError as inst:
-                response = {
-                    'status' : 500,
-                    'message' : list(inst.messages.values())[0][0]
-                }
-                return response,500
+            
+            A = user_transactions_repository.create(**{
+                'transaction_type' : trans_type,
+                'transaction_date' : str(datetime.datetime.now()),
+                'user_id' : user_id,
+                'amount' : amount,
+                'currency_id' : currency,
+                'origin_account': origin.id,
+                'destination_account' : destination.id,
+                'transaction_status_id' : status,
+                'transaction_description' : description
+            })
+            response = {
+                'status' : 200,
+                'message' : 'Se ha realizado la transferencia.',
+                'transaction_id' : A.id,
+            }
+            return response, 200
+
         else:
             response = { "status" : 401, "message": "No se ha iniciado sesión." }
             return response, 401
 
     @jwt_required(fresh=True)
-    def post(self,id):
+    def put(self,id):
         user_identity = get_jwt_identity()
         if user_identity:
             user_id = User.decode_token(user_identity)
@@ -142,7 +144,7 @@ class UserTransactionsApi(CrudApi):
             return response, 401
 
     @jwt_required(fresh=True)
-    def put(self):
+    def get(self):
         user_identity = get_jwt_identity()
         if user_identity:
             user_id = User.decode_token(user_identity)

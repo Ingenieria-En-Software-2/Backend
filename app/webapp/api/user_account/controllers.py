@@ -7,6 +7,7 @@ from flask import abort, make_response, jsonify
 from flask_restful import fields
 from webapp.auth.models import db, User
 from webapp.api.user_account.UserAccountRepository import UserAccountRepository
+from webapp.api.user_transactions.UserTransactionsRepository import UserTransactionsRepository
 from webapp.api.generic.CrudApi import CrudApi
 import json
 
@@ -19,9 +20,8 @@ from marshmallow import (
 )
 
 # Instance of the account holder repository
-user_account_repository = UserAccountRepository(
-    db, Create_User_Account_Schema, Update_User_Account_Schema
-)
+transaction_repository = UserTransactionsRepository(db)
+user_account_repository = UserAccountRepository(db, transaction_repository)
 
 from flask_jwt_extended import (
     jwt_required,
