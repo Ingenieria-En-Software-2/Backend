@@ -73,30 +73,8 @@ class Create_User_Account_Schema(Schema):
         # check person type of user id and check the number of accounts
         # natural person can only have one account of each type
         # legal person can only have two savings accounts and six current accounts
-        user = User.query.get(self.context["user_id"])
-        if user.person_type == "natural":
-            if value == 1 and UserAccount.query.filter_by(
-                    user_id=user.id, account_type_id=1).first():
-                raise ValidationError(
-                    "El usuario ya tiene una cuenta corriente")
-            if value == 2 and UserAccount.query.filter_by(
-                    user_id=user.id, account_type_id=2).first():
-                raise ValidationError(
-                    "El usuario ya tiene una cuenta de ahorro")
 
-        if user.person_type == "legal":
-            if value == 1 and UserAccount.query.filter_by(
-                    user_id=user.id, account_type_id=1).count() == 6:
-                raise ValidationError(
-                    "El usuario ya tiene seis cuentas corrientes")
-            if value == 2 and UserAccount.query.filter_by(
-                    user_id=user.id, account_type_id=2).count() == 2:
-                raise ValidationError(
-                    "El usuario ya tiene dos cuentas de ahorro")
 
-    @post_load
-    def make_user_account(self, data, **kwargs):
-        return UserAccount(**data)
 
 
 class Update_User_Account_Schema(Create_User_Account_Schema):
@@ -111,11 +89,9 @@ class Update_User_Account_Schema(Create_User_Account_Schema):
             error="El número de cuenta debe tener 20 caracteres",
         ),
     )
-    account_type_id = fields.Integer(required=True)
-
+    account_type_id = fields.Integer()
     class Meta:
-        exclude = ("id",)
-
+        exclude = ('id',)
 
 class Get_User_Account_Schema(Generic_Get_Schema):
     # Account holder fields

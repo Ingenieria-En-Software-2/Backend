@@ -9,11 +9,12 @@ class UserAccountRepository(CrudRepository):
     """A repository for managing Acc objects."""
 
     def __init__(
-        self,
+        self, 
         db,
-        create_schema=Create_User_Account_Schema,
-        update_schema=Update_User_Account_Schema,
-    ):
+        transactions_repository,
+        create_schema=Create_User_Account_Schema, 
+        update_schema=Update_User_Account_Schema):
+        self.transactions_repository = transactions_repository        
         super().__init__(UserAccount, db, create_schema, update_schema)
 
     def check_number_of_accounts(self, id, **kwargs):
@@ -166,3 +167,19 @@ class UserAccountRepository(CrudRepository):
     def update(self, id, **kwargs):
         self.check_number_of_accounts(id, **kwargs)
         return super().update(id, **kwargs)
+
+
+    def get_account_balance(self, id):
+        "Receive the id of an account and return that account with its balance"        
+        account = self.get_by_id(id)
+        balance = self.transactions_repository.get_account_balance(id)
+        return {'account' : account, 'balance' : balance} 
+
+    
+    def get_user_accounts_balances(self, id):
+        "Receive the id of a user and return all of the users accounts with their balance"
+        accounts = self.get_all(user_id=id)
+        accounts_balance = [
+            self.get_account_balance(acc.id) for acc in accounts
+            ]
+        return accounts_balance

@@ -43,7 +43,8 @@ def add_roles(roles):
     return roles
 
 def create_accounts():
-    repo = UserAccountRepository(db)
+    trans_repo = UserTransactionsRepository(db)
+    repo = UserAccountRepository(db, trans_repo)
     repo.create(**{
         'user_id': 1,
         'account_number' : '01503000000000000000',
@@ -52,17 +53,23 @@ def create_accounts():
 
     repo.create(**{
         'user_id': 1,
-        'account_number' : '01503000000000000000',
+        'account_number' : '01503000000000000001',
         'account_type_id' : 2
     })
 
     repo.create(**{
         'user_id': 2,
-        'account_number' : '01503000000000000000',
+        'account_number' : '01503000000000000002',
         'account_type_id' : 2
     })
 
-    repo.delete(3)
+    repo.create(**{
+        'user_id': 2,
+        'account_number' : '01503000000000000003',
+        'account_type_id' : 1
+    })
+
+    
 
 def add_currency():
     cs = [
@@ -86,13 +93,31 @@ def populate_db():
     add_role("admin")
     add_role("user")
     # add users
-    add_user("admin", "admin", "admin", "admin", "natural", "admin", 1, True)  # admin_role.id)
-    add_user("user", "user", "user", "user", "legal", "user", 2,True)  # user_role.id)
+    add_user("admin", "admin", "admin", "admin", "legal", "admin", 1, True)  # admin_role.id)
+    add_user("user", "user", "user", "user", "natural", "user", 2,True)  # user_role.id)
     # add account types    
     add_accounts_types()
     create_accounts()
     add_currency()
     add_transaction_status()
+    create_transactions()
+def create_transactions():
+    repo = UserTransactionsRepository(db)
+
+   
+    repo.create(**{
+        'transaction_type' : 'Paypal',
+        'transaction_date' : str(datetime.datetime.now()),
+        'user_id' : 1,
+        'amount' : 100,
+        'currency_id' : 1,
+        'origin_account': 1,
+        'destination_account' : 3,
+        'transaction_status_id' : 1,
+        'transaction_description' : 'testing'
+    })
+
+    #repo.update_transaction_status_to_finished(1)
     
 
 if __name__ == "__main__":
@@ -102,26 +127,13 @@ if __name__ == "__main__":
         db.create_all()
         populate_db()
         db.session.commit()
+        trans_repo = UserTransactionsRepository(db)
 
-        repo = UserTransactionsRepository(db)
-        for i in range(1,5):
-            repo.create(**{
-                'transaction_type' : 'Paypal',
-                'transaction_date' : str(datetime.datetime.now()),
-                'user_id' : 1,
-                'amount' : 500,
-                'currency_id' : 1,
-                'origin_account': 1,
-                'destination_account' : 2,
-                'transaction_status_id' : 1,
-                'transaction_description' : 'testing'
-            })
 
-        repo.update(1, **{'transaction_status_id': 3})
-
-        repo.delete(1)
-        repo.delete(3)
+        repo = UserAccountRepository(db, trans_repo)
+        accs = repo.get_all(user_id=1)
         
+
         # commit the changes
         db.session.commit()
 

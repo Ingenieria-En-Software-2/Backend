@@ -22,8 +22,8 @@ from marshmallow import (
 )
 
 
-class Create_User_Transaction_Schema(Schema):
-    id = fields.Integer()
+class Create_User_Transaction_Schema(Schema):  
+    id = fields.Integer()  
     user_id = fields.Integer(required=True)
     origin_account = fields.Integer()
     destination_account = fields.Integer()
