@@ -63,7 +63,7 @@ class UserTransactionsApi(CrudApi):
             currency = data.get('currency')
             description = data.get('description')
             status = 2
-
+            
             #verificar si el origen y destino son del mismo dueno, de terceros o de un wallet diferente
             origin = user_account_repository.get_user_account_by_account_number(wallet_origin)
             if not origin:
