@@ -5,7 +5,6 @@ from marshmallow import ValidationError
 from webapp.auth.models import User
 from sqlalchemy import func
 
-
 class UserAccountRepository(CrudRepository):
     """A repository for managing Acc objects."""
 
@@ -35,6 +34,7 @@ class UserAccountRepository(CrudRepository):
                 ).first()
             ):
                 raise ValidationError("El usuario ya tiene una cuenta corriente")
+
             if (
                 kwargs["account_type_id"] == 2
                 and UserAccount.query.filter_by(
