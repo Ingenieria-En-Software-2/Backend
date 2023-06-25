@@ -386,7 +386,7 @@ paths:
         '404':
           description: Role not found
 
-  # Account Holder Paths
+# Account Holder Paths
   /api/account_holder:
     get:
       summary: Retrieve a list of account holders
@@ -465,9 +465,7 @@ paths:
           description: The ID of the account holder to delete
       responses:
         '204':
-          description: The account holder was successfully deleted
-  
-          
+          description: The account holder was successfully deleted          
           
   /api/user_account:
     get:
@@ -790,6 +788,7 @@ components:
           example: admin
       xml:
         name: role
+
     Account_holder:
       required:
         - id_number
@@ -915,7 +914,6 @@ components:
           description: The full address of the account holder's employer.Required.
       xml:
         name: account_holder
-
         
     UserTransaction:
       required:
@@ -978,4 +976,3 @@ components:
           example: 1
       xml:
         name: user_account
-        

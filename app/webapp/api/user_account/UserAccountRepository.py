@@ -33,7 +33,8 @@ class UserAccountRepository(CrudRepository):
                     user_id=user.id, account_type_id=1
                 ).first()
             ):
-                raise c("El usuario ya tiene una cuenta corriente")
+                raise ValidationError("El usuario ya tiene una cuenta corriente")
+
             if (
                 kwargs["account_type_id"] == 2
                 and UserAccount.query.filter_by(
