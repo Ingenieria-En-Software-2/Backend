@@ -12,12 +12,7 @@ class Currency(db.Model):
     symbol = db.Column(db.String())
     code = db.Column(db.String())
 
-    def __init__(
-        self,
-        name,
-        symbol,
-        code
-    ):
+    def __init__(self, name, symbol, code):
         self.name = name
         self.symbol = symbol
         self.code = code
@@ -49,24 +44,31 @@ class UserTransaction(db.Model):
     user = relationship("User", cascade="delete")
     currency = relationship("Currency", cascade="delete")
     transaction_status = relationship("TransactionStatus", cascade="delete")
-    user_accounts = relationship("UserAccount", cascade="delete")
+    user_accounts = relationship(
+        "UserAccount",
+        cascade="delete",
+        primaryjoin="UserTransaction.origin_account == UserAccount.id or UserTransaction.destination_account == UserAccount.id",
+    )
 
     # Personal Data
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        "user.id", ondelete="cascade"))
-    origin_account = db.Column(db.Integer, db.ForeignKey(
-        "user_account.id", ondelete="cascade"))
-    destination_account = db.Column(db.Integer, db.ForeignKey(
-        "user_account.id", ondelete="cascade"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="cascade"))
+    origin_account = db.Column(
+        db.Integer, db.ForeignKey("account.id", ondelete="cascade")
+    )
+    destination_account = db.Column(
+        db.Integer, db.ForeignKey("account.id", ondelete="cascade")
+    )
     amount = db.Column(db.Float())
     transaction_type = db.Column(db.String())
     transaction_date = db.Column(db.Date())
     transaction_description = db.Column(db.Text())
-    currency_id = db.Column(db.Integer, db.ForeignKey(
-        "currency.id", ondelete="cascade"))
-    transaction_status_id = db.Column(db.Integer, db.ForeignKey(
-        "transaction_status.id", ondelete="cascade"))
+    currency_id = db.Column(
+        db.Integer, db.ForeignKey("currency.id", ondelete="cascade")
+    )
+    transaction_status_id = db.Column(
+        db.Integer, db.ForeignKey("transaction_status.id", ondelete="cascade")
+    )
 
     def __init__(
         self,
@@ -78,7 +80,7 @@ class UserTransaction(db.Model):
         transaction_date,
         transaction_description,
         currency_id,
-        transaction_status_id
+        transaction_status_id,
     ):
         self.user_id = user_id
         self.origin_account = origin_account

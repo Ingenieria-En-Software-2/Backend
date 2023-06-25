@@ -1,9 +1,8 @@
 from webapp.repositories.CrudRepository import CrudRepository
-from ...auth.UserRepository import UserRepository
-from ...auth.models import User
-from .models import AccountHolder
-from ..user.schemas import Create_User_Schema_No_Password
-from flask import abort
+from webapp.api.user_transactions.schemas import (
+    Create_User_Transaction_Schema, 
+    Update_User_Transaction_Schema)
+from webapp.api.user_transactions.models import UserTransaction, Currency
 
 
 class UserTransactionsRepository(CrudRepository):
@@ -11,22 +10,31 @@ class UserTransactionsRepository(CrudRepository):
     A repository for managing Acc objects.
     """
 
-    def __init__(self):
-        # TODO: Implement this method
-        pass
+    def __init__(
+        self, 
+        db, 
+        create_schema=Create_User_Transaction_Schema, 
+        update_schema=Update_User_Transaction_Schema):
+        super().__init__(UserTransaction, db, create_schema, update_schema)
 
-    def get_account_holder_by_login(self):
-        # TODO: Implement this method
-        pass
+    def get_transactions_by_user_id(self, user_id):
+        """
+        Gets transactions by user_id.
 
-    def get_user(self):
-        # TODO: Implement this method
-        pass
+        :param user_id: Id of the user that has done the transaction.
+        :return: A list of all the transactions made my the user regardless of the account.
+        """
+        return (
+            self.db.session.query(UserTransaction).filter(UserTransaction.user_id == user_id).all()
+        )
+    def get_currency_by_currency_id(self, currency_id):
+        """
+        Gets a currency object by the currency id.
 
-    def create(self, **kwargs):
-        # TODO: Implement this method
-        pass
+        :param currency_id: Id that identifies the currency.
+        :return: Currency that is associated with the given id.
+        """
+        return (
+            self.db.session.query(Currency).filter(Currency.id == currency_id).first()
+        )
 
-    def update(self, id, **kwargs):
-        # TODO: Implement this method
-        pass

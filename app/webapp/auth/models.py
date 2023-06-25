@@ -42,7 +42,7 @@ class User(db.Model):
     @staticmethod
     def decode_token(token):
         try:
-            return token["user_id"], payload["role"]
+            return token["user_id"] #, payload["role"]
         except jwt.ExpiredSignatureError:
             return "Signature expired. Please log in again."
         except jwt.InvalidTokenError:
