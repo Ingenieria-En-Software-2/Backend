@@ -389,6 +389,8 @@ paths:
 # Account Holder Paths
   /api/account_holder:
     get:
+      tags:
+        - AccountHolder
       summary: Retrieve a list of account holders
       responses:
         '200':
@@ -400,6 +402,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/AccountHolder'
     post:
+      tags:
+        - AccountHolder
       summary: Create a new account holder
       requestBody:
         required: true
@@ -417,6 +421,8 @@ paths:
   
   /api/account_holder/{account_holder_id}:
     get:
+      tags:
+        - AccountHolder
       summary: Retrieve an account holder by ID
       parameters:
         - in: path
@@ -433,6 +439,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/AccountHolder'
     put:
+      tags:
+        - AccountHolder
       summary: Update an existing account holder by ID
       parameters:
         - in: path
@@ -455,6 +463,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/AccountHolder'
     delete:
+      tags:
+        - AccountHolder
       summary: Delete an existing account holder by ID
       parameters:
         - in: path
@@ -789,7 +799,7 @@ components:
       xml:
         name: role
 
-    Account_holder:
+    AccountHolder:
       required:
         - id_number
         - gender
