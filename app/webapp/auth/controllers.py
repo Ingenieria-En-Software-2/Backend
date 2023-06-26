@@ -9,7 +9,7 @@ from flask_jwt_extended import (
 from webapp.auth.token import *
 
 
-auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
+auth_blueprint = Blueprint("auth", __name__)
 
 from .. import db, bcrypt
 
@@ -89,7 +89,7 @@ class LoginAPI(MethodView):
             user = User.query.filter_by(login=post_data.get("login")).first()
             if (
                 user
-                and user.password == post_data.get("password")
+                and bcrypt.check_password_hash(user.password, post_data.get("password"))
                 and user.verified == True
             ):
                 ## To protect an EP to ensure that is a logged user use the decorator: @jwt_required(fresh=True)
