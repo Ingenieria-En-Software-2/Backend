@@ -1,0 +1,172 @@
+{
+	"info": {
+		"_postman_id": "7bd9f2dd-c815-4a87-93d7-596d19d71cb5",
+		"name": "CaribbeanWalletS-3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28178569"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "user_transactions",
+					"item": [
+						{
+							"name": "Reverse transaction SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"",
+											"pm.test(\"Successful PUT request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"pm.test(\"Response must be valid and have a body\", function () {",
+											"     pm.response.to.be.withBody;",
+											"     pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNjg3Nzk1MDA2LCJqdGkiOiI1YTZiMTU1NC05NmQ2LTRjMzAtYTdmMi1mNTQ1MWU0Nzk2OTAiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjp7InJvbGUiOjEsInVzZXJfaWQiOjF9LCJuYmYiOjE2ODc3OTUwMDYsImV4cCI6MTY4Nzg4MTQwNn0._f0r0KU2Q51XRnI0EhqDc-hEfvHMZxIjRCDReb1yLO4",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/user_transactions/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"user_transactions",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Reverse transaction FAILURE",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"",
+											"pm.test(\"Failed PUT request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([401]);",
+											"});",
+											"",
+											"pm.test(\"Response must be valid and have a body\", function () {",
+											"     pm.response.to.be.withBody;",
+											"     pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/user_transactions/2",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"user_transactions",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "Login an User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"pm.test(\"Response must be valid and have a body\", function () {",
+											"     pm.response.to.be.withBody;",
+											"     pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"login\": \"admin\",\n    \"password\": \"admin\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
