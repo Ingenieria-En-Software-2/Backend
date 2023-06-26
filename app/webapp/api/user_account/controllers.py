@@ -62,9 +62,6 @@ class UserAccountApi(CrudApi):
     #     if not result:
     #         abort(500, "Algo salio mal creando el recurso")
 
-    #     # Crear token de verificacion y enviar correo para verificar usuario
-    #     args = request.get_json()
-
     #     return {"id": result.id, "account_number": result.account_number}, 201
 
     @jwt_required(fresh=True)
@@ -81,8 +78,5 @@ class UserAccountApi(CrudApi):
 
         if not result:
             abort(500, "Algo salio mal creando el recurso")
-
-        # Crear token de verificacion y enviar correo para verificar usuario
-        args = request.get_json()
 
         return {"id": result.id, "account_number": result.account_number}, 201
