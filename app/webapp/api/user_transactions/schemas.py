@@ -113,7 +113,7 @@ class Create_User_Transaction_Schema(Schema):
                 "La fecha de transacción no puede ser en el futuro")
 
 
-class Update_User_Transaction_Schema(Create_User_Transaction_Schema):
+class Update_User_Transaction_Schema(Schema):
     transaction_status_id = fields.Integer()
 
 class Get_User_Transaction_Schema(Generic_Get_Schema):
