@@ -48,8 +48,8 @@ class UserAccountApi(CrudApi):
             ahorro = list(filter(lambda x: x.account_type_id == 2, user_accounts))
             response = {
                     "status" : 200,
-                    "corriente" : json.dumps(list(map(lambda x: x.account_number, corriente))),
-                    "ahorro" : json.dumps(list(map(lambda x: x.account_number, ahorro)))}
+                    "corriente" : list(map(lambda x: x.account_number, corriente)),
+                    "ahorro" : list(map(lambda x: x.account_number, ahorro))}
             return response, 200
         else:
             response = { "status" : 401, "message": "No se ha iniciado sesión." }
