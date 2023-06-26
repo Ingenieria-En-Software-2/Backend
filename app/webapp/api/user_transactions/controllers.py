@@ -108,37 +108,13 @@ class UserTransactionsApi(CrudApi):
         if user_identity:
             user_id = User.decode_token(user_identity)
             A = user_transactions_repository.update(id, **{'transaction_status_id': 3})
-            if user_id == A.user_id: 
-                try:
-                    B = user_transactions_repository.create(**{
-                        'transaction_type' : A.transaction_type,
-                        'transaction_date' : str(datetime.datetime.now()),
-                        'user_id' : user_id,
-                        'amount' : A.amount,
-                        'currency_id' : A.currency_id,
-                        'origin_account': A.destination_account,
-                        'destination_account' : A.origin_account,
-                        'transaction_status_id' : A.transaction_status_id,
-                        'transaction_description' : A.transaction_description
-                    })
-                    response = {
-                        'status' : 200,
-                        'message' : 'Se ha cancelado la transferencia.',
-                        'id' : B.id
-                    }
-                    return response, 200
-                except ValidationError as inst:
-                    response = {
-                        'status' : 500,
-                        'message' : list(inst.messages.values())[0][0]
-                    }
-                    return response, 500
-            else:
-                response = {
-                        'status' : 400,
-                        'message' : "La transferencia solo puede ser cancelada por el usuario que la realizó."
-                    }
-                return response, 400
+            print(A)
+            response = {
+                'status' : 200,
+                'message' : 'Se ha cancelado la transferencia.',
+                'id' : A.id
+            }
+            return response, 200
         else:
             response = { "status" : 401, "message": "No se ha iniciado sesión." }
             return response, 401

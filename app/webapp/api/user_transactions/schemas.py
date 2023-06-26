@@ -114,17 +114,7 @@ class Create_User_Transaction_Schema(Schema):
 
 
 class Update_User_Transaction_Schema(Create_User_Transaction_Schema):
-    id = fields.Integer()
-    user_id = fields.Integer(required=True)
-    origin_account = fields.Integer()
-    destination_account = fields.Integer()
-    amount = fields.Float(required=True)
-    transaction_type = fields.String(required=True)
-    transaction_date = fields.DateTime(required=True)
-    transaction_description = fields.String()
-    currency_id = fields.Integer()
     transaction_status_id = fields.Integer()
-
 
 class Get_User_Transaction_Schema(Generic_Get_Schema):
     id = fields.Integer()
