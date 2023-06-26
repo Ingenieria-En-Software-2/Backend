@@ -55,10 +55,29 @@ class UserAccountApi(CrudApi):
         else:
             response = { "status" : 401, "message": "No se ha iniciado sesión." }
             return make_response(jsonify(response)), 401
+        
+    # def post(self):
+    #     result = self.repository.create(**request.get_json())
 
-    # @jwt_required(fresh=True)
+    #     if not result:
+    #         abort(500, "Algo salio mal creando el recurso")
+
+    #     # Crear token de verificacion y enviar correo para verificar usuario
+    #     args = request.get_json()
+
+    #     return {"id": result.id, "account_number": result.account_number}, 201
+
+    @jwt_required(fresh=True)
     def post(self):
-        result = self.repository.create(**request.get_json())
+        user_identity = get_jwt_identity()
+
+        if user_identity:
+            resp = User.decode_token(user_identity)
+            request.json["user_id"] = resp
+            result = self.repository.create(**request.get_json())
+        else:
+            response = { "status" : 401, "message": "No se ha iniciado sesión." }
+            return make_response(jsonify(response)), 401
 
         if not result:
             abort(500, "Algo salio mal creando el recurso")
