@@ -1,8 +1,8 @@
-from webapp.repositories.CrudRepository import CrudRepository
+from ...repositories.CrudRepository import CrudRepository
 from .models import UserAccount
 from .schemas import Create_User_Account_Schema, Update_User_Account_Schema
 from marshmallow import ValidationError
-from webapp.auth.models import User
+from ...auth.models import User
 from sqlalchemy import func
 
 class UserAccountRepository(CrudRepository):

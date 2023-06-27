@@ -6,7 +6,7 @@ each one with its respective arguments and validation rules.
 """
 
 from marshmallow import Schema, fields, validate, validates, ValidationError
-from webapp.api.generic.GetSchema import Generic_Get_Schema
+from ..generic.GetSchema import Generic_Get_Schema
 import re
 
 # Definition of the schemas for validation of user data

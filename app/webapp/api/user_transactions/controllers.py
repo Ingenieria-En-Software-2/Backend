@@ -5,10 +5,10 @@ CrudApi class, and is in charge of handling HTTP requests related to account hol
 
 from flask import abort, request
 from flask_restful import fields
-from webapp.auth.models import db, User
+from ...auth.models import db, User
 from .models import UserTransaction
 from .UserTransactionsRepository import UserTransactionsRepository
-from webapp.api.generic.CrudApi import CrudApi
+from ...api.generic.CrudApi import CrudApi
 from .schemas import Get_User_Transaction_Schema
 
 # Instance of the account holder repository
@@ -20,7 +20,7 @@ from marshmallow import (
 )
 
 
-from webapp.api.user_account.UserAccountRepository import UserAccountRepository
+from ...api.user_account.UserAccountRepository import UserAccountRepository
 
 
 from ..user_account.schemas import (

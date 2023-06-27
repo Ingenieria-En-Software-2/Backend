@@ -1,10 +1,5 @@
 from .. import db
-from webapp.api.user_account.models import UserAccount
-from sqlalchemy.dialects.postgresql import JSON
-from sqlalchemy.orm import relationship
 import jwt
-import datetime
-from config import DevConfig
 
 
 id_str = "<id {}>"

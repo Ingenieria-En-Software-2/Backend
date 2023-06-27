@@ -6,9 +6,9 @@ import datetime
 import phonenumbers
 import pycountry
 import re
-from webapp.api.user.schemas import Create_User_Schema
-from webapp.api.account_holder.models import AccountHolder
-from webapp.api.generic.GetSchema import Generic_Get_Schema
+from ...api.user.schemas import Create_User_Schema
+from ...api.account_holder.models import AccountHolder
+from ...api.generic.GetSchema import Generic_Get_Schema
 from marshmallow import (
     Schema,
     fields,

@@ -1,9 +1,9 @@
-from webapp.repositories.CrudRepository import CrudRepository
-from webapp.api.user_transactions.schemas import (
+from ...repositories.CrudRepository import CrudRepository
+from ...api.user_transactions.schemas import (
     Create_User_Transaction_Schema, 
     Update_User_Transaction_Schema)
-from webapp.api.user_transactions.models import Currency, UserTransaction
-from webapp.api.user_account.models import UserAccount
+from ...api.user_transactions.models import Currency, UserTransaction
+from ...api.user_account.models import UserAccount
 from sqlalchemy.sql import functions
 from sqlalchemy.orm import aliased
 from sqlalchemy import or_

@@ -1,4 +1,4 @@
-from webapp.repositories.CrudRepository import CrudRepository
+from ...repositories.CrudRepository import CrudRepository
 from ...auth.UserRepository import UserRepository
 from ...auth.models import User
 from .models import AccountHolder

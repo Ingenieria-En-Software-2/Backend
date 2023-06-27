@@ -1,7 +1,7 @@
 from flask import abort, request, url_for, render_template
 from flask_mail import Mail
 from flask_restful import Resource, marshal
-from webapp.auth.token import *
+from ...auth.token import generate_token
 
 
 class CrudApi(Resource):

@@ -3,7 +3,7 @@ Module for defining schemas for the Role model.
 """
 
 from marshmallow import Schema, fields, validate
-from webapp.api.generic.GetSchema import Generic_Get_Schema
+from ...api.generic.GetSchema import Generic_Get_Schema
 
 
 class Role_Schema(Schema):
