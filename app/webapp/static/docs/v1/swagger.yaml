@@ -520,7 +520,7 @@ paths:
                     example: No se ha iniciado sesión.
                     
   /api/user_transactions:
-    get:
+    post:
       tags:
         - UserTransaction
       summary: Transfer money between two wallets.
@@ -612,7 +612,7 @@ paths:
                   message:
                     type: string
                     example: La cuenta de origen no existe
-    put:
+    get:
       tags:
         - UserTransaction
       summary: Look for all the transactions done by an user.
@@ -673,7 +673,7 @@ paths:
                     example: No se ha realizado ninguna transferencia.
                     
   /api/user_transactions/{transaction_id}:
-    post:
+    put:
       tags:
         - UserTransaction
       summary: Revert a transaction.
