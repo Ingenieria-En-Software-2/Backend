@@ -8,7 +8,6 @@ from werkzeug.datastructures import MultiDict
 from app.webapp.api.generic import CrudApi
 from app.webapp.auth.models import User
 
-# Nobody knows if this works, it probably doesn't
 PASS_ALL_TESTS = True
 
 
