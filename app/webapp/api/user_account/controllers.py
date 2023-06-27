@@ -3,7 +3,7 @@ Module containing the definition of the UserAccountApi class, which inherits fro
 CrudApi class, and is in charge of handling HTTP requests related to account holders.
 """
 
-from flask import abort, make_response, jsonify
+from flask import abort, make_response, jsonify, request
 from flask_restful import fields
 from webapp.auth.models import db, User
 from webapp.api.user_account.UserAccountRepository import UserAccountRepository
@@ -36,6 +36,7 @@ class UserAccountApi(CrudApi):
             user_account_repository,  # Repositorio de usuarios
             Get_User_Account_Schema,  # Esquema Get
         )
+
     @jwt_required(fresh=True)
     def get(self):
         #id es el user_id
@@ -54,3 +55,28 @@ class UserAccountApi(CrudApi):
         else:
             response = { "status" : 401, "message": "No se ha iniciado sesión." }
             return make_response(jsonify(response)), 401
+        
+    # def post(self):
+    #     result = self.repository.create(**request.get_json())
+
+    #     if not result:
+    #         abort(500, "Algo salio mal creando el recurso")
+
+    #     return {"id": result.id, "account_number": result.account_number}, 201
+
+    @jwt_required(fresh=True)
+    def post(self):
+        user_identity = get_jwt_identity()
+
+        if user_identity:
+            resp = User.decode_token(user_identity)
+            request.json["user_id"] = resp
+            result = self.repository.create(**request.get_json())
+        else:
+            response = { "status" : 401, "message": "No se ha iniciado sesión." }
+            return make_response(jsonify(response)), 401
+
+        if not result:
+            abort(500, "Algo salio mal creando el recurso")
+
+        return {"id": result.id, "account_number": result.account_number}, 201

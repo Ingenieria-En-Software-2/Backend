@@ -6,10 +6,11 @@ from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
 )
+from flask import Response
 from webapp.auth.token import *
 
 
-auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
+auth_blueprint = Blueprint("auth", __name__)
 
 from .. import db, bcrypt
 
@@ -125,7 +126,11 @@ class LoginAPI(MethodView):
             responseObject = {"status": "fail", "message": "Try again"}
             return make_response(jsonify(responseObject)), 500
 
-
+    def options(self):
+        resp = Response()
+        resp.headers['Allow'] = 'POST'
+        return resp
+    
 class LogoutAPI(MethodView):
     @jwt_required(fresh=True)
     def post(self):
@@ -202,7 +207,7 @@ verify_view = VerifyAPI.as_view("verify_api")
 auth_blueprint.add_url_rule("/auth/verify", view_func=verify_view, methods=["GET"])
 
 login_view = LoginAPI.as_view("login_api")
-auth_blueprint.add_url_rule("/auth/login", view_func=login_view, methods=["POST"])
+auth_blueprint.add_url_rule("/auth/login", view_func=login_view, methods=["POST", "OPTIONS"])
 
 logout_view = LogoutAPI.as_view("logout_api")
 auth_blueprint.add_url_rule("/auth/logout", view_func=logout_view, methods=["POST"])

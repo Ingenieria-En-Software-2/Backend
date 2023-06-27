@@ -27,6 +27,9 @@ class UserAccountRepository(CrudRepository):
             return
 
         user = User.query.get(id)
+        if not user:
+            raise ValidationError("El usuario no existe")
+
         if user.person_type == "natural":
             if (
                 kwargs["account_type_id"] == 1
