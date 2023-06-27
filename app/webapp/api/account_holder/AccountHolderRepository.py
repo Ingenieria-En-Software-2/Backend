@@ -67,6 +67,7 @@ class AccountHolderRepository(CrudRepository):
             "password",
             "user_type",
             "role_id",
+            "person_type",
         ):
             if i in kwargs:
                 user_data[i] = kwargs[i]
@@ -85,7 +86,7 @@ class AccountHolderRepository(CrudRepository):
                 k: result[k]
                 for k in result.keys()
                 if k
-                not in ("login", "name", "lastname", "password", "user_type", "role_id")
+                not in ("login", "name", "lastname", "password", "user_type", "role_id", "person_type")
             }
             # Add the user_id to the filtered data
             filtered_data["user_id"] = user.id
@@ -97,6 +98,7 @@ class AccountHolderRepository(CrudRepository):
 
         except Exception as e:
             self.db.session.rollback()
+            print(f"A ocurrido un error al crear el registro: {e}")
             raise e
 
     def update(self, id, **kwargs):
@@ -113,7 +115,8 @@ class AccountHolderRepository(CrudRepository):
             raise ValueError(f"Registro no encontrado para {id}")
         user = self.get_user()
         if user is None:
-            raise ValueError(f"No hay usuario asociado con account holder {id}")
+            raise ValueError(
+                f"No hay usuario asociado con account holder {id}")
 
         kwargs["id"] = id
         result = self.schema_update().load(kwargs)
@@ -131,6 +134,7 @@ class AccountHolderRepository(CrudRepository):
             return instance
         except Exception as e:
             self.db.session.rollback()
-            print(f"A ocurrido un error al actualizar el registro: {e}") #falta
+            # falta
+            print(f"A ocurrido un error al actualizar el registro: {e}")
 
             return None
