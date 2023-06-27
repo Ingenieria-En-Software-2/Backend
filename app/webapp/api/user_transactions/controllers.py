@@ -132,6 +132,7 @@ class UserTransactionsApi(CrudApi):
                 B = list(map(lambda x: {"origin" : x.origin_account, "destination" : x.destination_account, "amount" : x.amount,
                                         "transaction_type" : x.transaction_type, "transaction_date" : x.transaction_date.strftime("%m/%d/%Y, %H:%M:%S"), 
                                         "currency" : user_transactions_repository.get_currency_by_currency_id(x.currency_id).name,
+                                        "description" : x.transaction_description, "id" : x.id,
                                         "status" : x.transaction_status_id}, A))
                 response = { "status" : 200, "transactions": B }
                 return response, 200
