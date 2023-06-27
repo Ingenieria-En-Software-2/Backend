@@ -10,7 +10,7 @@ from flask import Response
 from webapp.auth.token import *
 
 
-auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
+auth_blueprint = Blueprint("auth", __name__)
 
 from .. import db, bcrypt
 
