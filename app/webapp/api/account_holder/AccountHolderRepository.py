@@ -3,7 +3,9 @@ from ...auth.UserRepository import UserRepository
 from ...auth.models import User
 from .models import AccountHolder
 from ..user.schemas import Create_User_Schema_No_Password
-from flask import abort
+from flask import abort, url_for, render_template
+from flask_mail import Mail
+from webapp.auth.token import *
 
 # TODO: Import the User model and the db from app
 
@@ -58,6 +60,9 @@ class AccountHolderRepository(CrudRepository):
         :param kwargs: The keyword arguments to use to create the new record.
         :return: The newly created record.
         """
+
+        print("crear usuario")
+
         result = self.schema_create().load(kwargs)
         user_data = {}
         for i in (
@@ -73,6 +78,22 @@ class AccountHolderRepository(CrudRepository):
                 user_data[i] = kwargs[i]
 
         user_data["password"] = None
+
+        try:
+
+            if user_data.get("user_type") != None:
+                mail = Mail()
+                token = generate_token(user_data["login"])
+                confirm_url = url_for("auth.verify_api", token=token, _external=True)
+                html = render_template("confirm_email.html", confirm_url=confirm_url)
+                email = create_email(user_data["login"], "Verificacion de correo", html)
+
+                try:
+                    mail.send(email)
+                except:
+                    pass
+        except:
+            pass
 
         Create_User_Schema_No_Password().load(user_data)
         try:

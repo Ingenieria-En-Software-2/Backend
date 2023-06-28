@@ -6,9 +6,9 @@ from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
 )
-from flask import Response
+from flask import Response, redirect, url_for
 from webapp.auth.token import *
-
+import os
 
 auth_blueprint = Blueprint("auth", __name__)
 
@@ -193,8 +193,15 @@ class VerifyAPI(MethodView):
                     "status": "success",
                     "data": {"id": user.id},
                 }
-
-                return make_response(jsonify(responseObject)), 200
+                url = os.environ.get("VITE_API_URL")
+                print("\n\nurl1 : " + url)
+                print("\n\nurl2 : " + url_for("auth.login"))
+                return redirect(
+                    "http://localhost:5173/verify",
+                    200,
+                    make_response(jsonify(responseObject))
+                    )
+                #return make_response(jsonify(responseObject)), 200
 
         responseObject = {"status": "fail", "message": "Token invalido"}
         return make_response(jsonify(responseObject)), 401
