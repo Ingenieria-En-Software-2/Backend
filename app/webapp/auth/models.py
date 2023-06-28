@@ -1,10 +1,5 @@
 from .. import db
-from webapp.api.user_account.models import UserAccount
-from sqlalchemy.dialects.postgresql import JSON
-from sqlalchemy.orm import relationship
 import jwt
-import datetime
-from config import DevConfig
 
 
 id_str = "<id {}>"
@@ -24,8 +19,15 @@ class User(db.Model):
     verified = db.Column(db.Boolean)
 
     def __init__(
-        self, login, password, name, lastname, person_type,
-        user_type, role_id, verified=False
+        self,
+        login,
+        password,
+        name,
+        lastname,
+        person_type,
+        user_type,
+        role_id,
+        verified=False,
     ):
         self.login = login
         self.password = password
@@ -42,7 +44,7 @@ class User(db.Model):
     @staticmethod
     def decode_token(token):
         try:
-            return token["user_id"] #, payload["role"]
+            return token["user_id"]  # , payload["role"]
         except jwt.ExpiredSignatureError:
             return "Signature expired. Please log in again."
         except jwt.InvalidTokenError:

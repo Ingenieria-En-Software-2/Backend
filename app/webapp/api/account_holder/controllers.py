@@ -5,9 +5,9 @@ CrudApi class, and is in charge of handling HTTP requests related to account hol
 
 from flask import abort
 from flask_restful import fields
-from webapp.auth.models import db
-from webapp.api.account_holder.AccountHolderRepository import AccountHolderRepository
-from webapp.api.generic.CrudApi import CrudApi
+from ...auth.models import db
+from ...api.account_holder.AccountHolderRepository import AccountHolderRepository
+from ...api.generic.CrudApi import CrudApi
 from .schemas import (
     Create_Account_Holder_Schema,
     Update_Account_Holder_Schema,

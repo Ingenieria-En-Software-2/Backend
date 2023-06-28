@@ -1,4 +1,4 @@
-from webapp.repositories.CrudRepository import CrudRepository
+from ...repositories.CrudRepository import CrudRepository
 from ...auth.UserRepository import UserRepository
 from ...auth.models import User
 from .models import AccountHolder
@@ -107,7 +107,15 @@ class AccountHolderRepository(CrudRepository):
                 k: result[k]
                 for k in result.keys()
                 if k
-                not in ("login", "name", "lastname", "password", "user_type", "role_id", "person_type")
+                not in (
+                    "login",
+                    "name",
+                    "lastname",
+                    "password",
+                    "user_type",
+                    "role_id",
+                    "person_type",
+                )
             }
             # Add the user_id to the filtered data
             filtered_data["user_id"] = user.id
@@ -136,8 +144,7 @@ class AccountHolderRepository(CrudRepository):
             raise ValueError(f"Registro no encontrado para {id}")
         user = self.get_user()
         if user is None:
-            raise ValueError(
-                f"No hay usuario asociado con account holder {id}")
+            raise ValueError(f"No hay usuario asociado con account holder {id}")
 
         kwargs["id"] = id
         result = self.schema_update().load(kwargs)
