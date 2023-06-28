@@ -78,9 +78,7 @@ class Create_User_Schema(Schema):
         """
         regex = r"^[a-zA-Z\s]+$"
         if not re.match(regex, value):
-            raise ValidationError(
-                "El nombre solo puede contener letras y espacios"
-            )
+            raise ValidationError("El nombre solo puede contener letras y espacios")
 
     @validates("lastname")
     def validate_lastname(self, value):
@@ -91,9 +89,7 @@ class Create_User_Schema(Schema):
         """
         regex = r"^[a-zA-Z\s]+$"
         if not re.match(regex, value):
-            raise ValidationError(
-                "El apellido solo puede contener letras y espacios"
-            )
+            raise ValidationError("El apellido solo puede contener letras y espacios")
 
     @validates("person_type")
     def validate_person_type(self, value):
@@ -104,9 +100,7 @@ class Create_User_Schema(Schema):
         """
         allowed_types = ["natural", "legal"]
         if value not in allowed_types:
-            raise ValidationError(
-                "El tipo de persona solo puede ser natural o legal"
-            )
+            raise ValidationError("El tipo de persona solo puede ser natural o legal")
 
 
 class Update_User_Schema(Create_User_Schema):

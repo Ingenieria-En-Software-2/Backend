@@ -16,6 +16,7 @@ from .. import db, bcrypt
 
 from .models import User, Role
 
+
 @auth_blueprint.route("/")
 def login():
     return "I am a Login"
@@ -128,9 +129,10 @@ class LoginAPI(MethodView):
 
     def options(self):
         resp = Response()
-        resp.headers['Allow'] = 'POST'
+        resp.headers["Allow"] = "POST"
         return resp
-    
+
+
 class LogoutAPI(MethodView):
     @jwt_required(fresh=True)
     def post(self):
@@ -207,7 +209,9 @@ verify_view = VerifyAPI.as_view("verify_api")
 auth_blueprint.add_url_rule("/auth/verify", view_func=verify_view, methods=["GET"])
 
 login_view = LoginAPI.as_view("login_api")
-auth_blueprint.add_url_rule("/auth/login", view_func=login_view, methods=["POST", "OPTIONS"])
+auth_blueprint.add_url_rule(
+    "/auth/login", view_func=login_view, methods=["POST", "OPTIONS"]
+)
 
 logout_view = LogoutAPI.as_view("logout_api")
 auth_blueprint.add_url_rule("/auth/logout", view_func=logout_view, methods=["POST"])

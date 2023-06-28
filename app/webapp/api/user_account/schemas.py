@@ -52,16 +52,13 @@ class Create_User_Account_Schema(Schema):
         # the next 5 characters must be 30000
         # the remaining 11 characters must be numbers
         if not re.match(r"^\d{20}$", value):
-            raise ValidationError(
-                "El número de cuenta debe tener 20 caracteres")
+            raise ValidationError("El número de cuenta debe tener 20 caracteres")
         if value[0:4] != "0150":
             raise ValidationError("El número de cuenta debe comenzar con 0150")
         if value[4:9] != "30000":
-            raise ValidationError(
-                "El número de cuenta debe comenzar con 015030000")
+            raise ValidationError("El número de cuenta debe comenzar con 015030000")
         if not value[9:].isdigit():
-            raise ValidationError(
-                "Los últimos 11 caracteres deben ser números")
+            raise ValidationError("Los últimos 11 caracteres deben ser números")
 
     @validates("account_type_id")
     def validate_account_type_id(self, value):
@@ -69,12 +66,11 @@ class Create_User_Account_Schema(Schema):
         # check if account type id is 1 or 2
         if value not in [1, 2]:
             raise ValidationError(
-                "El tipo de cuenta debe ser 1 (corriente) o 2 (ahorro)")
+                "El tipo de cuenta debe ser 1 (corriente) o 2 (ahorro)"
+            )
         # check person type of user id and check the number of accounts
         # natural person can only have one account of each type
         # legal person can only have two savings accounts and six current accounts
-
-
 
 
 class Update_User_Account_Schema(Create_User_Account_Schema):
@@ -90,8 +86,10 @@ class Update_User_Account_Schema(Create_User_Account_Schema):
         ),
     )
     account_type_id = fields.Integer()
+
     class Meta:
-        exclude = ('id',)
+        exclude = ("id",)
+
 
 class Get_User_Account_Schema(Generic_Get_Schema):
     # Account holder fields
@@ -103,10 +101,7 @@ class Get_User_Account_Schema(Generic_Get_Schema):
     sort_by = fields.String(
         load_default="user_id",
         validate=validate.OneOf(
-            ["id",
-             "user_id",
-             "account_number",
-             "account_type_id"],
+            ["id", "user_id", "account_number", "account_type_id"],
             error="El campo sort_by solo puede tomar los valores id, user_id, account_number o account_type_id",
-        )
+        ),
     )

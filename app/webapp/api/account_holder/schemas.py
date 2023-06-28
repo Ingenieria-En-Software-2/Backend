@@ -176,9 +176,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         """
         regex = r"^[M|F|O]$"
         if not re.fullmatch(regex, value):
-            raise ValidationError(
-                "El género debe ser uno de los siguientes: M, F, O"
-            )
+            raise ValidationError("El género debe ser uno de los siguientes: M, F, O")
 
     @validates("civil_status")
     def validate_civil_status(self, value):
@@ -282,9 +280,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         if value is not None:
             regex = r"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$"
             if not re.fullmatch(regex, value):
-                raise ValidationError(
-                    "La ciudad debe contener solo letras y espacios"
-                )
+                raise ValidationError("La ciudad debe contener solo letras y espacios")
 
     @validates("country")
     def validate_country(self, value):
@@ -316,9 +312,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         """
         regex = r"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$"
         if not re.fullmatch(regex, value):
-            raise ValidationError(
-                "El municipio debe contener solo letras y espacios"
-            )
+            raise ValidationError("El municipio debe contener solo letras y espacios")
 
     @validates("address")
     def validate_address(self, value):
@@ -380,8 +374,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             regex = r"^[a-zA-Z\sáéíóúÁÉÍÓÚñÑüÜ]+$"
             if not re.fullmatch(regex, value):
                 raise ValidationError(
-                    "La ciudad del empleador debe contener solo letras y "
-                    + "espacios"
+                    "La ciudad del empleador debe contener solo letras y " + "espacios"
                 )
 
     @validates("employer_country")
@@ -420,8 +413,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
         regex = r"^[a-zA-Z\sáéíóúÁÉÍÓÚñÑüÜ]+$"
         if not re.fullmatch(regex, value):
             raise ValidationError(
-                "El municipio del empleador debe contener solo letras y "
-                + "espacios"
+                "El municipio del empleador debe contener solo letras y " + "espacios"
             )
 
     @validates("employer_address")
@@ -458,9 +450,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             is_valid = phonenumbers.is_valid_number(phone_number)
 
             if not is_valid:
-                raise ValidationError(
-                    "El número de teléfono ingresado es inválido"
-                )
+                raise ValidationError("El número de teléfono ingresado es inválido")
         # If the phone number and country is entered, validate the phone number
         elif "phone" in data and "country" in data:
             # Get the country code from the country name
@@ -472,9 +462,7 @@ class Create_Account_Holder_Schema(Create_User_Schema):
             is_valid = phonenumbers.is_valid_number(phone_number)
 
             if not is_valid:
-                raise ValidationError(
-                    "El número de teléfono ingresado es inválido"
-                )
+                raise ValidationError("El número de teléfono ingresado es inválido")
 
     @validates_schema(skip_on_field_errors=True)
     def validate_employer_phone(self, data, **kwargs):

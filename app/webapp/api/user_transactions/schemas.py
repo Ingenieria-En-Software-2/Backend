@@ -22,8 +22,8 @@ from marshmallow import (
 )
 
 
-class Create_User_Transaction_Schema(Schema):  
-    id = fields.Integer()  
+class Create_User_Transaction_Schema(Schema):
+    id = fields.Integer()
     user_id = fields.Integer(required=True)
     origin_account = fields.Integer()
     destination_account = fields.Integer()
@@ -81,8 +81,7 @@ class Create_User_Transaction_Schema(Schema):
         # validations for transaction description
         # check if transaction description is a string
         if not isinstance(value, str):
-            raise ValidationError(
-                "La descripción de la transacción debe ser un string")
+            raise ValidationError("La descripción de la transacción debe ser un string")
 
     @validates("currency_id")
     def validate_currency_id(self, value):
@@ -97,7 +96,8 @@ class Create_User_Transaction_Schema(Schema):
         # check if transaction status id exists in the database
         if not TransactionStatus.query.get(value):
             raise ValidationError(
-                "El estado de la transacción no existe en la base de datos")
+                "El estado de la transacción no existe en la base de datos"
+            )
 
     @validates_schema
     def validate_transaction(self, data, **kwargs):
@@ -105,16 +105,17 @@ class Create_User_Transaction_Schema(Schema):
         # check if origin account and destination account are the same
         if data["origin_account"] == data["destination_account"]:
             raise ValidationError(
-                "La cuenta de origen y la cuenta de destino no pueden ser la misma")
+                "La cuenta de origen y la cuenta de destino no pueden ser la misma"
+            )
 
         # check if transaction date is in the past
         if data["transaction_date"] > datetime.datetime.now():
-            raise ValidationError(
-                "La fecha de transacción no puede ser en el futuro")
+            raise ValidationError("La fecha de transacción no puede ser en el futuro")
 
 
 class Update_User_Transaction_Schema(Schema):
     transaction_status_id = fields.Integer()
+
 
 class Get_User_Transaction_Schema(Generic_Get_Schema):
     id = fields.Integer()
@@ -130,8 +131,18 @@ class Get_User_Transaction_Schema(Generic_Get_Schema):
 
     sort_by = fields.String(
         validate=validate.OneOf(
-            ["id", "user_id", "origin_account", "destination_account", "amount", "transaction_type",
-                "transaction_date", "transaction_description", "currency_id", "transaction_status_id"],
-            error="El campo de ordenamiento debe ser uno de los siguientes: id, user_id, origin_account, destination_account, amount, transaction_type, transaction_date, transaction_description, currency_id, transaction_status_id"
+            [
+                "id",
+                "user_id",
+                "origin_account",
+                "destination_account",
+                "amount",
+                "transaction_type",
+                "transaction_date",
+                "transaction_description",
+                "currency_id",
+                "transaction_status_id",
+            ],
+            error="El campo de ordenamiento debe ser uno de los siguientes: id, user_id, origin_account, destination_account, amount, transaction_type, transaction_date, transaction_description, currency_id, transaction_status_id",
         )
     )
