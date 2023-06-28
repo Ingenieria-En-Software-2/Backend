@@ -195,9 +195,6 @@ class VerifyAPI(MethodView):
                     "status": "success",
                     "data": {"id": user.id},
                 }
-                url = os.environ.get("VITE_API_URL")
-                print("\n\nurl1 : " + url)
-                print("\n\nurl2 : " + url_for("auth.login"))
                 return redirect(
                     "http://localhost:5173/verify",
                     200,
