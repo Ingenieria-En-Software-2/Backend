@@ -81,7 +81,7 @@ class AccountHolderRepository(CrudRepository):
 
         try:
 
-            if user_data.get("user_type") != None:
+            if user_data.get("user_type") is not None:
                 mail = Mail()
                 token = generate_token(user_data["login"])
                 confirm_url = url_for("auth.verify_api", token=token, _external=True)
