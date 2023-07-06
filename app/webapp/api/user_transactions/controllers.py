@@ -48,13 +48,42 @@ class UserTransactionsApi(CrudApi):
             Get_User_Transaction_Schema,  # Esquema Get para roles
         )
 
+    def handle_inter_wallet_transaction(self, user_id, origin,destination,amount,currency,description):
+        origin = user_account_repository.get_user_account_by_account_number(origin)
+        if not origin or origin==None:
+            return {'status':404, 'message':f'No existe la cuenta de origen: {wallet_origin}'}, 404
+        try:
+            A = user_transactions_repository.create(**{
+                'transaction_type' : 'inter_wallet',
+                'transaction_date' : str(datetime.datetime.now()),
+                'user_id' : user_id,
+                'amount' : amount,
+                'currency_id' : user_transactions_repository.get_currency_by_currency_name(currency).id,
+                'origin_account': origin.id,
+                'destination_account' : 1,
+                'transaction_status_id' : 2,
+                'transaction_description' : description
+            })
+            response = {
+                'status' : 200,
+                'message' : 'Se ha realizado la transferencia Interwallet.',
+                'transaction_id' : A.id,
+            }
+            return response, 200
+        except Exception as e:
+            response = {
+                'status' : 500,
+                'message' : 'La moneda no existe.',
+            }
+            return response, 500
+
+
     @jwt_required(fresh=True)
     def post(self):
         user_identity = get_jwt_identity()
         if user_identity:
             user_id = User.decode_token(user_identity)
             data = request.get_json()
-
 
             wallet_origin = data.get('origin')
             wallet_destination = data.get('destination')
@@ -63,41 +92,45 @@ class UserTransactionsApi(CrudApi):
             currency = data.get('currency')
             description = data.get('description')
             status = 2
-            
-            #verificar si el origen y destino son del mismo dueno, de terceros o de un wallet diferente
+
+            if trans_type == "inter_wallet":
+                return self.handle_inter_wallet_transaction(user_id, wallet_origin, wallet_destination,amount, currency, description)
+
+            #verificar si el origen y destino existen
             origin = user_account_repository.get_user_account_by_account_number(wallet_origin)
-            if not origin:
-                return {'code':404, 'error':f'No existe la cuenta de origen: {wallet_origin}'}, 404
+            if not origin or origin==None:
+                return {'status':404, 'message':f'No existe la cuenta de origen: {wallet_origin}'}, 404
             destination = user_account_repository.get_user_account_by_account_number(wallet_destination)
-            if not destination:
-                return {'code':404, 'error':f'No existe la cuenta de destino: {wallet_destination}:'}
+            if (not destination or destination==None) and trans_type != "inter_wallet":
+                return {'status':404, 'message':f'No existe la cuenta de destino: {wallet_destination}'}, 404
+
+            if origin.user_id == destination.user_id and trans_type != 'b_a':
+                return {'status' : 414, 'message' : 'Para realizar transferencias del mismo usuario, ir a la seccion "Entre Cuentas".'}, 414
             
-
-            # new_amount = amount
-            # if user_origin.user_id != user_destination.user_id and trans_type == "Caribbean Wallet": #2%
-            #     new_amount = amount + ((amount*2)/100)
-            # elif user_origin.user_id != user_destination.user_id and trans_type != "Caribbean Wallet": #5%
-            #     new_amount = amount + ((amount*5)/100)
-
-            
-            A = user_transactions_repository.create(**{
-                'transaction_type' : trans_type,
-                'transaction_date' : str(datetime.datetime.now()),
-                'user_id' : user_id,
-                'amount' : amount,
-                'currency_id' : currency,
-                'origin_account': origin.id,
-                'destination_account' : destination.id,
-                'transaction_status_id' : status,
-                'transaction_description' : description
-            })
-            response = {
-                'status' : 200,
-                'message' : 'Se ha realizado la transferencia.',
-                'transaction_id' : A.id,
-            }
-            return response, 200
-
+            try:
+                A = user_transactions_repository.create(**{
+                    'transaction_type' : trans_type,
+                    'transaction_date' : str(datetime.datetime.now()),
+                    'user_id' : user_id,
+                    'amount' : amount,
+                    'currency_id' : user_transactions_repository.get_currency_by_currency_name(currency).id,
+                    'origin_account': origin.id,
+                    'destination_account' : destination.id,
+                    'transaction_status_id' : status,
+                    'transaction_description' : description
+                })
+                response = {
+                    'status' : 200,
+                    'message' : 'Se ha realizado la transferencia.',
+                    'transaction_id' : A.id,
+                }
+                return response, 200
+            except Exception as e:
+                response = {
+                    'status' : 500,
+                    'message' : 'La moneda no existe.',
+                }
+                return response, 500
         else:
             response = { "status" : 401, "message": "No se ha iniciado sesión." }
             return response, 401
