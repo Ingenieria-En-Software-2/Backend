@@ -13,6 +13,10 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"pm.test(\"Compobar el codigo\", function(){",
+							"    pm.response.to.have.status(200)",
+							"})",
+							"",
 							"pm.collectionVariables.set(\"token\", pm.response.json().auth_token);",
 							""
 						],
@@ -55,6 +59,20 @@
 		},
 		{
 			"name": "Get account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Compobar el codigo\", function(){",
+							"    pm.response.to.have.status(200)",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "GET",
 				"header": [
@@ -80,6 +98,10 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"pm.test(\"Compobar el codigo\", function(){",
+							"    pm.response.to.have.status(201)",
+							"})",
+							"",
 							"pm.collectionVariables.set(\"c1\", pm.response.json().id)"
 						],
 						"type": "text/javascript"
@@ -125,6 +147,11 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"pm.test(\"Compobar el codigo\", function(){",
+							"    pm.response.to.have.status(201)",
+							"})",
+							"",
+							"",
 							"pm.collectionVariables.set(\"c2\", pm.response.json().id)"
 						],
 						"type": "text/javascript"
@@ -165,6 +192,20 @@
 		},
 		{
 			"name": "Delete savings",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Compobar el codigo\", function(){",
+							"    pm.response.to.have.status(204)",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "DELETE",
 				"header": [],
@@ -182,16 +223,30 @@
 		},
 		{
 			"name": "Delete check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Compobar el codigo\", function(){",
+							"    pm.response.to.have.status(204)",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/1",
+					"raw": "{{base_url}}/{{c2}}",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"1"
+						"{{c2}}"
 					]
 				}
 			},
