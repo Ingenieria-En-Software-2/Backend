@@ -72,7 +72,7 @@ class AccountHolderRepository(CrudRepository):
             if i in kwargs:
                 user_data[i] = kwargs[i]
 
-        user_data["password"] = None
+        # user_data["password"] = None
 
         Create_User_Schema_No_Password().load(user_data)
         try:

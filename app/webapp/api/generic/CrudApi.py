@@ -1,7 +1,7 @@
-from flask import abort, request, url_for, render_template
+from flask import abort, request
 from flask_mail import Mail
 from flask_restful import Resource, marshal
-from ...auth.token import generate_token
+from webapp.auth.email_verification import send_email
 
 
 class CrudApi(Resource):
@@ -70,17 +70,7 @@ class CrudApi(Resource):
         # Crear token de verificacion y enviar correo para verificar usuario
         args = request.get_json()
         if args.get("user_type") == "user":
-            mail = Mail()
-            token = generate_token(args["login"])
-            confirm_url = url_for("auth.verify_api", token=token, _external=True)
-            print(confirm_url)
-            html = render_template("confirm_email.html", confirm_url=confirm_url)
-            email = create_email(args["login"], "Confirm your email", html)
-
-            try:
-                mail.send(email)
-            except:
-                pass
+            send_email(args)
 
         return {"id": result.id}, 201
 
