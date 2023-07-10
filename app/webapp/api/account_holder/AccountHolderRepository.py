@@ -67,11 +67,12 @@ class AccountHolderRepository(CrudRepository):
             "password",
             "user_type",
             "role_id",
+            "person_type",
         ):
             if i in kwargs:
                 user_data[i] = kwargs[i]
 
-        user_data["password"] = None
+        #user_data["password"] = None
 
         Create_User_Schema_No_Password().load(user_data)
         try:
@@ -85,7 +86,7 @@ class AccountHolderRepository(CrudRepository):
                 k: result[k]
                 for k in result.keys()
                 if k
-                not in ("login", "name", "lastname", "password", "user_type", "role_id")
+                not in ("login", "name", "lastname", "password", "user_type", "role_id", "person_type")
             }
             # Add the user_id to the filtered data
             filtered_data["user_id"] = user.id
