@@ -8,6 +8,7 @@ from flask_jwt_extended import (
 )
 from flask import Response
 from webapp.auth.token import *
+from webapp.auth.email_verification import send_verification_email
 
 auth_blueprint = Blueprint("auth", __name__)
 
@@ -114,6 +115,10 @@ class LoginAPI(MethodView):
                     "status": "fail",
                     "message": "Login failed. User not verified.",
                 }
+
+                # Send verification email again
+                send_verification_email(user.login)
+
                 return make_response(jsonify(responseObject)), 400
             else:
                 responseObject = {
