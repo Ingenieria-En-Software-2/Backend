@@ -13,10 +13,9 @@ def send_verification_email(recipient: str):
     token = generate_token(recipient)
     confirm_url = url_for("auth.verify_api", token=token, _external=True)
     html = render_template("confirm_email.html", confirm_url=confirm_url)
-    email = create_email(recipient, "Confirm your email", html)
+    email = create_email(recipient, "Confirma tu usuario", html)
 
     try:
         mail.send(email)
-        print("Email de confirmación enviado.")
     except:
         pass

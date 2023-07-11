@@ -27,7 +27,7 @@ def integrity_error(e):
     if isinstance(e.orig, UniqueViolation):
         violation_key = re.search(r"\(\w+\)", e.orig.pgerror).group(0).strip("()")
 
-        return jsonify(error={f"{violation_key}": "Ya existe"}), 400
+        return jsonify(error={f"{violation_key}": "El registro ya existe"}), 400
 
     if isinstance(e.orig, ForeignKeyViolation):
         details = e.orig.pgerror.split("\n")[1]

@@ -23,7 +23,6 @@ def login():
 
 class RegisterAPI(MethodView):
     def post(self):
-        print("RegisterAPI\n\n")
         post_data = request.get_json()
         user = User.query.filter_by(login=post_data.get("login")).first()
         if not user:
