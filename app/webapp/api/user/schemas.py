@@ -27,11 +27,11 @@ class Create_User_Schema(Schema):
     )
     password = fields.String(
         required=True,
-        validate=validate.Length(
-            min=6,
-            max=20,
-            error="La contraseña debe tener entre 6 y 20 caracteres",
-        ),
+        # validate=validate.Length(
+        #     min=6,
+        #     max=20,
+        #     error="La contraseña debe tener entre 6 y 20 caracteres",
+        # ),
     )
     name = fields.String(
         required=True,
@@ -111,11 +111,11 @@ class Update_User_Schema(Create_User_Schema):
         ],
     )
     password = fields.String(
-        validate=validate.Length(
-            min=6,
-            max=20,
-            error="La contraseña debe tener entre 6 y 20 caracteres",
-        ),
+        # validate=validate.Length(
+        #     min=6,
+        #     max=20,
+        #     error="La contraseña debe tener entre 6 y 20 caracteres",
+        # ),
     )
     name = fields.String(
         validate=validate.Length(

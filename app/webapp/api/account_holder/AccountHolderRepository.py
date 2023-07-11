@@ -6,6 +6,7 @@ from ..user.schemas import Create_User_Schema_No_Password
 from flask import url_for, render_template
 from flask_mail import Mail
 from webapp.auth.email_verification import send_verification_email
+from webapp import bcrypt
 
 # TODO: Import the User model and the db from app
 
@@ -62,17 +63,14 @@ class AccountHolderRepository(CrudRepository):
         """
         result = self.schema_create().load(kwargs)
         user_data = {}
-        for i in (
-            "login",
-            "name",
-            "lastname",
-            "password",
-            "user_type",
-            "role_id",
-            "person_type",
-        ):
-            if i in kwargs:
-                user_data[i] = kwargs[i]
+        user_data = {
+            i: kwargs[i]
+            for i in ("login", "name", "lastname", "user_type", "role_id", "person_type")
+            if i in kwargs
+        }
+
+        # Add hashed password to user data
+        user_data["password"] = bcrypt.generate_password_hash(kwargs["password"]).decode("utf-8")
 
         Create_User_Schema_No_Password().load(user_data)
         try:
