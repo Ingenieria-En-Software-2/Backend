@@ -191,15 +191,17 @@ class VerifyAPI(MethodView):
                 user.verified = True
                 db.session.commit()
 
-                responseObject = {
-                    "status": "success",
-                    "data": {"id": user.id},
-                }
+                # responseObject = {
+                #     "status": "success",
+                #     "data": {"id": user.id},
+                # }
 
-                return make_response(jsonify(responseObject)), 200
+                # return make_response(jsonify(responseObject)), 200
+                return "Has verificado tu cuenta exitosamente"
 
-        responseObject = {"status": "fail", "message": "Token invalido"}
-        return make_response(jsonify(responseObject)), 401
+        # responseObject = {"status": "fail", "message": "Token invalido"}
+        # return make_response(jsonify(responseObject)), 401
+        return "Verificacion fallida, intenta de nuevo"
 
 
 register_view = RegisterAPI.as_view("register_api")

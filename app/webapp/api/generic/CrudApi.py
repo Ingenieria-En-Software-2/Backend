@@ -69,7 +69,7 @@ class CrudApi(Resource):
 
         # Crear token de verificacion y enviar correo para verificar usuario
         args = request.get_json()
-        if args.get("user_type") == "user":
+        if args.get("user_type") is not None:
             send_email(args)
 
         return {"id": result.id}, 201
