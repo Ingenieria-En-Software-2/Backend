@@ -18,6 +18,6 @@ def confirm_token(token, expiration=3600):
 
 def create_email(to, subject, template):
     msg = Message(
-        subject, recipients=[to], html=template, sender="pruebasoswer2@gmail.com"
+        subject, recipients=[to], html=template, sender="Caribbean Wallet"
     )
     return msg

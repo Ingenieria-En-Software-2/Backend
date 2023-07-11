@@ -8,13 +8,12 @@ def create_email(to, subject, template):
     return msg
 
 
-def send_email(to):
+def send_verification_email(recipient: str):
     mail = Mail()
-    token = generate_token(to["login"])
+    token = generate_token(recipient)
     confirm_url = url_for("auth.verify_api", token=token, _external=True)
-    print(confirm_url)
     html = render_template("confirm_email.html", confirm_url=confirm_url)
-    email = create_email(to["login"], "Confirm your email", html)
+    email = create_email(recipient, "Confirm your email", html)
 
     try:
         mail.send(email)

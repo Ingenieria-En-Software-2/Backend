@@ -1,7 +1,6 @@
 from flask import abort, request
 from flask_mail import Mail
 from flask_restful import Resource, marshal
-from webapp.auth.email_verification import send_email
 
 
 class CrudApi(Resource):
@@ -66,11 +65,6 @@ class CrudApi(Resource):
 
         if not result:
             abort(500, "Algo salio mal creando el recurso")
-
-        # Crear token de verificacion y enviar correo para verificar usuario
-        args = request.get_json()
-        if args.get("user_type") is not None:
-            send_email(args)
 
         return {"id": result.id}, 201
 

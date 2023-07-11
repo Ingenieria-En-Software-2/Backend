@@ -9,7 +9,6 @@ from flask_jwt_extended import (
 from flask import Response
 from webapp.auth.token import *
 
-
 auth_blueprint = Blueprint("auth", __name__)
 
 from .. import db, bcrypt
@@ -183,24 +182,18 @@ class UserAPI(MethodView):
 
 
 class VerifyAPI(MethodView):
+    # Como es una página que verá el usuario, no se retorna un JSON
     def get(self):
         token = request.args.get("token")
         if token:
-            if confirm_token(token) != False:
-                user = User.query.filter_by(login=confirm_token(token)).first()
+            login = confirm_token(token)
+            if login:
+                user = User.query.filter_by(login=login).first()
                 user.verified = True
                 db.session.commit()
 
-                # responseObject = {
-                #     "status": "success",
-                #     "data": {"id": user.id},
-                # }
+                return "Has verificado tu cuenta exitosamente, ahora puedes iniciar sesión"
 
-                # return make_response(jsonify(responseObject)), 200
-                return "Has verificado tu cuenta exitosamente"
-
-        # responseObject = {"status": "fail", "message": "Token invalido"}
-        # return make_response(jsonify(responseObject)), 401
         return "Verificacion fallida, intenta de nuevo"
 
 

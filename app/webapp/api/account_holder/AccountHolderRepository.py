@@ -3,7 +3,9 @@ from ...auth.UserRepository import UserRepository
 from ...auth.models import User
 from .models import AccountHolder
 from ..user.schemas import Create_User_Schema_No_Password
-from flask import abort
+from flask import url_for, render_template
+from flask_mail import Mail
+from webapp.auth.email_verification import send_verification_email
 
 # TODO: Import the User model and the db from app
 
@@ -72,8 +74,6 @@ class AccountHolderRepository(CrudRepository):
             if i in kwargs:
                 user_data[i] = kwargs[i]
 
-        # user_data["password"] = None
-
         Create_User_Schema_No_Password().load(user_data)
         try:
             # Create the user
@@ -98,15 +98,20 @@ class AccountHolderRepository(CrudRepository):
             }
             # Add the user_id to the filtered data
             filtered_data["user_id"] = user.id
+
             # Create the instance
             instance = AccountHolder(**filtered_data)
             self.db.session.add(instance)
             self.db.session.commit()
+
+            # Send verification email
+            send_verification_email(user.login)
+
             return instance
 
         except Exception as e:
             self.db.session.rollback()
-            print(f"A ocurrido un error al crear el registro: {e}")
+            print(f"Ha ocurrido un error al crear el registro: {e}")
             raise e
 
     def update(self, id, **kwargs):
@@ -142,6 +147,6 @@ class AccountHolderRepository(CrudRepository):
         except Exception as e:
             self.db.session.rollback()
             # falta
-            print(f"A ocurrido un error al actualizar el registro: {e}")
+            print(f"Ha ocurrido un error al actualizar el registro: {e}")
 
             return None
