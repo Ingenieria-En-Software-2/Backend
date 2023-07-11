@@ -196,7 +196,9 @@ class VerifyAPI(MethodView):
                 user.verified = True
                 db.session.commit()
 
-                return "Has verificado tu cuenta exitosamente, ahora puedes iniciar sesión"
+                return (
+                    "Has verificado tu cuenta exitosamente, ahora puedes iniciar sesión"
+                )
 
         return "Verificacion fallida, intenta de nuevo"
 

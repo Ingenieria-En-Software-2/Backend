@@ -65,12 +65,21 @@ class AccountHolderRepository(CrudRepository):
         user_data = {}
         user_data = {
             i: kwargs[i]
-            for i in ("login", "name", "lastname", "user_type", "role_id", "person_type")
+            for i in (
+                "login",
+                "name",
+                "lastname",
+                "user_type",
+                "role_id",
+                "person_type",
+            )
             if i in kwargs
         }
 
         # Add hashed password to user data
-        user_data["password"] = bcrypt.generate_password_hash(kwargs["password"]).decode("utf-8")
+        user_data["password"] = bcrypt.generate_password_hash(
+            kwargs["password"]
+        ).decode("utf-8")
 
         Create_User_Schema_No_Password().load(user_data)
         try:

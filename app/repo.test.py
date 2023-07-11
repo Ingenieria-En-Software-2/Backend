@@ -14,7 +14,7 @@ from webapp.api.user_transactions.models import (
 )
 import datetime
 
-from webapp import db,  bcrypt
+from webapp import db, bcrypt
 
 
 def add_user(
@@ -95,8 +95,26 @@ def populate_db():
     add_role("user")
 
     # Add users
-    add_user("admin@test.com", bcrypt.generate_password_hash("admin").decode("utf-8"), "admin", "admin", "legal", "admin", 1, True)  # admin_role.id)
-    add_user("user@test.com", bcrypt.generate_password_hash("user").decode("utf-8"), "user", "user", "natural", "user", 2,True)  # user_role.id)
+    add_user(
+        "admin@test.com",
+        bcrypt.generate_password_hash("admin").decode("utf-8"),
+        "admin",
+        "admin",
+        "legal",
+        "admin",
+        1,
+        True,
+    )  # admin_role.id)
+    add_user(
+        "user@test.com",
+        bcrypt.generate_password_hash("user").decode("utf-8"),
+        "user",
+        "user",
+        "natural",
+        "user",
+        2,
+        True,
+    )  # user_role.id)
 
     # Add account types
     add_accounts_types()

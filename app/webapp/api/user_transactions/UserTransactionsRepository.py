@@ -113,5 +113,7 @@ class UserTransactionsRepository(CrudRepository):
         :return: Currency that is associated with the given name.
         """
         return (
-            self.db.session.query(Currency).filter(Currency.name == currency_name).first()
+            self.db.session.query(Currency)
+            .filter(Currency.name == currency_name)
+            .first()
         )
