@@ -105,3 +105,13 @@ class UserTransactionsRepository(CrudRepository):
         return (
             self.db.session.query(Currency).filter(Currency.id == currency_id).first()
         )
+
+    def get_currency_by_currency_name(self, currency_name):
+        """
+        Gets a currency object by the currency name.
+        :param currency_name: Name that identifies the currency.
+        :return: Currency that is associated with the given name.
+        """
+        return (
+            self.db.session.query(Currency).filter(Currency.name == currency_name).first()
+        )
