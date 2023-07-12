@@ -2,7 +2,7 @@ from ...repositories.CrudRepository import CrudRepository
 from ...auth.UserRepository import UserRepository
 from ...auth.models import User
 from .models import AccountHolder
-from ..user.schemas import Create_User_Schema_No_Password
+from ..user.schemas import Create_User_Schema
 from flask import url_for, render_template
 from flask_mail import Mail
 from webapp.auth.email_verification import send_verification_email
@@ -81,7 +81,7 @@ class AccountHolderRepository(CrudRepository):
             kwargs["password"]
         ).decode("utf-8")
 
-        Create_User_Schema_No_Password().load(user_data)
+        Create_User_Schema().load(user_data)
         try:
             # Create the user
             user = User(**user_data)
