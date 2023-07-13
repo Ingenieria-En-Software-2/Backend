@@ -19,6 +19,20 @@ class AccountHolderRepository(CrudRepository):
     def __init__(self, db, create_schema, update_schema):
         super().__init__(AccountHolder, db, create_schema, update_schema)
 
+    def get_account_holder_by_user_id(self, user_id):
+        """
+        Gets a account holder by user_id.
+
+        :param user_id: The id of the user to retrieve.
+        :return: The user with the specified id, or `None` if no user was
+                 found or is not accountholder.
+        """
+        return (
+            self.db.session.query(AccountHolder)
+            .filter(AccountHolder.user_id == user_id)
+            .first()
+        )
+
     def get_account_holder_by_login(self, login):
         """
         Gets a account holder by login.

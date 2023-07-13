@@ -7,7 +7,10 @@ from ...api.user_transactions.models import Currency, UserTransaction
 from ...api.user_account.models import UserAccount
 from sqlalchemy.sql import functions
 from sqlalchemy.orm import aliased
-from sqlalchemy import or_
+from sqlalchemy import or_, func, extract
+import datetime
+from datetime import datetime, timedelta
+
 
 
 class UserTransactionsRepository(CrudRepository):
@@ -95,6 +98,93 @@ class UserTransactionsRepository(CrudRepository):
             .filter(UserTransaction.user_id == user_id)
             .all()
         )
+    def get_transactions_by_day(self,day,role,user_id):
+        if role == 1: #admin
+            return (self.db.session.query(UserTransaction)
+                        .filter(UserTransaction.transaction_date == day)
+                        .all())
+        if role == 2: #user
+            return (self.db.session.query(UserTransaction)
+                        .filter(UserTransaction.transaction_date == day, UserTransaction.user_id == user_id)
+                        .all())
+    def get_transactions_by_week(self,role,user_id):
+        if role == 1: #ADMIN
+            six_days_ago = datetime.today() - timedelta(days = 6)
+            return (self.db.session.query(UserTransaction)
+                        .filter(UserTransaction.transaction_date >= six_days_ago)
+                        .all())
+        if role == 2: #user
+            six_days_ago = datetime.today() - timedelta(days = 6)
+            return (self.db.session.query(UserTransaction)
+                        .filter(UserTransaction.transaction_date >= six_days_ago, UserTransaction.user_id == user_id)
+                        .all())
+    def get_transactions_by_month(self, month_number, role,user_id):
+        if role == 1:
+            return (self.db.session.query(UserTransaction)
+                        .filter(extract('month', UserTransaction.transaction_date) == month_number)
+                        .all())
+        if role == 2:
+            return (self.db.session.query(UserTransaction)
+                        .filter(extract('month', UserTransaction.transaction_date) == month_number, UserTransaction.user_id == user_id)
+                        .all())
+    def get_months(self,number):
+        if number == 1:
+            return [1,2,3]
+        elif number == 2:
+            return [4,5,6]
+        elif number == 3:
+            return [7,8,9]
+        else:
+            return [10,11,12]
+
+    def get_transactions_by_quarter(self, quarter, role,user_id):
+        MONTHS = self.get_months(quarter)
+        if role == 1:
+            return (self.db.session.query(UserTransaction)
+                        .filter(extract('month', UserTransaction.transaction_date).in_(MONTHS))
+                        .all())
+        if role == 2:
+            return (self.db.session.query(UserTransaction)
+                        .filter(extract('month', UserTransaction.transaction_date).in_(MONTHS), UserTransaction.user_id == user_id)
+                        .all())
+    def get_transactions_by_year(self, year, role,user_id):
+        if role == 1:
+            return (self.db.session.query(UserTransaction)
+                        .filter(extract('year', UserTransaction.transaction_date) == year)
+                        .all())
+        if role == 2:
+            return (self.db.session.query(UserTransaction)
+                        .filter(extract('year', UserTransaction.transaction_date) == year, UserTransaction.user_id == user_id)
+                        .all())
+    def get_transactions_by_date(self, date, role,user_id):
+        if role == 1:
+            return (self.db.session.query(UserTransaction)
+                        .filter(UserTransaction.transaction_date == date)
+                        .all())
+        if role == 2:
+            return (self.db.session.query(UserTransaction)
+                        .filter(UserTransaction.transaction_date == date, UserTransaction.user_id == user_id)
+                        .all())
+
+    def get_transactions_by_period(self,start,end,role,user_id):
+        if role == 1:
+            return (self.db.session.query(UserTransaction)
+                        .filter(UserTransaction.transaction_date >= start, UserTransaction.transaction_date <= end)
+                        .all())
+        if role == 2:
+            return (self.db.session.query(UserTransaction)
+                        .filter(UserTransaction.transaction_date >= start, UserTransaction.transaction_date <= end, 
+                            UserTransaction.user_id == user_id)
+                        .all())
+
+    def get_all_transactions(self,role,user_id):
+        if role == 1:
+            return (self.db.session.query(UserTransaction).all())
+        if role == 2:
+            return (self.db.session.query(UserTransaction)
+                        .filter(UserTransaction.user_id == user_id)
+                        .all()
+                    )
 
     def get_currency_by_currency_id(self, currency_id):
         """
