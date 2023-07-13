@@ -2,11 +2,6 @@ from ... import db
 from datetime import datetime
 
 class LogEvent(db.Model):
-    """
-    Account Type:
-    1. Current Account
-    2. Savings Account
-    """
 
     __tablename__ = "log_event"
 

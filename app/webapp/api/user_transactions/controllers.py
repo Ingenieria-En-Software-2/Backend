@@ -10,6 +10,7 @@ from .models import UserTransaction
 from .UserTransactionsRepository import UserTransactionsRepository
 from webapp.api.generic.CrudApi import CrudApi
 from .schemas import Get_User_Transaction_Schema
+from webapp.api.logger.models import LogEvent
 
 # Instance of the account holder repository
 user_transactions_repository = UserTransactionsRepository(db)
@@ -69,7 +70,7 @@ class UserTransactionsApi(CrudApi):
             A = user_transactions_repository.create(
                 **{
                     "transaction_type": "inter_wallet",
-                    "transaction_date": str(datetime.datetime.now()),
+                    "transaction_date": str(datetime.now()),
                     "user_id": user_id,
                     "amount": amount,
                     "currency_id": user_transactions_repository.get_currency_by_currency_name(
@@ -86,12 +87,16 @@ class UserTransactionsApi(CrudApi):
                 "message": "Se ha realizado la transferencia Interwallet.",
                 "transaction_id": A.id,
             }
+            log = LogEvent(user_id=user_id, description="Transferencia realizada")
+            db.session.add(log)
+            db.session.commit()
             return response, 200
         except Exception as e:
             response = {
                 "status": 500,
                 "message": "La moneda no existe.",
             }
+
             return response, 500
 
     @jwt_required(fresh=True)
@@ -149,7 +154,7 @@ class UserTransactionsApi(CrudApi):
                 A = user_transactions_repository.create(
                     **{
                         "transaction_type": trans_type,
-                        "transaction_date": str(datetime.datetime.now()),
+                        "transaction_date": str(datetime.now()),
                         "user_id": user_id,
                         "amount": amount,
                         "currency_id": user_transactions_repository.get_currency_by_currency_name(
@@ -166,6 +171,9 @@ class UserTransactionsApi(CrudApi):
                     "message": "Se ha realizado la transferencia.",
                     "transaction_id": A.id,
                 }
+                log = LogEvent(user_id=user_id, description="Transferencia realizada")
+                db.session.add(log)
+                db.session.commit()
                 return response, 200
             except Exception as e:
                 response = {
@@ -190,6 +198,9 @@ class UserTransactionsApi(CrudApi):
                         "message": "Se ha cancelado la transferencia.",
                         "id": A.id,
                     }
+                    log = LogEvent(user_id=user_id, description="Transferencia cancelada")
+                    db.session.add(log)
+                    db.session.commit()
                     return response, 200
                 except ValidationError as inst:
                     response = {
