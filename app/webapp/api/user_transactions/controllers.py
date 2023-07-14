@@ -207,24 +207,24 @@ class UserTransactionsApi(CrudApi):
             response = {"status": 401, "message": "No se ha iniciado sesión."}
             return response, 401
 
-    def get_transactions_by(self,g,inp,user_id,role):
+    def get_transactions_by(self,g,inp,user_id,role,account_type):
         if g == "today":
             A = user_transactions_repository.get_transactions_by_day(datetime.now().strftime(
                                 "%Y-%m-%d"
-                            ),role,user_id)
+                            ),role,user_id,account_type)
         elif g == "week":
-            A = user_transactions_repository.get_transactions_by_week(role,user_id)
+            A = user_transactions_repository.get_transactions_by_week(role,user_id,account_type)
         elif g == "month":
-            A = user_transactions_repository.get_transactions_by_month(int(inp), role,user_id)
+            A = user_transactions_repository.get_transactions_by_month(int(inp), role,user_id,account_type)
         elif g == "quarter":
-            A = user_transactions_repository.get_transactions_by_quarter(int(inp), role,user_id)
+            A = user_transactions_repository.get_transactions_by_quarter(int(inp), role,user_id,account_type)
         elif g == "year":
-            A = user_transactions_repository.get_transactions_by_year(int(inp), role,user_id)
+            A = user_transactions_repository.get_transactions_by_year(int(inp), role,user_id,account_type)
         elif g == "date":
             date = (datetime.strptime(inp,
                                 "%Y-%m-%d"
                             )).strftime("%Y-%m-%d")
-            A = user_transactions_repository.get_transactions_by_date(date, role,user_id)
+            A = user_transactions_repository.get_transactions_by_date(date, role,user_id,account_type)
         elif g == "period":
             start = (datetime.strptime(inp.split(" ")[0],
                                 "%Y-%m-%d"
@@ -232,9 +232,9 @@ class UserTransactionsApi(CrudApi):
             end = (datetime.strptime(inp.split(" ")[1],
                                 "%Y-%m-%d"
                             )).strftime("%Y-%m-%d")
-            A = user_transactions_repository.get_transactions_by_period(start,end, role,user_id)
+            A = user_transactions_repository.get_transactions_by_period(start,end, role,user_id,account_type)
         if g == "all":
-            A=user_transactions_repository.get_all_transactions(role,user_id)
+            A=user_transactions_repository.get_all_transactions(role,user_id,account_type)
         return A
 
     def type_of_transaction(self,t):
@@ -254,11 +254,13 @@ class UserTransactionsApi(CrudApi):
             return AH.id_number
 
     @jwt_required(fresh=True)
-    def get(self,g,inp):
+    def get(self,g,inp,account_type):
         '''
         This function returns the transactions
         :param g: Filter we wanna apply for the search, it can be "all","today","week","month","quarter","year","date","period"
         :param inp: Specified search for "month","quarter","year","date","period"
+        :param inp: Account type of the transactions done by said account, 1 is for checking, 2 is for savings, 0 for admins
+        that gather any
         :return: All the transactions filtered by g and inp
 
         inp can be any string for "all","today","week"
@@ -273,10 +275,14 @@ class UserTransactionsApi(CrudApi):
         If the user is admin, the transactions returned are all of the ones that comply with the filter
         If the user has role user, the transactions are filtered also only by theirs id
         '''
+
+        # 1 es corriente
+        # 2 es ahorro
+
         user_identity = get_jwt_identity()
         if user_identity:
             user_id = User.decode_token(user_identity)
-            A = self.get_transactions_by(g,inp,user_id,User.get_role(user_identity))
+            A = self.get_transactions_by(g,inp,user_id,User.get_role(user_identity),account_type)
             if len(A) == 0:
                 response = {
                     "status": 400,
