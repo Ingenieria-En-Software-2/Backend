@@ -63,13 +63,13 @@ class UserTransactionsApi(CrudApi):
         if not origin or origin == None:
             return {
                 "status": 404,
-                "message": f"No existe la cuenta de origen: {wallet_origin}",
+                "message": f"No existe la cuenta de origen: {origin}",
             }, 404
         try:
             A = user_transactions_repository.create(
                 **{
                     "transaction_type": "inter_wallet",
-                    "transaction_date": str(datetime.datetime.now()),
+                    "transaction_date": str(datetime.now()),
                     "user_id": user_id,
                     "amount": amount,
                     "currency_id": user_transactions_repository.get_currency_by_currency_name(
@@ -94,6 +94,42 @@ class UserTransactionsApi(CrudApi):
             }
             return response, 500
 
+    def handle_pago_movil(self,origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id):
+        origin = user_account_repository.get_user_account_by_account_number(origin)
+        if not origin or origin == None:
+            return {
+                "status": 404,
+                "message": f"No existe la cuenta de origen: {origin}",
+            }, 404
+        try:
+            A = user_transactions_repository.create(
+                **{
+                    "transaction_type": "inter_wallet",
+                    "transaction_date": str(datetime.now()),
+                    "user_id": user_id,
+                    "amount": amount,
+                    "currency_id": user_transactions_repository.get_currency_by_currency_name(
+                        currency
+                    ).id,
+                    "origin_account": origin.id,
+                    "destination_account": 1,
+                    "transaction_status_id": 2,
+                    "transaction_description": description,
+                }
+            )
+            response = {
+                "status": 200,
+                "message": "Se ha realizado la transferencia Pago Movil.",
+                "transaction_id": A.id,
+            }
+            return response, 200
+        except Exception as e:
+            response = {
+                "status": 500,
+                "message": "La moneda no existe.",
+            }
+            return response, 500
+
     @jwt_required(fresh=True)
     def post(self):
         user_identity = get_jwt_identity()
@@ -101,10 +137,22 @@ class UserTransactionsApi(CrudApi):
             user_id = User.decode_token(user_identity)
             data = request.get_json()
 
+            trans_type = data.get("transaction_type")
+
+            if trans_type == "pago_movil":
+                wallet_origin = data.get("origin")
+                dest_CI = data.get("destination_ci")
+                dest_wallet = data.get("destination_wallet")
+                dest_name = data.get("destination_name")
+                dest_phone = data.get("destination_phone")
+                description = data.get("description")
+                currency = data.get("currency")
+                amount = data.get("amount")
+                return self.handle_pago_movil(wallet_origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id)
+
             wallet_origin = data.get("origin")
             wallet_destination = data.get("destination")
             amount = data.get("amount")
-            trans_type = data.get("transaction_type")
             currency = data.get("currency")
             description = data.get("description")
             status = 2
@@ -149,7 +197,7 @@ class UserTransactionsApi(CrudApi):
                 A = user_transactions_repository.create(
                     **{
                         "transaction_type": trans_type,
-                        "transaction_date": str(datetime.datetime.now()),
+                        "transaction_date": str(datetime.now()),
                         "user_id": user_id,
                         "amount": amount,
                         "currency_id": user_transactions_repository.get_currency_by_currency_name(
@@ -168,6 +216,7 @@ class UserTransactionsApi(CrudApi):
                 }
                 return response, 200
             except Exception as e:
+                print(e)
                 response = {
                     "status": 500,
                     "message": "La moneda no existe.",
