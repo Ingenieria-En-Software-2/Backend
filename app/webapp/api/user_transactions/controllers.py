@@ -109,7 +109,7 @@ class UserTransactionsApi(CrudApi):
         try:
             A = user_transactions_repository.create(
                 **{
-                    "transaction_type": "inter_wallet",
+                    "transaction_type": "pago_movil",
                     "transaction_date": str(datetime.now()),
                     "user_id": user_id,
                     "amount": amount,
@@ -302,6 +302,8 @@ class UserTransactionsApi(CrudApi):
             return "Entre cuentas"
         elif t == "to_3rds":
             return "A Terceros"
+        elif t == "pago_movil":
+            return "Pago Móvil"
 
     def get_ci(self,x):
         AH = account_holder_repository.get_account_holder_by_user_id(user_account_repository.get_user_account_by_id(

@@ -107,11 +107,11 @@ class UserTransactionsRepository(CrudRepository):
         :param account_type : Type of account for getting transactions of only one type.
         :return: A list of all the transactions by day, done by the user of if it is an admin, all the daily transactions.
         """
-        if role == 1 and account_type == 0: #admin
+        if (role == 1 or role == 3) and account_type == 0: #admin
             return (self.db.session.query(UserTransaction)
                         .filter(UserTransaction.transaction_date == day)
                         .all())
-        if role == 1 and account_type != 0:
+        if (role == 1 or role == 3) and account_type != 0:
             return (self.db.session.query(UserTransaction).join(UserAccount, and_(UserTransaction.origin_account == UserAccount.id))
                         .join(AccountType, and_(UserAccount.account_type_id == AccountType.id))
                         .filter(UserTransaction.transaction_date == day, AccountType.id==account_type).all())
@@ -130,11 +130,11 @@ class UserTransactionsRepository(CrudRepository):
         :return: A list of all the transactions by week, done by the user of if it is an admin, all the weekly transactions.
         """
         six_days_ago = datetime.today() - timedelta(days = 6)
-        if role == 1 and account_type == 0: #ADMIN get all transactions by week 
+        if (role == 1 or role == 3) and account_type == 0: #ADMIN get all transactions by week 
             return (self.db.session.query(UserTransaction)
                         .filter(UserTransaction.transaction_date >= six_days_ago)
                         .all())
-        if role == 1 and account_type != 0: #get all transactions by week done by a certain account type
+        if (role == 1 or role == 3) and account_type != 0: #get all transactions by week done by a certain account type
             return (self.db.session.query(UserTransaction).join(UserAccount, and_(UserTransaction.origin_account == UserAccount.id))
                         .join(AccountType, and_(UserAccount.account_type_id == AccountType.id))
                         .filter(UserTransaction.transaction_date >= six_days_ago, AccountType.id==account_type).all())
@@ -153,11 +153,11 @@ class UserTransactionsRepository(CrudRepository):
         :param account_type : Type of account for getting transactions of only one type.
         :return: A list of all the transactions by month, done by the user of if it is an admin, all the month's transactions.
         """
-        if role == 1 and account_type == 0:
+        if (role == 1 or role == 3) and account_type == 0:
             return (self.db.session.query(UserTransaction)
                         .filter(extract('month', UserTransaction.transaction_date) == month_number)
                         .all())
-        if role == 1 and account_type != 0:
+        if (role == 1 or role == 3) and account_type != 0:
             return (self.db.session.query(UserTransaction).join(UserAccount, and_(UserTransaction.origin_account == UserAccount.id))
                         .join(AccountType, and_(UserAccount.account_type_id == AccountType.id))
                         .filter(extract('month', UserTransaction.transaction_date) == month_number, AccountType.id==account_type).all())
@@ -192,11 +192,11 @@ class UserTransactionsRepository(CrudRepository):
         wanted quarter.
         """
         MONTHS = self.get_months(quarter)
-        if role == 1 and account_type==0:
+        if (role == 1 or role == 3) and account_type==0:
             return (self.db.session.query(UserTransaction)
                         .filter(extract('month', UserTransaction.transaction_date).in_(MONTHS))
                         .all())
-        if role == 1 and account_type != 0:
+        if (role == 1 or role == 3) and account_type != 0:
             return (self.db.session.query(UserTransaction).join(UserAccount, and_(UserTransaction.origin_account == UserAccount.id))
                         .join(AccountType, and_(UserAccount.account_type_id == AccountType.id))
                         .filter(extract('month', UserTransaction.transaction_date).in_(MONTHS), AccountType.id==account_type).all())
@@ -215,11 +215,11 @@ class UserTransactionsRepository(CrudRepository):
         :param account_type : Type of account for getting transactions of only one type.
         :return: A list of all the transactions by year, done by the user of if it is an admin, all the yearly transactions.
         """
-        if role == 1 and account_type==0:
+        if (role == 1 or role == 3) and account_type==0:
             return (self.db.session.query(UserTransaction)
                         .filter(extract('year', UserTransaction.transaction_date) == year)
                         .all())
-        if role == 1 and account_type != 0:
+        if (role == 1 or role == 3) and account_type != 0:
             return (self.db.session.query(UserTransaction).join(UserAccount, and_(UserTransaction.origin_account == UserAccount.id))
                         .join(AccountType, and_(UserAccount.account_type_id == AccountType.id))
                         .filter(extract('year', UserTransaction.transaction_date) == year, AccountType.id==account_type).all())
@@ -239,11 +239,11 @@ class UserTransactionsRepository(CrudRepository):
         :return: A list of all the transactions by date, done by the user of if it is an admin, all the transactions done in a specific
         date.
         """
-        if role == 1 and account_type == 0:
+        if (role == 1 or role == 3) and account_type == 0:
             return (self.db.session.query(UserTransaction)
                         .filter(UserTransaction.transaction_date == date)
                         .all())
-        if role == 1 and account_type != 0:
+        if (role == 1 or role == 3) and account_type != 0:
             return (self.db.session.query(UserTransaction).join(UserAccount, and_(UserTransaction.origin_account == UserAccount.id))
                         .join(AccountType, and_(UserAccount.account_type_id == AccountType.id))
                         .filter(UserTransaction.transaction_date == date, AccountType.id==account_type).all())
@@ -264,11 +264,11 @@ class UserTransactionsRepository(CrudRepository):
         :return: A list of all the transactions by period, done by the user of if it is an admin, all the transactions done in the
         period [start,end].
         """
-        if role == 1 and account_type==0:
+        if (role == 1 or role == 3) and account_type==0:
             return (self.db.session.query(UserTransaction)
                         .filter(UserTransaction.transaction_date >= start, UserTransaction.transaction_date <= end)
                         .all())
-        if role == 1 and account_type != 0:
+        if (role == 1 or role == 3) and account_type != 0:
             return (self.db.session.query(UserTransaction).join(UserAccount, and_(UserTransaction.origin_account == UserAccount.id))
                         .join(AccountType, and_(UserAccount.account_type_id == AccountType.id))
                         .filter(UserTransaction.transaction_date >= start, UserTransaction.transaction_date <= end,
@@ -287,9 +287,9 @@ class UserTransactionsRepository(CrudRepository):
         :param account_type : Type of account for getting transactions of only one type.
         :return: A list of all the transactions done by the user of if it is an admin, all the transactions done by any user.
         """
-        if role == 1 and account_type==0:
+        if (role == 1 or role == 3) and account_type==0:
             return (self.db.session.query(UserTransaction).all())
-        if role == 1 and account_type != 0:
+        if (role == 1 or role == 3) and account_type != 0:
             return (self.db.session.query(UserTransaction).join(UserAccount, and_(UserTransaction.origin_account == UserAccount.id))
                         .join(AccountType, and_(UserAccount.account_type_id == AccountType.id)).all())
         if role == 2:
