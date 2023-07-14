@@ -41,7 +41,7 @@ class Update_Log_Event_Schema(Create_Log_Event_Schema):
 
 class Get_Log_Event_Schema(Generic_Get_Schema, Update_Log_Event_Schema):
 
-
+    occurrence_time = fields.DateTime()
     sort_by = fields.String(
         load_default="id",
         validate=validate.OneOf(
