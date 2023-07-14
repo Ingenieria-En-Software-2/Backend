@@ -25,6 +25,7 @@ class Create_Log_Event_Schema(Schema):
     id = fields.Integer()
     user_id = fields.Integer(required=True)
     description = fields.Str(required=True)
+    occurrence_time = fields.DateTime()
 
     
 
@@ -41,11 +42,11 @@ class Update_Log_Event_Schema(Create_Log_Event_Schema):
 
 class Get_Log_Event_Schema(Generic_Get_Schema, Update_Log_Event_Schema):
 
-    occurrence_time = fields.DateTime()
+    
     sort_by = fields.String(
         load_default="id",
         validate=validate.OneOf(
-            ["id", "user_id", "description"],
+            ["id", "user_id", "description", "occurrence_time"],
             error="El campo sort_by solo puede tomar los valores id, user_id, account_number o account_type_id",
         ),
     )
