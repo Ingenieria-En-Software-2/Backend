@@ -340,41 +340,45 @@ class UserTransactionsApi(CrudApi):
         user_identity = get_jwt_identity()
         if user_identity:
             user_id = User.decode_token(user_identity)
-            A = self.get_transactions_by(g,inp,user_id,User.get_role(user_identity),account_type)
-            if len(A) == 0:
-                response = {
-                    "status": 400,
-                    "message": "No se ha realizado ninguna transferencia.",
-                }
-                return response, 400
-            else:
-                B = list(
-                    map(
-                        lambda x: {
-                            "origin": x.origin_account,
-                            "user_name_origin" : db.session.query(User)
-                        .filter(User.id == user_account_repository.get_user_account_by_id(
-                                x.origin_account).user_id).first().name,
-                            "destination": x.destination_account,
-                            "amount": x.amount,
-                            "transaction_id" : x.id,
-                            "ci" : self.get_ci(x.origin_account),
-                            "description" : x.transaction_description,
-                            "transaction_type": self.type_of_transaction(x.transaction_type),
-                            "transaction_date": x.transaction_date.strftime(
-                                "%m/%d/%Y"
-                            ),
-                            "transaction_hour" : x.transaction_date.strftime("%H:%M:%S"),
-                            "currency": user_transactions_repository.get_currency_by_currency_id(
-                                x.currency_id
-                            ).name,
-                            "status": x.transaction_status_id,
-                        },
-                        A,
+            try:
+                A = self.get_transactions_by(g,inp,user_id,User.get_role(user_identity),account_type)
+                if len(A) == 0:
+                    response = {
+                        "status": 400,
+                        "message": "No se ha realizado ninguna transferencia.",
+                    }
+                    return response, 400
+                else:
+                    B = list(
+                        map(
+                            lambda x: {
+                                "origin": x.origin_account,
+                                "user_name_origin" : db.session.query(User)
+                            .filter(User.id == user_account_repository.get_user_account_by_id(
+                                    x.origin_account).user_id).first().name,
+                                "destination": x.destination_account,
+                                "amount": x.amount,
+                                "transaction_id" : x.id,
+                                "ci" : self.get_ci(x.origin_account),
+                                "description" : x.transaction_description,
+                                "transaction_type": self.type_of_transaction(x.transaction_type),
+                                "transaction_date": x.transaction_date.strftime(
+                                    "%m/%d/%Y"
+                                ),
+                                "transaction_hour" : x.transaction_date.strftime("%H:%M:%S"),
+                                "currency": user_transactions_repository.get_currency_by_currency_id(
+                                    x.currency_id
+                                ).name,
+                                "status": x.transaction_status_id,
+                            },
+                            A,
+                        )
                     )
-                )
-                response = {"status": 200, "transactions": B}
-                return response, 200
+                    response = {"status": 200, "transactions": B}
+                    return response, 200
+            except Exception as e:
+                response = {"status" : 500, "message" : "Un error ha ocurrido"}
+                return response, 500
         else:
             response = {"status": 401, "message": "No se ha iniciado sesión."}
             return response, 401
