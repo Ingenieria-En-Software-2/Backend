@@ -38,6 +38,9 @@ from ..account_holder.schemas import (
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
+from webapp.auth.email_verification import send_transaction_email,send_pago_movil_email
+
+
 # Instance of the user account repository
 user_account_repository = UserAccountRepository(
     db, Create_User_Account_Schema, Update_User_Account_Schema
@@ -81,6 +84,8 @@ class UserTransactionsApi(CrudApi):
                     "transaction_description": description,
                 }
             )
+            user_login = db.session.query(User).filter(User.id==user_id).first()
+            send_transaction_email("inter_wallet",user_login.login,origin.account_number,destination,amount,currency)
             response = {
                 "status": 200,
                 "message": "Se ha realizado la transferencia Interwallet.",
@@ -117,6 +122,8 @@ class UserTransactionsApi(CrudApi):
                     "transaction_description": description,
                 }
             )
+            user_login = db.session.query(User).filter(User.id==user_id).first()
+            send_pago_movil_email(user_login.login,origin.account_number,dest_CI,dest_name,dest_wallet,amount,currency)
             response = {
                 "status": 200,
                 "message": "Se ha realizado la transferencia Pago Movil.",
@@ -209,6 +216,8 @@ class UserTransactionsApi(CrudApi):
                         "transaction_description": description,
                     }
                 )
+                user_login = db.session.query(User).filter(User.id==user_id).first()
+                send_transaction_email("transaction",user_login.login,origin.account_number,destination.account_number,amount,currency)
                 response = {
                     "status": 200,
                     "message": "Se ha realizado la transferencia.",
