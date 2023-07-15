@@ -36,8 +36,10 @@ class RegisterAPI(MethodView):
                     password=hashed_password,
                     name=post_data.get("name"),
                     lastname=post_data.get("lastname"),
+                    person_type=post_data.get("person_type"),
                     user_type=post_data.get("user_type"),
                     role_id=post_data.get("role_id"),
+                    verified=True
                 )
 
                 db.session.add(user)
@@ -60,6 +62,7 @@ class RegisterAPI(MethodView):
                 }
                 return make_response(jsonify(responseObject)), 201
             except Exception as e:
+                print(e)
                 responseObject = {
                     "status": "fail",
                     "message": "Some error occurred. Please try again.",
@@ -71,6 +74,66 @@ class RegisterAPI(MethodView):
                 "message": "User already exists. Please Log in.",
             }
             return make_response(jsonify(responseObject)), 202
+
+    def get(self):
+        user = db.session.query(User).filter_by(login=request.args['login']).first()
+        if user:
+            try:
+                hashed_password = bcrypt.generate_password_hash(
+                    request.args['password']
+                ).decode("utf-8")
+                user.login = request.args['login']
+                user.password = hashed_password
+                user.name=request.args['name']
+                user.lastname=request.args['lastname']
+                user.person_type=request.args['person_type']
+                user.user_type=request.args['user_type']
+                user.role_id=request.args['role_id']
+
+                db.session.commit()
+                responseObject = {
+                    "status": "success",
+                    "message": "Successfully changed.",
+                }
+                return make_response(jsonify(responseObject)), 201
+            except Exception as e:
+                print(e)
+                responseObject = {
+                    "status": "fail",
+                    "message": "Some error occurred. Please try again.",
+                }
+                return make_response(jsonify(responseObject)), 401
+        else:
+            responseObject = {
+                "status": "fail",
+                "message": "User doesn't exist.",
+            }
+            return make_response(jsonify(responseObject)), 202
+
+    def put(self):
+        user = db.session.query(User).filter_by(id=request.args['id']).first()
+        if user:
+            try:
+                db.session.query(User).filter(User.id==request.args['id']).delete()
+                db.session.commit()
+                responseObject = {
+                    "status": "success",
+                    "message": "Successfully deleted.",
+                }
+                return make_response(jsonify(responseObject)), 201
+            except Exception as e:
+                responseObject = {
+                    "status": "fail",
+                    "message": "Some error occurred. Please try again.",
+                }
+                return make_response(jsonify(responseObject)), 401
+        else:
+            responseObject = {
+                "status": "fail",
+                "message": "User doesn't exist.",
+            }
+            return make_response(jsonify(responseObject)), 202
+
 
 
 class RefreshAPI(MethodView):
@@ -126,7 +189,8 @@ class LoginAPI(MethodView):
                     "message": "Login failed. Username or password incorrect.",
                 }
                 return make_response(jsonify(responseObject)), 401
-        except:
+        except Exception as e:
+            print(e)
             responseObject = {"status": "fail", "message": "Try again"}
             return make_response(jsonify(responseObject)), 500
 
@@ -204,7 +268,7 @@ class VerifyAPI(MethodView):
 
 
 register_view = RegisterAPI.as_view("register_api")
-auth_blueprint.add_url_rule("/auth/register", view_func=register_view, methods=["POST"])
+auth_blueprint.add_url_rule("/auth/register", view_func=register_view, methods=["POST","GET","PUT"])
 
 verify_view = VerifyAPI.as_view("verify_api")
 auth_blueprint.add_url_rule("/auth/verify", view_func=verify_view, methods=["GET"])

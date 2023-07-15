@@ -9,6 +9,9 @@ from ...auth.UserRepository import UserRepository
 from ..generic.CrudApi import CrudApi
 from .schemas import Create_User_Schema, Update_User_Schema, Get_User_Schema
 
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from webapp.auth.models import db, User
+
 user_fields = {
     "id": fs.Integer(),
     "login": fs.String(),
@@ -31,3 +34,13 @@ class UserApi(CrudApi):
             user_repository,  # Repositorio de usuarios
             Get_User_Schema,  # Esquema Get para roles
         )
+    @jwt_required(fresh=True)
+    def put(self):
+        user_identity = get_jwt_identity()
+        if user_identity:
+            response = {"status" : 200, "role" : User.get_role(user_identity)}
+            return response, 200
+        else:
+            response = {"status": 401, "message": "No se ha iniciado sesión."}
+            return response, 401
+
