@@ -5,6 +5,8 @@ from flask import Blueprint
 from .account_holder.controllers import AccountHolderApi
 from .user_account.controllers import UserAccountApi
 from .user_transactions.controllers import UserTransactionsApi
+from .logger.controllers import Log_EventApi
+
 
 # Parchear el manejador de excepciones de la API
 Api.error_router = lambda self, hnd, e: hnd(e)
@@ -46,5 +48,13 @@ def create_module(app, **kwargs):
         "/user_transactions/<string:g>/<string:inp>/<int:account_type>",
         "/user_transactions/<int:id>",
     )
+
+    rest_api.add_resource(
+        Log_EventApi,
+        "/log_event",        
+        "/log_event/<int:id>",
+    )
+
+
 
     app.register_blueprint(rest_api_bp)

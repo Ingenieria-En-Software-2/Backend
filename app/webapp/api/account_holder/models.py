@@ -10,7 +10,7 @@ class AccountHolder(db.Model):
 
     # Personal Data
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="cascade"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     id_number = db.Column(db.String())
     gender = db.Column(db.String())
     civil_status = db.Column(db.String())

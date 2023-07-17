@@ -12,7 +12,7 @@ from ...api.user_transactions.UserTransactionsRepository import (
 )
 from ...api.generic.CrudApi import CrudApi
 import json
-
+from webapp.api.logger.models import LogEvent
 from .schemas import (
     Create_User_Account_Schema,
     Update_User_Account_Schema,
@@ -91,6 +91,9 @@ class UserAccountApi(CrudApi):
             resp = User.decode_token(user_identity)
             request.json["user_id"] = resp
             result = self.repository.create(**request.get_json())
+            log = LogEvent(user_id=resp, description="Cuenta creada")
+            db.session.add(log)
+            db.session.commit()
         else:
             response = {"status": 401, "message": "No se ha iniciado sesión."}
             return make_response(jsonify(response)), 401

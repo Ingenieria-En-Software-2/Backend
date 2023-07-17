@@ -1,0 +1,213 @@
+{
+	"info": {
+		"_postman_id": "f866e63d-ea25-45e4-990c-075634982f7d",
+		"name": "log_event",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27813533"
+	},
+	"item": [
+		{
+			"name": "Get log",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Compobar el codigo\", function(){",
+							"    pm.response.to.have.status(200)",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/log_event",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"log_event"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create log",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Compobar el codigo\", function(){",
+							"    pm.response.to.have.status(201)",
+							"})",
+							"",
+							"pm.collectionVariables.set(\"c1\", pm.response.json().id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\" : \"1\",\n    \"description\" : \"hola\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/log_event",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"log_event"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit log",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Compobar el codigo\", function(){",
+							"    pm.response.to.have.status(201)",
+							"})",
+							"",
+							"pm.collectionVariables.set(\"c1\", pm.response.json().id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{    \n    \"description\" : \"adios\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/log_event/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"log_event",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete log",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Compobar el codigo\", function(){",
+							"    pm.response.to.have.status(204)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{base_url}}/api/log_event/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"log_event",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "c1",
+			"value": ""
+		}
+	]
+}

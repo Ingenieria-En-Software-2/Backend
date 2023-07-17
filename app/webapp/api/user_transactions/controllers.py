@@ -10,6 +10,7 @@ from .models import UserTransaction
 from .UserTransactionsRepository import UserTransactionsRepository
 from webapp.api.generic.CrudApi import CrudApi
 from .schemas import Get_User_Transaction_Schema
+from webapp.api.logger.models import LogEvent
 
 # Instance of the account holder repository
 user_transactions_repository = UserTransactionsRepository(db)
@@ -91,12 +92,16 @@ class UserTransactionsApi(CrudApi):
                 "message": "Se ha realizado la transferencia Interwallet.",
                 "transaction_id": A.id,
             }
+            log = LogEvent(user_id=user_id, description="Transferencia realizada")
+            db.session.add(log)
+            db.session.commit()
             return response, 200
         except Exception as e:
             response = {
                 "status": 500,
                 "message": "La moneda no existe.",
             }
+
             return response, 500
 
     def handle_pago_movil(self,origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id):
@@ -223,6 +228,9 @@ class UserTransactionsApi(CrudApi):
                     "message": "Se ha realizado la transferencia.",
                     "transaction_id": A.id,
                 }
+                log = LogEvent(user_id=user_id, description="Transferencia realizada")
+                db.session.add(log)
+                db.session.commit()
                 return response, 200
             except Exception as e:
                 print(e)
@@ -248,6 +256,9 @@ class UserTransactionsApi(CrudApi):
                         "message": "Se ha cancelado la transferencia.",
                         "id": A.id,
                     }
+                    log = LogEvent(user_id=user_id, description="Transferencia cancelada")
+                    db.session.add(log)
+                    db.session.commit()
                     return response, 200
                 except ValidationError as inst:
                     response = {
