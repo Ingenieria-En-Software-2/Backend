@@ -112,10 +112,26 @@ class UserTransactionsApi(CrudApi):
                 "message": f"No existe la cuenta de origen: {origin}",
             }, 404
         try:
+            
+            wallet = db.session.query(Wallet).filter(Wallet.id==int(dest_wallet)).first()
+            print(f'wallet : {wallet.description}')
+            if not wallet or wallet == None:
+                return {
+                "status": 404,
+                "message": f"No existe la wallet: {wallet}",
+            }, 404
+            if wallet.description != "Caribbean Wallet":
+                destination_acc = 1
+            else:
+                acc = account_holder_repository.get_account_holder_by_phone(dest_phone)
+                if not acc or acc == None:
+                    return {
+                    "status": 404,
+                    "message": f"El telefono: {dest_phone} no esta asociado a ningun usuario",
+                }, 404
+                destination_acc = user_account_repository.get_user_account_by_id(acc.user_id).id
 
-            wallet = db.session.query(Wallet).filter(Wallet.id==dest_wallet).first()
-            if wallet.description == "Caribbean Wallet":
-                pass
+
 
             A = user_transactions_repository.create(
                 **{
@@ -127,7 +143,7 @@ class UserTransactionsApi(CrudApi):
                         currency
                     ).id,
                     "origin_account": origin.id,
-                    "destination_account": 1,
+                    "destination_account": destination_acc,
                     "transaction_status_id": 2,
                     "transaction_description": description,
                 }
@@ -155,23 +171,8 @@ class UserTransactionsApi(CrudApi):
         if user_identity:
             user_id = User.decode_token(user_identity)
             data = request.get_json()
-            print(data)
-            try:
-                trans_type = data.get("transaction_type")
-                origin = user_account_repository.get_user_account_by_account_number(
-                    data.get("origin")
-                )
-                destination = user_account_repository.get_user_account_by_account_number(
-                    data.get("destination")
-                )
-                
-                print(f'origin : {origin}')
-                print(f'origin.id : {origin.user_id}')
-                print(f'destination : {destination}')
-                print(f'destination.id : {destination.user_id}')
-            except:
-                pass
-
+            trans_type = data.get("transaction_type")
+            
             if trans_type == "pago_movil":
                 wallet_origin = data.get("origin")
                 dest_CI = data.get("destination_ci")
@@ -185,8 +186,7 @@ class UserTransactionsApi(CrudApi):
 
             wallet_origin = data.get("origin")
             wallet_destination = data.get("destination")
-            print(f'wallet_destination : {wallet_destination}')
-            print(f'trans_type : {trans_type}')
+    
             amount = data.get("amount")
             currency = data.get("currency")
             description = data.get("description")
@@ -214,8 +214,7 @@ class UserTransactionsApi(CrudApi):
             destination = user_account_repository.get_user_account_by_account_number(
                 wallet_destination
             )
-            print(f'destination : {destination}')
-            print(f'destination.id : {destination.id}')
+            
             if (
                 not destination or destination == None
             ) and trans_type != "inter_wallet":

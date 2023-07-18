@@ -33,6 +33,20 @@ class AccountHolderRepository(CrudRepository):
             .first()
         )
 
+    def get_account_holder_by_phone(self, phone):
+        """
+        Gets a account holder by user phone.
+
+        :param phone: The phone number of the user to retrieve.
+        :return: The user with the specified id, or `None` if no user was
+                 found or is not accountholder.
+        """
+        return (
+            self.db.session.query(AccountHolder)
+            .filter(AccountHolder.phone == phone)
+            .first()
+        )
+    
     def get_account_holder_by_login(self, login):
         """
         Gets a account holder by login.
