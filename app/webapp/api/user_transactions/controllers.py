@@ -5,7 +5,7 @@ CrudApi class, and is in charge of handling HTTP requests related to account hol
 
 from flask import abort, request
 from flask_restful import fields
-from webapp.auth.models import db, User, Role
+from webapp.auth.models import db, User, Role, Wallet
 from .models import UserTransaction
 from .UserTransactionsRepository import UserTransactionsRepository
 from webapp.api.generic.CrudApi import CrudApi
@@ -112,6 +112,11 @@ class UserTransactionsApi(CrudApi):
                 "message": f"No existe la cuenta de origen: {origin}",
             }, 404
         try:
+
+            wallet = db.session.query(Wallet).filter(Wallet.id==dest_wallet).first()
+            if wallet.description == "Caribbean Wallet":
+                pass
+
             A = user_transactions_repository.create(
                 **{
                     "transaction_type": "pago_movil",
@@ -126,7 +131,9 @@ class UserTransactionsApi(CrudApi):
                     "transaction_status_id": 2,
                     "transaction_description": description,
                 }
+            
             )
+            
             user_login = db.session.query(User).filter(User.id==user_id).first()
             send_pago_movil_email(user_login.login,origin.account_number,dest_CI,dest_name,dest_wallet,amount,currency)
             response = {
@@ -148,8 +155,22 @@ class UserTransactionsApi(CrudApi):
         if user_identity:
             user_id = User.decode_token(user_identity)
             data = request.get_json()
-
-            trans_type = data.get("transaction_type")
+            print(data)
+            try:
+                trans_type = data.get("transaction_type")
+                origin = user_account_repository.get_user_account_by_account_number(
+                    data.get("origin")
+                )
+                destination = user_account_repository.get_user_account_by_account_number(
+                    data.get("destination")
+                )
+                
+                print(f'origin : {origin}')
+                print(f'origin.id : {origin.user_id}')
+                print(f'destination : {destination}')
+                print(f'destination.id : {destination.user_id}')
+            except:
+                pass
 
             if trans_type == "pago_movil":
                 wallet_origin = data.get("origin")
@@ -164,6 +185,8 @@ class UserTransactionsApi(CrudApi):
 
             wallet_origin = data.get("origin")
             wallet_destination = data.get("destination")
+            print(f'wallet_destination : {wallet_destination}')
+            print(f'trans_type : {trans_type}')
             amount = data.get("amount")
             currency = data.get("currency")
             description = data.get("description")
@@ -191,6 +214,8 @@ class UserTransactionsApi(CrudApi):
             destination = user_account_repository.get_user_account_by_account_number(
                 wallet_destination
             )
+            print(f'destination : {destination}')
+            print(f'destination.id : {destination.id}')
             if (
                 not destination or destination == None
             ) and trans_type != "inter_wallet":

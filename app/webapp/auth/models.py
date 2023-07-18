@@ -72,3 +72,15 @@ class Role(db.Model):
 
     def __repr__(self):
         return id_str.format(self.id)
+
+class Wallet(db.Model):
+    __tablename__ = "wallet"
+
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(), unique=True)
+
+    def __init__(self, description):
+        self.description = description
+
+    def __repr__(self):
+        return id_str.format(self.id)

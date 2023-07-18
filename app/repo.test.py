@@ -5,7 +5,7 @@ from webapp.api.user_transactions.UserTransactionsRepository import (
 )
 from webapp.api.user_account.UserAccountRepository import UserAccountRepository
 from webapp.api.user_account.models import AccountType
-from webapp.auth.models import User, Role
+from webapp.auth.models import User, Wallet, Role
 from webapp.api.account_holder.models import AccountHolder
 from webapp.api.user_transactions.models import (
     Currency,
@@ -46,6 +46,11 @@ def add_role(description):
     db.session.commit()
     return role
 
+def add_wallet(description):
+    wallet = Wallet(description)
+    db.session.add(wallet)
+    db.session.commit()
+    return wallet
 
 def add_roles(roles):
     db.session.add_all(roles)
@@ -93,6 +98,9 @@ def populate_db():
     # Add roles
     add_role("admin")
     add_role("user")
+    add_wallet("Caribbean Wallet")
+    add_wallet("Paypal")
+    add_wallet("Test Wallet")
 
     # Add users
     add_user(

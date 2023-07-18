@@ -1,6 +1,7 @@
 from flask_restful import Api
 from .user.controllers import UserApi
 from .role.controllers import RoleApi
+from .wallet.controllers import WalletApi
 from flask import Blueprint
 from .account_holder.controllers import AccountHolderApi
 from .user_account.controllers import UserAccountApi
@@ -28,6 +29,12 @@ def create_module(app, **kwargs):
         RoleApi,
         "/role",
         "/role/<int:id>",
+    )
+    
+    rest_api.add_resource(
+        WalletApi,
+        "/wallet",
+        "/wallet/<int:id>",
     )
 
     rest_api.add_resource(
