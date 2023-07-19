@@ -3,9 +3,9 @@ Module containing the definition of the UserTransactionsApi class, which inherit
 CrudApi class, and is in charge of handling HTTP requests related to account holders.
 """
 
-from flask import abort, request, make_response, jsonify
+from flask import abort, request
 from flask_restful import fields
-from webapp.auth.models import db, User, Role, Wallet
+from webapp.auth.models import db, User, Role
 from .models import UserTransaction
 from .UserTransactionsRepository import UserTransactionsRepository
 from webapp.api.generic.CrudApi import CrudApi
@@ -61,7 +61,7 @@ class UserTransactionsApi(CrudApi):
         )
 
     def handle_inter_wallet_transaction(
-        self, user_id, origin, destination, amount, currency, description
+        self, user_id, origin, destination, amount, currency, description, status
     ):
         origin = user_account_repository.get_user_account_by_account_number(origin)
         if not origin or origin == None:
@@ -81,21 +81,32 @@ class UserTransactionsApi(CrudApi):
                     ).id,
                     "origin_account": origin.id,
                     "destination_account": 1,
-                    "transaction_status_id": 2,
+                    "transaction_status_id": status,
                     "transaction_description": description,
                 }
             )
             user_login = db.session.query(User).filter(User.id==user_id).first()
             send_transaction_email("inter_wallet",user_login.login,origin.account_number,destination,amount,currency)
-            response = {
-                "status": 200,
-                "message": "Se ha realizado la transferencia Interwallet.",
-                "transaction_id": A.id,
-            }
-            log = LogEvent(user_id=user_id, description="Transferencia realizada")
-            db.session.add(log)
-            db.session.commit()
-            return response, 200
+            if status == 2:
+                response = {
+                    "status": 200,
+                    "message": "Se ha realizado la transferencia Interwallet.",
+                    "transaction_id": A.id,
+                }
+                log = LogEvent(user_id=user_id, description="Transferencia realizada")
+                db.session.add(log)
+                db.session.commit()
+                return response, 200
+            elif status == 1:
+                response = {
+                        'status' : 201,
+                        'message' : 'Su transferencia ha sido retenida',
+                        'transaction_id' : A.id,
+                    }
+                log = LogEvent(user_id=user_id, description="Transferencia retenida")
+                db.session.add(log)
+                db.session.commit()
+                return response, 201
         except Exception as e:
             response = {
                 "status": 500,
@@ -104,40 +115,14 @@ class UserTransactionsApi(CrudApi):
 
             return response, 500
 
-    def handle_pago_movil(self,origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id):
+    def handle_pago_movil(self,origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id,status):
         origin = user_account_repository.get_user_account_by_account_number(origin)
         if not origin or origin == None:
-            response = {
+            return {
                 "status": 404,
                 "message": f"No existe la cuenta de origen: {origin}",
-            }
-            return make_response(jsonify(response)), 404
-            
+            }, 404
         try:
-            
-            wallet = db.session.query(Wallet).filter(Wallet.id==int(dest_wallet)).first()
-            print(f'wallet : {wallet.description}')
-            if not wallet or wallet == None:
-                response = {
-                        "status": 404,
-                        "message": f"No existe la wallet: {wallet}",
-                        }
-                return make_response(jsonify(response)), 404
-            if wallet.description != "Caribbean Wallet":
-                destination_acc = 1
-            else:
-                acc = account_holder_repository.get_account_holder_by_phone(dest_phone)
-                if not acc or acc == None:
-                    
-                    response = {
-                    "status": 404,
-                    "message": f"El telefono: {dest_phone} no esta asociado a ningun usuario",
-                    }
-                    return make_response(jsonify(response)), 404
-                destination_acc = user_account_repository.get_user_account_by_id(acc.user_id).id
-
-
-
             A = user_transactions_repository.create(
                 **{
                     "transaction_type": "pago_movil",
@@ -148,27 +133,39 @@ class UserTransactionsApi(CrudApi):
                         currency
                     ).id,
                     "origin_account": origin.id,
-                    "destination_account": destination_acc,
-                    "transaction_status_id": 2,
+                    "destination_account": 1,
+                    "transaction_status_id": status,
                     "transaction_description": description,
                 }
-            
             )
-            
             user_login = db.session.query(User).filter(User.id==user_id).first()
             send_pago_movil_email(user_login.login,origin.account_number,dest_CI,dest_name,dest_wallet,amount,currency)
-            response = {
-                "status": 200,
-                "message": "Se ha realizado la transferencia Pago Movil.",
-                "transaction_id": A.id,
-            }
-            return make_response(jsonify(response)), 200
+            if status == 2:
+                response = {
+                    "status": 200,
+                    "message": "Se ha realizado la transferencia Pago Movil.",
+                    "transaction_id": A.id,
+                }
+                return response, 200
+            elif status ==1:
+                response = {
+                        'status' : 201,
+                        'message' : 'Su transferencia ha sido retenida',
+                        'transaction_id' : A.id,
+                    }
+                return response, 201
         except Exception as e:
             response = {
                 "status": 500,
                 "message": "La moneda no existe.",
             }
-            return make_response(jsonify(response)), 500
+            return response, 500
+
+    def check_status(self, amount):
+        stat = 2
+        if int(amount) > 1000:
+            stat = 1
+        return stat
 
     @jwt_required(fresh=True)
     def post(self):
@@ -176,8 +173,10 @@ class UserTransactionsApi(CrudApi):
         if user_identity:
             user_id = User.decode_token(user_identity)
             data = request.get_json()
+
             trans_type = data.get("transaction_type")
-            
+            status = self.check_status(data.get("amount"))
+
             if trans_type == "pago_movil":
                 wallet_origin = data.get("origin")
                 dest_CI = data.get("destination_ci")
@@ -187,15 +186,13 @@ class UserTransactionsApi(CrudApi):
                 description = data.get("description")
                 currency = data.get("currency")
                 amount = data.get("amount")
-                return self.handle_pago_movil(wallet_origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id)
+                return self.handle_pago_movil(wallet_origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id,status)
 
             wallet_origin = data.get("origin")
             wallet_destination = data.get("destination")
-    
             amount = data.get("amount")
             currency = data.get("currency")
             description = data.get("description")
-            status = 2
 
             if trans_type == "inter_wallet":
                 return self.handle_inter_wallet_transaction(
@@ -205,6 +202,7 @@ class UserTransactionsApi(CrudApi):
                     amount,
                     currency,
                     description,
+                    status
                 )
 
             # verificar si el origen y destino existen
@@ -219,7 +217,6 @@ class UserTransactionsApi(CrudApi):
             destination = user_account_repository.get_user_account_by_account_number(
                 wallet_destination
             )
-            
             if (
                 not destination or destination == None
             ) and trans_type != "inter_wallet":
@@ -252,15 +249,26 @@ class UserTransactionsApi(CrudApi):
                 )
                 user_login = db.session.query(User).filter(User.id==user_id).first()
                 send_transaction_email("transaction",user_login.login,origin.account_number,destination.account_number,amount,currency)
-                response = {
-                    "status": 200,
-                    "message": "Se ha realizado la transferencia.",
-                    "transaction_id": A.id,
-                }
-                log = LogEvent(user_id=user_id, description="Transferencia realizada")
-                db.session.add(log)
-                db.session.commit()
-                return response, 200
+                if status == 2:
+                    response = {
+                        "status": 200,
+                        "message": "Se ha realizado la transferencia.",
+                        "transaction_id": A.id,
+                    }
+                    log = LogEvent(user_id=user_id, description="Transferencia realizada")
+                    db.session.add(log)
+                    db.session.commit()
+                    return response, 200
+                elif status == 1:
+                    response = {
+                        'status' : 201,
+                        'message' : 'Su transferencia ha sido retenida',
+                        'transaction_id' : A.id,
+                    }
+                    log = LogEvent(user_id=user_id, description="Transferencia retenida")
+                    db.session.add(log)
+                    db.session.commit()
+                    return response, 201
             except Exception as e:
                 print(e)
                 response = {
@@ -273,19 +281,25 @@ class UserTransactionsApi(CrudApi):
             return response, 401
 
     @jwt_required(fresh=True)
-    def put(self, id):
+    def put(self, id, status):
         user_identity = get_jwt_identity()
         if user_identity:
             user_id = User.decode_token(user_identity)
             if User.get_role(user_identity) == 1: # es administrador y puede cancelar la transferencia    #user_id == A.user_id:
                 try:
-                    A = user_transactions_repository.update(id, **{"transaction_status_id": 3})
+                    A = user_transactions_repository.update(id, **{"transaction_status_id": status})
+                    if status == 3:
+                        mess = "Se ha cancelado la transferencia."
+                        des = "Transferencia cancelada"
+                    elif status == 2:
+                        mess = "Se ha aprobado la transferencia"
+                        des = "Transferencia aprobada"
                     response = {
                         "status": 200,
-                        "message": "Se ha cancelado la transferencia.",
+                        "message": mess,
                         "id": A.id,
                     }
-                    log = LogEvent(user_id=user_id, description="Transferencia cancelada")
+                    log = LogEvent(user_id=user_id, description=des)
                     db.session.add(log)
                     db.session.commit()
                     return response, 200
@@ -298,7 +312,7 @@ class UserTransactionsApi(CrudApi):
             else:
                 response = {
                     "status": 400,
-                    "message": "La transferencia solo puede ser cancelada por un usuario administrador que la realizó.",
+                    "message": "La transferencia solo puede ser modificada por un usuario administrador.",
                 }
                 return response, 400
         else:

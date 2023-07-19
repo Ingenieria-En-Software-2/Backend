@@ -53,7 +53,7 @@ def create_module(app, **kwargs):
         UserTransactionsApi,
         "/user_transactions",
         "/user_transactions/<string:g>/<string:inp>/<int:account_type>",
-        "/user_transactions/<int:id>",
+        "/user_transactions/<int:id>/<int:status>",
     )
 
     rest_api.add_resource(
