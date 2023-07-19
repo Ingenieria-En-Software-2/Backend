@@ -3,7 +3,7 @@ Module containing the definition of the UserTransactionsApi class, which inherit
 CrudApi class, and is in charge of handling HTTP requests related to account holders.
 """
 
-from flask import abort, request
+from flask import abort, request, make_response, jsonify
 from flask_restful import fields
 from webapp.auth.models import db, User, Role, Wallet
 from .models import UserTransaction
@@ -107,28 +107,33 @@ class UserTransactionsApi(CrudApi):
     def handle_pago_movil(self,origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id):
         origin = user_account_repository.get_user_account_by_account_number(origin)
         if not origin or origin == None:
-            return {
+            response = {
                 "status": 404,
                 "message": f"No existe la cuenta de origen: {origin}",
-            }, 404
+            }
+            return make_response(jsonify(response)), 404
+            
         try:
             
             wallet = db.session.query(Wallet).filter(Wallet.id==int(dest_wallet)).first()
             print(f'wallet : {wallet.description}')
             if not wallet or wallet == None:
-                return {
-                "status": 404,
-                "message": f"No existe la wallet: {wallet}",
-            }, 404
+                response = {
+                        "status": 404,
+                        "message": f"No existe la wallet: {wallet}",
+                        }
+                return make_response(jsonify(response)), 404
             if wallet.description != "Caribbean Wallet":
                 destination_acc = 1
             else:
                 acc = account_holder_repository.get_account_holder_by_phone(dest_phone)
                 if not acc or acc == None:
-                    return {
+                    
+                    response = {
                     "status": 404,
                     "message": f"El telefono: {dest_phone} no esta asociado a ningun usuario",
-                }, 404
+                    }
+                    return make_response(jsonify(response)), 404
                 destination_acc = user_account_repository.get_user_account_by_id(acc.user_id).id
 
 
@@ -157,13 +162,13 @@ class UserTransactionsApi(CrudApi):
                 "message": "Se ha realizado la transferencia Pago Movil.",
                 "transaction_id": A.id,
             }
-            return response, 200
+            return make_response(jsonify(response)), 200
         except Exception as e:
             response = {
                 "status": 500,
                 "message": "La moneda no existe.",
             }
-            return response, 500
+            return make_response(jsonify(response)), 500
 
     @jwt_required(fresh=True)
     def post(self):
