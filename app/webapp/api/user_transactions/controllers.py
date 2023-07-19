@@ -5,7 +5,7 @@ CrudApi class, and is in charge of handling HTTP requests related to account hol
 
 from flask import abort, request
 from flask_restful import fields
-from webapp.auth.models import db, User, Role
+from webapp.auth.models import db, User, Role, Wallet
 from .models import UserTransaction
 from .UserTransactionsRepository import UserTransactionsRepository
 from webapp.api.generic.CrudApi import CrudApi
@@ -123,6 +123,28 @@ class UserTransactionsApi(CrudApi):
                 "message": f"No existe la cuenta de origen: {origin}",
             }, 404
         try:
+            wallet = db.session.query(Wallet).filter(Wallet.id==int(dest_wallet)).first()
+            print(f'wallet : {wallet.description}')
+            if not wallet or wallet == None:
+                response = {
+                        "status": 404,
+                        "message": f"No existe la wallet: {wallet}",
+                        }
+                return make_response(jsonify(response)), 404
+            if wallet.description != "Caribbean Wallet":
+                destination_acc = 1
+            else:
+                acc = account_holder_repository.get_account_holder_by_phone(dest_phone)
+                if not acc or acc == None:
+                    
+                    response = {
+                    "status": 404,
+                    "message": f"El telefono: {dest_phone} no esta asociado a ningun usuario",
+                    }
+                    return make_response(jsonify(response)), 404
+                destination_acc = user_account_repository.get_user_account_by_id(acc.user_id).id
+
+
             A = user_transactions_repository.create(
                 **{
                     "transaction_type": "pago_movil",
@@ -133,7 +155,7 @@ class UserTransactionsApi(CrudApi):
                         currency
                     ).id,
                     "origin_account": origin.id,
-                    "destination_account": 1,
+                    "destination_account": destination_acc,
                     "transaction_status_id": status,
                     "transaction_description": description,
                 }
