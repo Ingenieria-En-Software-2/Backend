@@ -61,7 +61,7 @@ class UserTransactionsApi(CrudApi):
         )
 
     def handle_inter_wallet_transaction(
-        self, user_id, origin, destination, amount, currency, description
+        self, user_id, origin, destination, amount, currency, description, status
     ):
         origin = user_account_repository.get_user_account_by_account_number(origin)
         if not origin or origin == None:
@@ -81,21 +81,32 @@ class UserTransactionsApi(CrudApi):
                     ).id,
                     "origin_account": origin.id,
                     "destination_account": 1,
-                    "transaction_status_id": 2,
+                    "transaction_status_id": status,
                     "transaction_description": description,
                 }
             )
             user_login = db.session.query(User).filter(User.id==user_id).first()
             send_transaction_email("inter_wallet",user_login.login,origin.account_number,destination,amount,currency)
-            response = {
-                "status": 200,
-                "message": "Se ha realizado la transferencia Interwallet.",
-                "transaction_id": A.id,
-            }
-            log = LogEvent(user_id=user_id, description="Transferencia realizada")
-            db.session.add(log)
-            db.session.commit()
-            return response, 200
+            if status == 2:
+                response = {
+                    "status": 200,
+                    "message": "Se ha realizado la transferencia Interwallet.",
+                    "transaction_id": A.id,
+                }
+                log = LogEvent(user_id=user_id, description="Transferencia realizada")
+                db.session.add(log)
+                db.session.commit()
+                return response, 200
+            elif status == 1:
+                response = {
+                        'status' : 201,
+                        'message' : 'Su transferencia ha sido retenida',
+                        'transaction_id' : A.id,
+                    }
+                log = LogEvent(user_id=user_id, description="Transferencia retenida")
+                db.session.add(log)
+                db.session.commit()
+                return response, 201
         except Exception as e:
             response = {
                 "status": 500,
@@ -104,7 +115,7 @@ class UserTransactionsApi(CrudApi):
 
             return response, 500
 
-    def handle_pago_movil(self,origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id):
+    def handle_pago_movil(self,origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id,status):
         origin = user_account_repository.get_user_account_by_account_number(origin)
         if not origin or origin == None:
             return {
@@ -123,24 +134,38 @@ class UserTransactionsApi(CrudApi):
                     ).id,
                     "origin_account": origin.id,
                     "destination_account": 1,
-                    "transaction_status_id": 2,
+                    "transaction_status_id": status,
                     "transaction_description": description,
                 }
             )
             user_login = db.session.query(User).filter(User.id==user_id).first()
             send_pago_movil_email(user_login.login,origin.account_number,dest_CI,dest_name,dest_wallet,amount,currency)
-            response = {
-                "status": 200,
-                "message": "Se ha realizado la transferencia Pago Movil.",
-                "transaction_id": A.id,
-            }
-            return response, 200
+            if status == 2:
+                response = {
+                    "status": 200,
+                    "message": "Se ha realizado la transferencia Pago Movil.",
+                    "transaction_id": A.id,
+                }
+                return response, 200
+            elif status ==1:
+                response = {
+                        'status' : 201,
+                        'message' : 'Su transferencia ha sido retenida',
+                        'transaction_id' : A.id,
+                    }
+                return response, 201
         except Exception as e:
             response = {
                 "status": 500,
                 "message": "La moneda no existe.",
             }
             return response, 500
+
+    def check_status(self, amount):
+        stat = 2
+        if int(amount) > 1000:
+            stat = 1
+        return stat
 
     @jwt_required(fresh=True)
     def post(self):
@@ -150,6 +175,7 @@ class UserTransactionsApi(CrudApi):
             data = request.get_json()
 
             trans_type = data.get("transaction_type")
+            status = self.check_status(data.get("amount"))
 
             if trans_type == "pago_movil":
                 wallet_origin = data.get("origin")
@@ -160,14 +186,13 @@ class UserTransactionsApi(CrudApi):
                 description = data.get("description")
                 currency = data.get("currency")
                 amount = data.get("amount")
-                return self.handle_pago_movil(wallet_origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id)
+                return self.handle_pago_movil(wallet_origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id,status)
 
             wallet_origin = data.get("origin")
             wallet_destination = data.get("destination")
             amount = data.get("amount")
             currency = data.get("currency")
             description = data.get("description")
-            status = 2
 
             if trans_type == "inter_wallet":
                 return self.handle_inter_wallet_transaction(
@@ -177,6 +202,7 @@ class UserTransactionsApi(CrudApi):
                     amount,
                     currency,
                     description,
+                    status
                 )
 
             # verificar si el origen y destino existen
@@ -223,15 +249,26 @@ class UserTransactionsApi(CrudApi):
                 )
                 user_login = db.session.query(User).filter(User.id==user_id).first()
                 send_transaction_email("transaction",user_login.login,origin.account_number,destination.account_number,amount,currency)
-                response = {
-                    "status": 200,
-                    "message": "Se ha realizado la transferencia.",
-                    "transaction_id": A.id,
-                }
-                log = LogEvent(user_id=user_id, description="Transferencia realizada")
-                db.session.add(log)
-                db.session.commit()
-                return response, 200
+                if status == 2:
+                    response = {
+                        "status": 200,
+                        "message": "Se ha realizado la transferencia.",
+                        "transaction_id": A.id,
+                    }
+                    log = LogEvent(user_id=user_id, description="Transferencia realizada")
+                    db.session.add(log)
+                    db.session.commit()
+                    return response, 200
+                elif status == 1:
+                    response = {
+                        'status' : 201,
+                        'message' : 'Su transferencia ha sido retenida',
+                        'transaction_id' : A.id,
+                    }
+                    log = LogEvent(user_id=user_id, description="Transferencia retenida")
+                    db.session.add(log)
+                    db.session.commit()
+                    return response, 201
             except Exception as e:
                 print(e)
                 response = {
@@ -269,7 +306,7 @@ class UserTransactionsApi(CrudApi):
             else:
                 response = {
                     "status": 400,
-                    "message": "La transferencia solo puede ser cancelada por un usuario administrador que la realizó.",
+                    "message": "La transferencia solo puede ser cancelada por un usuario administrador.",
                 }
                 return response, 400
         else:
