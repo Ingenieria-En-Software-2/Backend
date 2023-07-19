@@ -83,7 +83,7 @@ class RegisterAPI(MethodView):
                     request.args['password']
                 ).decode("utf-8")
                 user.login = request.args['login']
-                user.password = hashed_password
+                #user.password = user.password
                 user.name=request.args['name']
                 user.lastname=request.args['lastname']
                 user.person_type=request.args['person_type']
