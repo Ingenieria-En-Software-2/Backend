@@ -5,7 +5,7 @@ CrudApi class, and is in charge of handling HTTP requests related to account hol
 
 from flask import abort, request
 from flask_restful import fields
-from webapp.auth.models import db, User, Role
+from webapp.auth.models import db, User, Role, Wallet
 from .models import UserTransaction
 from .UserTransactionsRepository import UserTransactionsRepository
 from webapp.api.generic.CrudApi import CrudApi
@@ -123,6 +123,28 @@ class UserTransactionsApi(CrudApi):
                 "message": f"No existe la cuenta de origen: {origin}",
             }, 404
         try:
+            wallet = db.session.query(Wallet).filter(Wallet.id==int(dest_wallet)).first()
+            print(f'wallet : {wallet.description}')
+            if not wallet or wallet == None:
+                response = {
+                        "status": 404,
+                        "message": f"No existe la wallet: {wallet}",
+                        }
+                return make_response(jsonify(response)), 404
+            if wallet.description != "Caribbean Wallet":
+                destination_acc = 1
+            else:
+                acc = account_holder_repository.get_account_holder_by_phone(dest_phone)
+                if not acc or acc == None:
+                    
+                    response = {
+                    "status": 404,
+                    "message": f"El telefono: {dest_phone} no esta asociado a ningun usuario",
+                    }
+                    return make_response(jsonify(response)), 404
+                destination_acc = user_account_repository.get_user_account_by_id(acc.user_id).id
+
+
             A = user_transactions_repository.create(
                 **{
                     "transaction_type": "pago_movil",
@@ -133,7 +155,7 @@ class UserTransactionsApi(CrudApi):
                         currency
                     ).id,
                     "origin_account": origin.id,
-                    "destination_account": 1,
+                    "destination_account": destination_acc,
                     "transaction_status_id": status,
                     "transaction_description": description,
                 }
@@ -281,25 +303,19 @@ class UserTransactionsApi(CrudApi):
             return response, 401
 
     @jwt_required(fresh=True)
-    def put(self, id, status):
+    def put(self, id):
         user_identity = get_jwt_identity()
         if user_identity:
             user_id = User.decode_token(user_identity)
             if User.get_role(user_identity) == 1: # es administrador y puede cancelar la transferencia    #user_id == A.user_id:
                 try:
-                    A = user_transactions_repository.update(id, **{"transaction_status_id": status})
-                    if status == 3:
-                        mess = "Se ha cancelado la transferencia."
-                        des = "Transferencia cancelada"
-                    elif status == 2:
-                        mess = "Se ha aprobado la transferencia"
-                        des = "Transferencia aprobada"
+                    A = user_transactions_repository.update(id, **{"transaction_status_id": 3})
                     response = {
                         "status": 200,
-                        "message": mess,
+                        "message": "Se ha cancelado la transferencia.",
                         "id": A.id,
                     }
-                    log = LogEvent(user_id=user_id, description=des)
+                    log = LogEvent(user_id=user_id, description="Transferencia cancelada")
                     db.session.add(log)
                     db.session.commit()
                     return response, 200
@@ -312,7 +328,7 @@ class UserTransactionsApi(CrudApi):
             else:
                 response = {
                     "status": 400,
-                    "message": "La transferencia solo puede ser modificada por un usuario administrador.",
+                    "message": "La transferencia solo puede ser cancelada por un usuario administrador.",
                 }
                 return response, 400
         else:
