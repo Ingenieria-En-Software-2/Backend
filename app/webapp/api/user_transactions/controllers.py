@@ -161,7 +161,7 @@ class UserTransactionsApi(CrudApi):
                 }
             )
             user_login = db.session.query(User).filter(User.id==user_id).first()
-            send_pago_movil_email(user_login.login,origin.account_number,dest_CI,dest_name,dest_wallet,amount,currency)
+            send_pago_movil_email(user_login.login,origin.account_number,dest_CI,dest_name,wallet.description,amount,currency)
             if status == 2:
                 response = {
                     "status": 200,
@@ -185,7 +185,7 @@ class UserTransactionsApi(CrudApi):
 
     def check_status(self, amount):
         stat = 2
-        if int(amount) > 1000:
+        if float(amount) > 1000:
             stat = 1
         return stat
 
@@ -215,7 +215,6 @@ class UserTransactionsApi(CrudApi):
             amount = data.get("amount")
             currency = data.get("currency")
             description = data.get("description")
-
             if trans_type == "inter_wallet":
                 return self.handle_inter_wallet_transaction(
                     user_id,

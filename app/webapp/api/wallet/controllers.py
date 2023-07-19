@@ -16,9 +16,11 @@ class WalletApi(CrudApi):
     def __init__(self):
         super().__init__(wallet_repository, Get_Wallet_Schema)
 
-    def get_wallets(self):
+    def get(self):
         """Get all user account.
 
         :return: All user accounts
         """
-        return self.db.session.query(Wallet).all()
+        wallets = db.session.query(Wallet).all()
+        list_wallets = list(map(lambda a : {"id" : a.id, "description" : a.description}, wallets))
+        return {"wallets" : list_wallets},200
