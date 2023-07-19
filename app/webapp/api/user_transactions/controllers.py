@@ -144,7 +144,6 @@ class UserTransactionsApi(CrudApi):
                     return make_response(jsonify(response)), 404
                 destination_acc = user_account_repository.get_user_account_by_id(acc.user_id).id
 
-
             A = user_transactions_repository.create(
                 **{
                     "transaction_type": "pago_movil",
