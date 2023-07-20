@@ -75,9 +75,40 @@ class UserApi(CrudApi):
             else:
                 responseObject = {
                     "status": "failed",
-                    "message": "Somesthing failed."
+                    "message": "Something failed."
                 }
                 return responseObject, 500
+            
+    @jwt_required(fresh=True)
+    def get(self):
+        user_identity = get_jwt_identity()
+        if user_identity:
+            user_id = User.decode_token(user_identity)
+
+            if user_id:
+                affiliates = UserAffiliates.query.filter_by(user_id=user_id).all()
+                affiliates = [{
+                        "id": affiliate.id,
+                        "identification_document": affiliate.document_number,
+                        "destination": affiliate.name,
+                        "phone": affiliate.phone,
+                        "email": affiliate.mail,
+                        "destination_wallet": affiliate.wallet
+                    } for affiliate in affiliates]
+
+                responseObject = {
+                    "status": "success",
+                    "message": "Successfully retrieved.",
+                    "data": affiliates
+                }
+                return responseObject, 200
+            else:
+                responseObject = {
+                    "status": "failed",
+                    "message": "Something failed."
+                }
+                return responseObject, 500
+
 
 
 
