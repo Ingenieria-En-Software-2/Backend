@@ -302,19 +302,27 @@ class UserTransactionsApi(CrudApi):
             return response, 401
 
     @jwt_required(fresh=True)
-    def put(self, id):
+    def put(self, id, status):
         user_identity = get_jwt_identity()
         if user_identity:
             user_id = User.decode_token(user_identity)
             if User.get_role(user_identity) == 1: # es administrador y puede cancelar la transferencia    #user_id == A.user_id:
                 try:
-                    A = user_transactions_repository.update(id, **{"transaction_status_id": 3})
+                    A = user_transactions_repository.update(id, **{"transaction_status_id": status})
+                    mess = ""
+                    des = ""
+                    if status==1:
+                        mess = "Se ha cancelado la transferencia."
+                        des = "Transferencia Cancelada"
+                    if status==2:
+                        mess = "Se ha aprobado la transferencia."
+                        des = "Transferencia Aprobada"
                     response = {
                         "status": 200,
-                        "message": "Se ha cancelado la transferencia.",
+                        "message": mess,
                         "id": A.id,
                     }
-                    log = LogEvent(user_id=user_id, description="Transferencia cancelada")
+                    log = LogEvent(user_id=user_id, description=des)
                     db.session.add(log)
                     db.session.commit()
                     return response, 200
