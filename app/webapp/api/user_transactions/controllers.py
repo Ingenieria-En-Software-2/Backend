@@ -309,6 +309,8 @@ class UserTransactionsApi(CrudApi):
             if User.get_role(user_identity) == 1: # es administrador y puede cancelar la transferencia    #user_id == A.user_id:
                 try:
                     A = user_transactions_repository.update(id, **{"transaction_status_id": status})
+                    mess = ""
+                    des = ""
                     if status==1:
                         mess = "Se ha cancelado la transferencia."
                         des = "Transferencia Cancelada"
