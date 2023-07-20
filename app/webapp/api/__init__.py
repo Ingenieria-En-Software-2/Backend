@@ -23,7 +23,6 @@ def create_module(app, **kwargs):
         "/user",
         "/user/<int:id>",
         "/user/user_affiliates",
-        "/user/affiliates_list"
     )
 
     rest_api.add_resource(

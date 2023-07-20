@@ -109,7 +109,27 @@ class UserApi(CrudApi):
                 }
                 return responseObject, 500
 
-
-
+    @jwt_required(fresh=True)
+    def delete(self):
+        user_identity = get_jwt_identity()
+        if user_identity:
+            user_id = User.decode_token(user_identity)
+            data = request.get_json()
+            affiliate_id = data.get("affiliate_id")
+            affiliate = UserAffiliates.query.filter_by(user_id=user_id, id=affiliate_id).first()
+            if affiliate:
+                db.session.delete(affiliate)
+                db.session.commit()
+                responseObject = {
+                    "status": "success",
+                    "message": "Successfully deleted."
+                }
+                return responseObject, 200
+            else:
+                responseObject = {
+                    "status": "failed",
+                    "message": "Affiliate not found."
+                }
+                return responseObject, 404
 
 
