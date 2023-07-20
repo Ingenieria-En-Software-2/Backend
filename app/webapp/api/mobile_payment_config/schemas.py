@@ -38,6 +38,7 @@ class POST_Mobile_Payment_Schema(Schema):
     max_amount = fields.Float(required=True)
     document = fields.String(required=True)
     receiver_name = fields.String(required=True)
+    phone_number = fields.String(required=True)
     
 
 
@@ -86,7 +87,7 @@ class POST_Mobile_Payment_Schema(Schema):
         ValidationError exception in case the name does not comply with the
         pattern.
         """
-        regex = r"^+\d{7}$"
+        regex = r"^\+\d{12}$"
         if not re.match(regex, value):
             raise ValidationError("El numero de telefono no tiene el formato correcto")
 

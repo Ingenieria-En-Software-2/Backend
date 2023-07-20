@@ -47,3 +47,15 @@ class MobilePaymentConfig(db.Model):
 
     def __repr__(self):
         return "<MobilePaymentConfig id {}>".format(self.id)
+    
+    def serialize(self):
+       """Return object data in easily serializable format"""
+       return {
+           'id'    : self.id,
+           'email'      : self.email,
+           'document'   : self.document,
+           'receiver_name' : self.receiver_name,
+           'phone_number'  : self.phone_number,
+           'account_id'    : self.account_id,
+           'max_amount'    : self.max_amount,
+       }

@@ -8,6 +8,7 @@ from flask import abort, make_response, jsonify, request
 from flask_restful import fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ...auth.models import db, User
+from .models import MobilePaymentConfig
 from webapp.api.logger.models import LogEvent
 from ...api.generic.CrudApi import CrudApi
 from .schemas import (
@@ -31,16 +32,11 @@ class MobilePaymentConfigAPI(CrudApi):
         
     @jwt_required(fresh=True)
     def get(self):
-        # id es el user_id
-        # account_type_id 1 es corriente, 2 es ahorro
         user_identity = get_jwt_identity()
         if user_identity:
             resp = User.decode_token(user_identity)
             configuration = mobile_payment_config_repository.get_config_by_user_id(resp)
-            response = {
-                "status": 200,
-                "response": configuration,
-            }
+            response = dict(configuration.serialize())
             return response, 200
         else:
             response = {"status": 401, "message": "No se ha iniciado sesión."}
@@ -56,9 +52,9 @@ class MobilePaymentConfigAPI(CrudApi):
             
             # If configuration exists, update it
             if configuration:
-                for key, value in configuration.items():
+                for key, value in request.get_json().items():
                     # Check if the key exists in the model and update it
-                    if hasattr(self.model, key):
+                    if hasattr(MobilePaymentConfig, key):
                         setattr(configuration, key, value)
                 log = LogEvent(user_id=resp, description="Configuracion de Pago Movil actualizado")
                 db.session.commit()
@@ -70,13 +66,13 @@ class MobilePaymentConfigAPI(CrudApi):
                 log = LogEvent(user_id=resp, description="Configuracion de Pago Movil creado")
                 db.session.add(log)
                 db.session.commit()
+                if not result:
+                    abort(500, "Algo salio mal creando el recurso")
                 
         
         else:
             response = {"status": 401, "message": "No se ha iniciado sesión."}
             return make_response(jsonify(response)), 401
 
-        if not result:
-            abort(500, "Algo salio mal creando el recurso")
 
         return {"status": "Solicitud Procesada Correctamente"}, 201

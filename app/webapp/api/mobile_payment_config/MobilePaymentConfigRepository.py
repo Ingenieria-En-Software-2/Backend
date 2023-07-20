@@ -31,30 +31,15 @@ class MobilePaymentConfigRepository(CrudRepository):
         return self.db.session.query(self.model).filter_by(phone_number=phone_number).all()
 
     def get_config_by_user_id(
-        self, user_id, page=1, per_page=None, sort_by=None, sort_order="asc"
+        self, user_id
     ):
+        """Get config by user id
+
+        Args:
+            user_id (int): User id
+
+        Returns:
+            MobilePaymentConfig: Mobile payment config
         """
-        Gets a list of config by receiver name
-
-        :param user_id: The id of the user to retrieve.
-        :param page: The page number to retrieve, or `1` to retrieve the first one.
-        :param per_page: The number of records per page, or `None` to retrieve all records.
-        :param sort_by: The name of the attribute to sort by, or `None` to not sort the records.
-        :param sort_order: The sort order, 'desc' for descending or ascending by default.
-        :return: A list or `QueryPagination` object of users with the specified user id, or an empty list if no users were found.
-        """
-        query = self.db.session.query(self.model).filter_by(user_id=user_id)
-
-        if sort_by is not None:
-            if sort_order != "desc":
-                query = query.order_by(getattr(self.model, sort_by).asc())
-            else:
-                query = query.order_by(getattr(self.model, sort_by).desc())
-
-        if per_page is not None:
-            # Error out is false to return empty list instead of 404 error when page is out of range
-            records = query.paginate(page=page, per_page=per_page, error_out=False)
-        else:
-            records = query.all()
-
-        return records
+        query = self.db.session.query(self.model).filter_by(user_id=user_id).first()
+        return query
