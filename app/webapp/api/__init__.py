@@ -3,6 +3,7 @@ from .user.controllers import UserApi
 from .role.controllers import RoleApi
 from flask import Blueprint
 from .account_holder.controllers import AccountHolderApi
+from .mobile_payment_config.controllers import MobilePaymentConfigAPI
 from .user_account.controllers import UserAccountApi
 from .user_transactions.controllers import UserTransactionsApi
 from .logger.controllers import Log_EventApi
@@ -53,6 +54,11 @@ def create_module(app, **kwargs):
         Log_EventApi,
         "/log_event",        
         "/log_event/<int:id>",
+    )
+    
+    rest_api.add_resource(
+        MobilePaymentConfigAPI,
+        "/mobile-payment"
     )
 
 
