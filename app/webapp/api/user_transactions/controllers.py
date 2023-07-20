@@ -3,7 +3,7 @@ Module containing the definition of the UserTransactionsApi class, which inherit
 CrudApi class, and is in charge of handling HTTP requests related to account holders.
 """
 
-from flask import abort, request
+from flask import abort, request, make_response, jsonify
 from flask_restful import fields
 from webapp.auth.models import db, User, Role, Wallet
 from .models import UserTransaction
@@ -130,7 +130,7 @@ class UserTransactionsApi(CrudApi):
                         "status": 404,
                         "message": f"No existe la wallet: {wallet}",
                         }
-                return make_response(jsonify(response)), 404
+                return (jsonify(response)), 404
             if wallet.description != "Caribbean Wallet":
                 destination_acc = 1
             else:

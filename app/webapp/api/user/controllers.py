@@ -11,6 +11,9 @@ from .schemas import Create_User_Schema, Update_User_Schema, Get_User_Schema
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from webapp.auth.models import db, User
+from webapp.api.user_account.models import UserAffiliates
+
+from flask import request, jsonify, make_response
 
 user_fields = {
     "id": fs.Integer(),
@@ -43,4 +46,90 @@ class UserApi(CrudApi):
         else:
             response = {"status": 401, "message": "No se ha iniciado sesión."}
             return response, 401
+        
+    @jwt_required(fresh=True)
+    def post(self):
+        user_identity = get_jwt_identity()
+        if user_identity:
+            user_id = User.decode_token(user_identity)
+            data = request.get_json()
+
+            if data:
+                affiliate = UserAffiliates(
+                    user_id=user_id,
+                    document_number=data.get("identification_document"),
+                    name=data.get("name"),
+                    phone=data.get("phone"),
+                    mail=data.get("email"),
+                    wallet=data.get("wallet"),
+                )
+
+                db.session.add(affiliate)
+                db.session.commit()
+
+                responseObject = {
+                    "status": "success",
+                    "message": "Successfully added."
+                }
+                return responseObject, 200
+            else:
+                responseObject = {
+                    "status": "failed",
+                    "message": "Something failed."
+                }
+                return responseObject, 500
+            
+    @jwt_required(fresh=True)
+    def get(self):
+        user_identity = get_jwt_identity()
+        if user_identity:
+            user_id = User.decode_token(user_identity)
+
+            if user_id:
+                affiliates = UserAffiliates.query.filter_by(user_id=user_id).all()
+                affiliates = [{
+                        "id": affiliate.id,
+                        "identification_document": affiliate.document_number,
+                        "destination": affiliate.name,
+                        "phone": affiliate.phone,
+                        "email": affiliate.mail,
+                        "destination_wallet": affiliate.wallet
+                    } for affiliate in affiliates]
+
+                responseObject = {
+                    "status": "success",
+                    "message": "Successfully retrieved.",
+                    "data": affiliates
+                }
+                return responseObject, 200
+            else:
+                responseObject = {
+                    "status": "failed",
+                    "message": "Something failed."
+                }
+                return responseObject, 500
+
+    @jwt_required(fresh=True)
+    def delete(self):
+        user_identity = get_jwt_identity()
+        if user_identity:
+            user_id = User.decode_token(user_identity)
+            data = request.get_json()
+            affiliate_id = data.get("affiliate_id")
+            affiliate = UserAffiliates.query.filter_by(user_id=user_id, id=affiliate_id).first()
+            if affiliate:
+                db.session.delete(affiliate)
+                db.session.commit()
+                responseObject = {
+                    "status": "success",
+                    "message": "Successfully deleted."
+                }
+                return responseObject, 200
+            else:
+                responseObject = {
+                    "status": "failed",
+                    "message": "Affiliate not found."
+                }
+                return responseObject, 404
+
 

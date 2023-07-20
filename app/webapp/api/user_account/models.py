@@ -73,3 +73,30 @@ class UserAccount(db.Model):
 
     def __repr__(self):
         return "<Account id {}>".format(self.id)
+    
+class UserAffiliates(db.Model):
+    __tablename__ = "user_affiliates"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="cascade"))
+    document_number = db.Column(db.String(20))
+    name = db.Column(db.String())
+    phone = db.Column(db.String())
+    mail = db.Column(db.String())
+    wallet = db.Column(db.String())
+
+    def __init__(
+        self,
+        user_id,
+        document_number,
+        name,
+        phone,
+        mail,
+        wallet,
+    ):
+        self.user_id = user_id
+        self.document_number = document_number
+        self.name = name
+        self.phone = phone
+        self.mail = mail
+        self.wallet = wallet
