@@ -3,7 +3,7 @@ Module containing the definition of the UserTransactionsApi class, which inherit
 CrudApi class, and is in charge of handling HTTP requests related to account holders.
 """
 
-from flask import abort, request, make_response, jsonify
+from flask import abort, request
 from flask_restful import fields
 from webapp.auth.models import db, User, Role, Wallet
 from .models import UserTransaction
@@ -130,7 +130,7 @@ class UserTransactionsApi(CrudApi):
                         "status": 404,
                         "message": f"No existe la wallet: {wallet}",
                         }
-                return (jsonify(response)), 404
+                return make_response(jsonify(response)), 404
             if wallet.description != "Caribbean Wallet":
                 destination_acc = 1
             else:
@@ -143,6 +143,7 @@ class UserTransactionsApi(CrudApi):
                     }
                     return make_response(jsonify(response)), 404
                 destination_acc = user_account_repository.get_user_account_by_id(acc.user_id).id
+
 
             A = user_transactions_repository.create(
                 **{
@@ -160,7 +161,7 @@ class UserTransactionsApi(CrudApi):
                 }
             )
             user_login = db.session.query(User).filter(User.id==user_id).first()
-            send_pago_movil_email(user_login.login,origin.account_number,dest_CI,dest_name,dest_wallet,amount,currency)
+            send_pago_movil_email(user_login.login,origin.account_number,dest_CI,dest_name,wallet.description,amount,currency)
             if status == 2:
                 response = {
                     "status": 200,
@@ -184,7 +185,7 @@ class UserTransactionsApi(CrudApi):
 
     def check_status(self, amount):
         stat = 2
-        if int(amount) > 1000:
+        if float(amount) > 1000:
             stat = 1
         return stat
 
@@ -214,7 +215,6 @@ class UserTransactionsApi(CrudApi):
             amount = data.get("amount")
             currency = data.get("currency")
             description = data.get("description")
-
             if trans_type == "inter_wallet":
                 return self.handle_inter_wallet_transaction(
                     user_id,
@@ -302,19 +302,25 @@ class UserTransactionsApi(CrudApi):
             return response, 401
 
     @jwt_required(fresh=True)
-    def put(self, id):
+    def put(self, id, status):
         user_identity = get_jwt_identity()
         if user_identity:
             user_id = User.decode_token(user_identity)
             if User.get_role(user_identity) == 1: # es administrador y puede cancelar la transferencia    #user_id == A.user_id:
                 try:
-                    A = user_transactions_repository.update(id, **{"transaction_status_id": 3})
+                    A = user_transactions_repository.update(id, **{"transaction_status_id": status})
+                    if status==1:
+                        mess = "Se ha cancelado la transferencia."
+                        des = "Transferencia Cancelada"
+                    if status==2:
+                        mess = "Se ha aprobado la transferencia."
+                        des = "Transferencia Aprobada"
                     response = {
                         "status": 200,
-                        "message": "Se ha cancelado la transferencia.",
+                        "message": mess,
                         "id": A.id,
                     }
-                    log = LogEvent(user_id=user_id, description="Transferencia cancelada")
+                    log = LogEvent(user_id=user_id, description=des)
                     db.session.add(log)
                     db.session.commit()
                     return response, 200
