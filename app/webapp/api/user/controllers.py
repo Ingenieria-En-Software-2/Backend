@@ -37,16 +37,17 @@ class UserApi(CrudApi):
             user_repository,  # Repositorio de usuarios
             Get_User_Schema,  # Esquema Get para roles
         )
+
     @jwt_required(fresh=True)
     def put(self):
         user_identity = get_jwt_identity()
         if user_identity:
-            response = {"status" : 200, "role" : User.get_role(user_identity)}
+            response = {"status": 200, "role": User.get_role(user_identity)}
             return response, 200
         else:
             response = {"status": 401, "message": "No se ha iniciado sesión."}
             return response, 401
-        
+
     @jwt_required(fresh=True)
     def post(self):
         user_identity = get_jwt_identity()
@@ -67,18 +68,12 @@ class UserApi(CrudApi):
                 db.session.add(affiliate)
                 db.session.commit()
 
-                responseObject = {
-                    "status": "success",
-                    "message": "Successfully added."
-                }
+                responseObject = {"status": "success", "message": "Successfully added."}
                 return responseObject, 200
             else:
-                responseObject = {
-                    "status": "failed",
-                    "message": "Something failed."
-                }
+                responseObject = {"status": "failed", "message": "Something failed."}
                 return responseObject, 500
-            
+
     @jwt_required(fresh=True)
     def get(self):
         user_identity = get_jwt_identity()
@@ -87,26 +82,26 @@ class UserApi(CrudApi):
 
             if user_id:
                 affiliates = UserAffiliates.query.filter_by(user_id=user_id).all()
-                affiliates = [{
+                affiliates = [
+                    {
                         "id": affiliate.id,
                         "identification_document": affiliate.document_number,
                         "destination": affiliate.name,
                         "phone": affiliate.phone,
                         "email": affiliate.mail,
-                        "destination_wallet": affiliate.wallet
-                    } for affiliate in affiliates]
+                        "destination_wallet": affiliate.wallet,
+                    }
+                    for affiliate in affiliates
+                ]
 
                 responseObject = {
                     "status": "success",
                     "message": "Successfully retrieved.",
-                    "data": affiliates
+                    "data": affiliates,
                 }
                 return responseObject, 200
             else:
-                responseObject = {
-                    "status": "failed",
-                    "message": "Something failed."
-                }
+                responseObject = {"status": "failed", "message": "Something failed."}
                 return responseObject, 500
 
     @jwt_required(fresh=True)
@@ -116,20 +111,17 @@ class UserApi(CrudApi):
             user_id = User.decode_token(user_identity)
             data = request.get_json()
             affiliate_id = data.get("affiliate_id")
-            affiliate = UserAffiliates.query.filter_by(user_id=user_id, id=affiliate_id).first()
+            affiliate = UserAffiliates.query.filter_by(
+                user_id=user_id, id=affiliate_id
+            ).first()
             if affiliate:
                 db.session.delete(affiliate)
                 db.session.commit()
                 responseObject = {
                     "status": "success",
-                    "message": "Successfully deleted."
+                    "message": "Successfully deleted.",
                 }
                 return responseObject, 200
             else:
-                responseObject = {
-                    "status": "failed",
-                    "message": "Affiliate not found."
-                }
+                responseObject = {"status": "failed", "message": "Affiliate not found."}
                 return responseObject, 404
-
-

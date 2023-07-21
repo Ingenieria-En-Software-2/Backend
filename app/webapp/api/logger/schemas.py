@@ -27,10 +27,8 @@ class Create_Log_Event_Schema(Schema):
     description = fields.Str(required=True)
     occurrence_time = fields.DateTime()
 
-    
 
 class Update_Log_Event_Schema(Create_Log_Event_Schema):
-    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field_obj in self.fields.items():
@@ -41,8 +39,6 @@ class Update_Log_Event_Schema(Create_Log_Event_Schema):
 
 
 class Get_Log_Event_Schema(Generic_Get_Schema, Update_Log_Event_Schema):
-
-    
     sort_by = fields.String(
         load_default="id",
         validate=validate.OneOf(

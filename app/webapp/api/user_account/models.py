@@ -73,7 +73,8 @@ class UserAccount(db.Model):
 
     def __repr__(self):
         return "<Account id {}>".format(self.id)
-    
+
+
 class UserAffiliates(db.Model):
     __tablename__ = "user_affiliates"
 

@@ -57,23 +57,23 @@ class UserAccountApi(CrudApi):
 
     @jwt_required(fresh=True)
     def put(self):
-        #return the amount of money of the account_num passed as a parameter
+        # return the amount of money of the account_num passed as a parameter
         user_identity = get_jwt_identity()
         if user_identity:
             user_id = User.decode_token(user_identity)
             account_number = request.args["account"]
-            account_id = user_account_repository.get_user_account_by_account_number(account_number).id
+            account_id = user_account_repository.get_user_account_by_account_number(
+                account_number
+            ).id
             balance = user_account_repository.get_account_balance(account_id)
             response = {
                 "status": 200,
-                "balance" : balance["balance"],
+                "balance": balance["balance"],
             }
             return response, 200
         else:
             response = {"status": 401, "message": "No se ha iniciado sesión."}
             return make_response(jsonify(response)), 401
-
-
 
     # def post(self):
     #     result = self.repository.create(**request.get_json())

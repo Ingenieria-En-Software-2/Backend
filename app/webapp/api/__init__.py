@@ -52,10 +52,8 @@ def create_module(app, **kwargs):
 
     rest_api.add_resource(
         Log_EventApi,
-        "/log_event",        
+        "/log_event",
         "/log_event/<int:id>",
     )
-
-
 
     app.register_blueprint(rest_api_bp)

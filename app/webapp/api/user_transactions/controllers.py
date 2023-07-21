@@ -36,10 +36,9 @@ from ..account_holder.schemas import (
 )
 
 
-
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from webapp.auth.email_verification import send_transaction_email,send_pago_movil_email
+from webapp.auth.email_verification import send_transaction_email, send_pago_movil_email
 
 
 # Instance of the user account repository
@@ -51,6 +50,7 @@ user_account_repository = UserAccountRepository(
 account_holder_repository = AccountHolderRepository(
     db, Create_Account_Holder_Schema, Update_Account_Holder_Schema
 )
+
 
 class UserTransactionsApi(CrudApi):
     # Call to the base class constructor CrudApi
@@ -85,8 +85,15 @@ class UserTransactionsApi(CrudApi):
                     "transaction_description": description,
                 }
             )
-            user_login = db.session.query(User).filter(User.id==user_id).first()
-            send_transaction_email("inter_wallet",user_login.login,origin.account_number,destination,amount,currency)
+            user_login = db.session.query(User).filter(User.id == user_id).first()
+            send_transaction_email(
+                "inter_wallet",
+                user_login.login,
+                origin.account_number,
+                destination,
+                amount,
+                currency,
+            )
             if status == 2:
                 response = {
                     "status": 200,
@@ -99,10 +106,10 @@ class UserTransactionsApi(CrudApi):
                 return response, 200
             elif status == 1:
                 response = {
-                        'status' : 201,
-                        'message' : 'Su transferencia ha sido retenida',
-                        'transaction_id' : A.id,
-                    }
+                    "status": 201,
+                    "message": "Su transferencia ha sido retenida",
+                    "transaction_id": A.id,
+                }
                 log = LogEvent(user_id=user_id, description="Transferencia retenida")
                 db.session.add(log)
                 db.session.commit()
@@ -115,7 +122,19 @@ class UserTransactionsApi(CrudApi):
 
             return response, 500
 
-    def handle_pago_movil(self,origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id,status):
+    def handle_pago_movil(
+        self,
+        origin,
+        dest_CI,
+        dest_name,
+        dest_phone,
+        dest_wallet,
+        description,
+        amount,
+        currency,
+        user_id,
+        status,
+    ):
         origin = user_account_repository.get_user_account_by_account_number(origin)
         if not origin or origin == None:
             return {
@@ -123,27 +142,29 @@ class UserTransactionsApi(CrudApi):
                 "message": f"No existe la cuenta de origen: {origin}",
             }, 404
         try:
-            wallet = db.session.query(Wallet).filter(Wallet.id==int(dest_wallet)).first()
-            print(f'wallet : {wallet.description}')
+            wallet = (
+                db.session.query(Wallet).filter(Wallet.id == int(dest_wallet)).first()
+            )
+            print(f"wallet : {wallet.description}")
             if not wallet or wallet == None:
                 response = {
-                        "status": 404,
-                        "message": f"No existe la wallet: {wallet}",
-                        }
+                    "status": 404,
+                    "message": f"No existe la wallet: {wallet}",
+                }
                 return make_response(jsonify(response)), 404
             if wallet.description != "Caribbean Wallet":
                 destination_acc = 1
             else:
                 acc = account_holder_repository.get_account_holder_by_phone(dest_phone)
                 if not acc or acc == None:
-                    
                     response = {
-                    "status": 404,
-                    "message": f"El telefono: {dest_phone} no esta asociado a ningun usuario",
+                        "status": 404,
+                        "message": f"El telefono: {dest_phone} no esta asociado a ningun usuario",
                     }
                     return make_response(jsonify(response)), 404
-                destination_acc = user_account_repository.get_user_account_by_id(acc.user_id).id
-
+                destination_acc = user_account_repository.get_user_account_by_id(
+                    acc.user_id
+                ).id
 
             A = user_transactions_repository.create(
                 **{
@@ -160,8 +181,16 @@ class UserTransactionsApi(CrudApi):
                     "transaction_description": description,
                 }
             )
-            user_login = db.session.query(User).filter(User.id==user_id).first()
-            send_pago_movil_email(user_login.login,origin.account_number,dest_CI,dest_name,wallet.description,amount,currency)
+            user_login = db.session.query(User).filter(User.id == user_id).first()
+            send_pago_movil_email(
+                user_login.login,
+                origin.account_number,
+                dest_CI,
+                dest_name,
+                wallet.description,
+                amount,
+                currency,
+            )
             if status == 2:
                 response = {
                     "status": 200,
@@ -169,12 +198,12 @@ class UserTransactionsApi(CrudApi):
                     "transaction_id": A.id,
                 }
                 return response, 200
-            elif status ==1:
+            elif status == 1:
                 response = {
-                        'status' : 201,
-                        'message' : 'Su transferencia ha sido retenida',
-                        'transaction_id' : A.id,
-                    }
+                    "status": 201,
+                    "message": "Su transferencia ha sido retenida",
+                    "transaction_id": A.id,
+                }
                 return response, 201
         except Exception as e:
             response = {
@@ -208,7 +237,18 @@ class UserTransactionsApi(CrudApi):
                 description = data.get("description")
                 currency = data.get("currency")
                 amount = data.get("amount")
-                return self.handle_pago_movil(wallet_origin,dest_CI,dest_name,dest_phone,dest_wallet,description,amount,currency,user_id,status)
+                return self.handle_pago_movil(
+                    wallet_origin,
+                    dest_CI,
+                    dest_name,
+                    dest_phone,
+                    dest_wallet,
+                    description,
+                    amount,
+                    currency,
+                    user_id,
+                    status,
+                )
 
             wallet_origin = data.get("origin")
             wallet_destination = data.get("destination")
@@ -223,7 +263,7 @@ class UserTransactionsApi(CrudApi):
                     amount,
                     currency,
                     description,
-                    status
+                    status,
                 )
 
             # verificar si el origen y destino existen
@@ -268,25 +308,36 @@ class UserTransactionsApi(CrudApi):
                         "transaction_description": description,
                     }
                 )
-                user_login = db.session.query(User).filter(User.id==user_id).first()
-                send_transaction_email("transaction",user_login.login,origin.account_number,destination.account_number,amount,currency)
+                user_login = db.session.query(User).filter(User.id == user_id).first()
+                send_transaction_email(
+                    "transaction",
+                    user_login.login,
+                    origin.account_number,
+                    destination.account_number,
+                    amount,
+                    currency,
+                )
                 if status == 2:
                     response = {
                         "status": 200,
                         "message": "Se ha realizado la transferencia.",
                         "transaction_id": A.id,
                     }
-                    log = LogEvent(user_id=user_id, description="Transferencia realizada")
+                    log = LogEvent(
+                        user_id=user_id, description="Transferencia realizada"
+                    )
                     db.session.add(log)
                     db.session.commit()
                     return response, 200
                 elif status == 1:
                     response = {
-                        'status' : 201,
-                        'message' : 'Su transferencia ha sido retenida',
-                        'transaction_id' : A.id,
+                        "status": 201,
+                        "message": "Su transferencia ha sido retenida",
+                        "transaction_id": A.id,
                     }
-                    log = LogEvent(user_id=user_id, description="Transferencia retenida")
+                    log = LogEvent(
+                        user_id=user_id, description="Transferencia retenida"
+                    )
                     db.session.add(log)
                     db.session.commit()
                     return response, 201
@@ -306,15 +357,19 @@ class UserTransactionsApi(CrudApi):
         user_identity = get_jwt_identity()
         if user_identity:
             user_id = User.decode_token(user_identity)
-            if User.get_role(user_identity) == 1: # es administrador y puede cancelar la transferencia    #user_id == A.user_id:
+            if (
+                User.get_role(user_identity) == 1
+            ):  # es administrador y puede cancelar la transferencia    #user_id == A.user_id:
                 try:
-                    A = user_transactions_repository.update(id, **{"transaction_status_id": status})
+                    A = user_transactions_repository.update(
+                        id, **{"transaction_status_id": status}
+                    )
                     mess = ""
                     des = ""
-                    if status==1:
+                    if status == 1:
                         mess = "Se ha cancelado la transferencia."
                         des = "Transferencia Cancelada"
-                    if status==2:
+                    if status == 2:
                         mess = "Se ha aprobado la transferencia."
                         des = "Transferencia Aprobada"
                     response = {
@@ -342,37 +397,49 @@ class UserTransactionsApi(CrudApi):
             response = {"status": 401, "message": "No se ha iniciado sesión."}
             return response, 401
 
-    def get_transactions_by(self,g,inp,user_id,role,account_type):
+    def get_transactions_by(self, g, inp, user_id, role, account_type):
         if g == "today":
-            A = user_transactions_repository.get_transactions_by_day(datetime.now().strftime(
-                                "%Y-%m-%d"
-                            ),role,user_id,account_type)
+            A = user_transactions_repository.get_transactions_by_day(
+                datetime.now().strftime("%Y-%m-%d"), role, user_id, account_type
+            )
         elif g == "week":
-            A = user_transactions_repository.get_transactions_by_week(role,user_id,account_type)
+            A = user_transactions_repository.get_transactions_by_week(
+                role, user_id, account_type
+            )
         elif g == "month":
-            A = user_transactions_repository.get_transactions_by_month(int(inp), role,user_id,account_type)
+            A = user_transactions_repository.get_transactions_by_month(
+                int(inp), role, user_id, account_type
+            )
         elif g == "quarter":
-            A = user_transactions_repository.get_transactions_by_quarter(int(inp), role,user_id,account_type)
+            A = user_transactions_repository.get_transactions_by_quarter(
+                int(inp), role, user_id, account_type
+            )
         elif g == "year":
-            A = user_transactions_repository.get_transactions_by_year(int(inp), role,user_id,account_type)
+            A = user_transactions_repository.get_transactions_by_year(
+                int(inp), role, user_id, account_type
+            )
         elif g == "date":
-            date = (datetime.strptime(inp,
-                                "%Y-%m-%d"
-                            )).strftime("%Y-%m-%d")
-            A = user_transactions_repository.get_transactions_by_date(date, role,user_id,account_type)
+            date = (datetime.strptime(inp, "%Y-%m-%d")).strftime("%Y-%m-%d")
+            A = user_transactions_repository.get_transactions_by_date(
+                date, role, user_id, account_type
+            )
         elif g == "period":
-            start = (datetime.strptime(inp.split(" ")[0],
-                                "%Y-%m-%d"
-                            )).strftime("%Y-%m-%d")
-            end = (datetime.strptime(inp.split(" ")[1],
-                                "%Y-%m-%d"
-                            )).strftime("%Y-%m-%d")
-            A = user_transactions_repository.get_transactions_by_period(start,end, role,user_id,account_type)
+            start = (datetime.strptime(inp.split(" ")[0], "%Y-%m-%d")).strftime(
+                "%Y-%m-%d"
+            )
+            end = (datetime.strptime(inp.split(" ")[1], "%Y-%m-%d")).strftime(
+                "%Y-%m-%d"
+            )
+            A = user_transactions_repository.get_transactions_by_period(
+                start, end, role, user_id, account_type
+            )
         if g == "all":
-            A=user_transactions_repository.get_all_transactions(role,user_id,account_type)
+            A = user_transactions_repository.get_all_transactions(
+                role, user_id, account_type
+            )
         return A
 
-    def type_of_transaction(self,t):
+    def type_of_transaction(self, t):
         if t == "inter_wallet":
             return "Inter Wallet"
         elif t == "b_a":
@@ -382,17 +449,18 @@ class UserTransactionsApi(CrudApi):
         elif t == "pago_movil":
             return "Pago Móvil"
 
-    def get_ci(self,x):
-        AH = account_holder_repository.get_account_holder_by_user_id(user_account_repository.get_user_account_by_id(
-            x).user_id)
+    def get_ci(self, x):
+        AH = account_holder_repository.get_account_holder_by_user_id(
+            user_account_repository.get_user_account_by_id(x).user_id
+        )
         if AH == None:
             return -1
         else:
             return AH.id_number
 
     @jwt_required(fresh=True)
-    def get(self,g,inp,account_type):
-        '''
+    def get(self, g, inp, account_type):
+        """
         This function returns the transactions
         :param g: Filter we wanna apply for the search, it can be "all","today","week","month","quarter","year","date","period"
         :param inp: Specified search for "month","quarter","year","date","period"
@@ -411,7 +479,7 @@ class UserTransactionsApi(CrudApi):
         The transactions are given depending on the role of the user
         If the user is admin, the transactions returned are all of the ones that comply with the filter
         If the user has role user, the transactions are filtered also only by theirs id
-        '''
+        """
 
         # 1 es corriente
         # 2 es ahorro
@@ -420,7 +488,9 @@ class UserTransactionsApi(CrudApi):
         if user_identity:
             user_id = User.decode_token(user_identity)
             try:
-                A = self.get_transactions_by(g,inp,user_id,User.get_role(user_identity),account_type)
+                A = self.get_transactions_by(
+                    g, inp, user_id, User.get_role(user_identity), account_type
+                )
                 if len(A) == 0:
                     response = {
                         "status": 400,
@@ -432,19 +502,29 @@ class UserTransactionsApi(CrudApi):
                         map(
                             lambda x: {
                                 "origin": x.origin_account,
-                                "user_name_origin" : db.session.query(User)
-                            .filter(User.id == user_account_repository.get_user_account_by_id(
-                                    x.origin_account).user_id).first().name,
+                                "user_name_origin": db.session.query(User)
+                                .filter(
+                                    User.id
+                                    == user_account_repository.get_user_account_by_id(
+                                        x.origin_account
+                                    ).user_id
+                                )
+                                .first()
+                                .name,
                                 "destination": x.destination_account,
                                 "amount": x.amount,
-                                "transaction_id" : x.id,
-                                "ci" : self.get_ci(x.origin_account),
-                                "description" : x.transaction_description,
-                                "transaction_type": self.type_of_transaction(x.transaction_type),
+                                "transaction_id": x.id,
+                                "ci": self.get_ci(x.origin_account),
+                                "description": x.transaction_description,
+                                "transaction_type": self.type_of_transaction(
+                                    x.transaction_type
+                                ),
                                 "transaction_date": x.transaction_date.strftime(
                                     "%m/%d/%Y"
                                 ),
-                                "transaction_hour" : x.transaction_date.strftime("%H:%M:%S"),
+                                "transaction_hour": x.transaction_date.strftime(
+                                    "%H:%M:%S"
+                                ),
                                 "currency": user_transactions_repository.get_currency_by_currency_id(
                                     x.currency_id
                                 ).name,
@@ -456,7 +536,7 @@ class UserTransactionsApi(CrudApi):
                     response = {"status": 200, "transactions": B}
                     return response, 200
             except Exception as e:
-                response = {"status" : 500, "message" : "Un error ha ocurrido"}
+                response = {"status": 500, "message": "Un error ha ocurrido"}
                 return response, 500
         else:
             response = {"status": 401, "message": "No se ha iniciado sesión."}

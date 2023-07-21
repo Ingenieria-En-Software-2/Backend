@@ -39,7 +39,7 @@ class RegisterAPI(MethodView):
                     person_type=post_data.get("person_type"),
                     user_type=post_data.get("user_type"),
                     role_id=post_data.get("role_id"),
-                    verified=True
+                    verified=True,
                 )
 
                 db.session.add(user)
@@ -76,19 +76,19 @@ class RegisterAPI(MethodView):
             return make_response(jsonify(responseObject)), 202
 
     def get(self):
-        user = db.session.query(User).filter_by(login=request.args['login']).first()
+        user = db.session.query(User).filter_by(login=request.args["login"]).first()
         if user:
             try:
                 hashed_password = bcrypt.generate_password_hash(
-                    request.args['password']
+                    request.args["password"]
                 ).decode("utf-8")
-                user.login = request.args['login']
-                #user.password = user.password
-                user.name=request.args['name']
-                user.lastname=request.args['lastname']
-                user.person_type=request.args['person_type']
-                user.user_type=request.args['user_type']
-                user.role_id=request.args['role_id']
+                user.login = request.args["login"]
+                # user.password = user.password
+                user.name = request.args["name"]
+                user.lastname = request.args["lastname"]
+                user.person_type = request.args["person_type"]
+                user.user_type = request.args["user_type"]
+                user.role_id = request.args["role_id"]
 
                 db.session.commit()
                 responseObject = {
@@ -111,10 +111,10 @@ class RegisterAPI(MethodView):
             return make_response(jsonify(responseObject)), 202
 
     def put(self):
-        user = db.session.query(User).filter_by(id=request.args['id']).first()
+        user = db.session.query(User).filter_by(id=request.args["id"]).first()
         if user:
             try:
-                db.session.query(User).filter(User.id==request.args['id']).delete()
+                db.session.query(User).filter(User.id == request.args["id"]).delete()
                 db.session.commit()
                 responseObject = {
                     "status": "success",
@@ -133,7 +133,6 @@ class RegisterAPI(MethodView):
                 "message": "User doesn't exist.",
             }
             return make_response(jsonify(responseObject)), 202
-
 
 
 class RefreshAPI(MethodView):
@@ -268,7 +267,9 @@ class VerifyAPI(MethodView):
 
 
 register_view = RegisterAPI.as_view("register_api")
-auth_blueprint.add_url_rule("/auth/register", view_func=register_view, methods=["POST","GET","PUT"])
+auth_blueprint.add_url_rule(
+    "/auth/register", view_func=register_view, methods=["POST", "GET", "PUT"]
+)
 
 verify_view = VerifyAPI.as_view("verify_api")
 auth_blueprint.add_url_rule("/auth/verify", view_func=verify_view, methods=["GET"])

@@ -1,11 +1,10 @@
 from ... import db
 from datetime import datetime
 
-class LogEvent(db.Model):
 
+class LogEvent(db.Model):
     __tablename__ = "log_event"
 
-    
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     occurrence_time = db.Column(db.DateTime())

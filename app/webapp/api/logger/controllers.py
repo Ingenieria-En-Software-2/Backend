@@ -4,7 +4,6 @@ CrudApi class, and is in charge of handling HTTP requests related to account hol
 """
 
 
-
 from ...auth.models import db
 from ...api.generic.CrudApi import CrudApi
 from webapp.repositories.CrudRepository import CrudRepository
@@ -16,7 +15,9 @@ from .schemas import (
 )
 
 # Instance of the account holder repository
-logger_repository = CrudRepository(LogEvent, db, Create_Log_Event_Schema, Update_Log_Event_Schema)
+logger_repository = CrudRepository(
+    LogEvent, db, Create_Log_Event_Schema, Update_Log_Event_Schema
+)
 
 
 class Log_EventApi(CrudApi):
